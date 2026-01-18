@@ -47,6 +47,7 @@ public class DashboardService : IDashboardService
             // Répartitions
             stats.EmployeesByDepartment = GetEmployeesByDepartment();
             stats.EmployeesByStatus = _context.Employees
+                .AsEnumerable()
                 .GroupBy(e => e.Status.ToString())
                 .ToDictionary(g => g.Key, g => g.Count());
             

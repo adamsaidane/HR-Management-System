@@ -30,8 +30,10 @@ public class EmployeeService : IEmployeeService
                 .Include(e => e.Documents)
                 .Include(e => e.Salaries)
                 .Include(e => e.Bonuses)
-                .Include(e => e.EmployeeBenefits.Select(eb => eb.Benefit))
-                .Include(e => e.EquipmentAssignments.Select(ea => ea.Equipment))
+                .Include(e => e.EmployeeBenefits)
+                .ThenInclude(eb => eb.Benefit)
+                .Include(e => e.EquipmentAssignments)
+                .ThenInclude(ea => ea.Equipment)
                 .FirstOrDefault(e => e.EmployeeId == id);
         }
 

@@ -278,7 +278,6 @@ namespace HRMS.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("PhotoPath")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PositionId")

@@ -74,7 +74,7 @@ public class Employee
         public DateTime? EndDate { get; set; }
 
         [Display(Name = "Photo")]
-        public string PhotoPath { get; set; }
+        public string? PhotoPath { get; set; }
 
         [Display(Name = "Date de création")]
         public DateTime CreatedDate { get; set; }

@@ -62,9 +62,8 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label">CV (PDF, Word, etc.) *</label>
-                            <input type="file" name="cvFile" class="form-control" 
-                                   accept=".pdf,.doc,.docx" required />
+                            <label class="form-label" asp-for="CVFile">CV (PDF, Word, etc.) *</label>
+                            <input type="file" asp-for="CVFile" class="form-control" />
                             <small class="text-muted">Formats acceptés: PDF, DOC, DOCX (max 5 MB)</small>
                         </div>
 

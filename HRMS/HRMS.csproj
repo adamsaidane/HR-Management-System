@@ -19,4 +19,8 @@
       </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="wwwroot\Content\CVs\" />
+    </ItemGroup>
+
 </Project>

@@ -96,10 +96,15 @@ public class RecruitmentController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult CreateCandidate(CandidateFormViewModel model, IFormFile cvFile)
+    public IActionResult CreateCandidate(CandidateFormViewModel model)
     {
         if (!ModelState.IsValid)
         {
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+            foreach (var error in errors) 
+            {
+                Console.WriteLine(error.ErrorMessage);
+            }
             model.JobOffers = _recruitmentService.GetActiveJobOffers();
             return View(model);
         }
@@ -110,19 +115,19 @@ public class RecruitmentController : Controller
             LastName = model.LastName,
             Email = model.Email,
             Phone = model.Phone,
-            JobOfferId = model.JobOfferId
+            JobOfferId = model.JobOfferId.Value
         };
 
-        if (cvFile != null && cvFile.Length > 0)
+        if (model.CVFile != null && model.CVFile.Length > 0)
         {
             var folder = Path.Combine(_environment.WebRootPath, "Content/CVs");
             Directory.CreateDirectory(folder);
 
-            var fileName = Path.GetFileName(cvFile.FileName);
+            var fileName = Path.GetFileName(model.CVFile.FileName);
             var path = Path.Combine(folder, fileName);
 
             using var stream = new FileStream(path, FileMode.Create);
-            cvFile.CopyTo(stream);
+            model.CVFile.CopyTo(stream);
 
             candidate.CVPath = "/Content/CVs/" + fileName;
         }

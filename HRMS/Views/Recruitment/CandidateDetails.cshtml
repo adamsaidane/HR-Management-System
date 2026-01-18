@@ -1,0 +1,194 @@
+﻿@model HRMS.Models.Candidate
+@{
+    ViewData["Title"] = "Détails Candidat - " + Model.FullName;
+    var interviews = ViewBag.Interviews as IEnumerable<HRMS.Models.Interview>;
+}
+
+<div class="page-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1><i class="fas fa-user-graduate me-2"></i>@Model.FullName</h1>
+        <p class="text-muted mb-0">Candidature pour: <strong>@Model.JobOffer.Title</strong></p>
+    </div>
+    <div>
+        <a asp-action="Candidates" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Retour
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Colonne Gauche: Informations du Candidat -->
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                     style="width:100px;height:100px;">
+                    <i class="fas fa-user fa-3x"></i>
+                </div>
+                <h4 class="mb-1">@Model.FullName</h4>
+                <p class="text-muted">Candidat</p>
+                <span class="badge bg-@(Model.Status == HRMS.Enums.CandidateStatus.CandidatureReçue ? "info" : 
+                                        Model.Status == HRMS.Enums.CandidateStatus.Entretien ? "warning" : 
+                                        Model.Status == HRMS.Enums.CandidateStatus.Accepté ? "success" : "danger") fs-6">
+                    @Model.Status
+                </span>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-3">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-address-card me-2"></i>Coordonnées</h5>
+            </div>
+            <div class="list-group list-group-flush">
+                <div class="list-group-item">
+                    <small class="text-muted d-block">Email</small>
+                    <a href="mailto:@Model.Email">@Model.Email</a>
+                </div>
+                <div class="list-group-item">
+                    <small class="text-muted d-block">Téléphone</small>
+                    <strong>@Model.Phone</strong>
+                </div>
+                <div class="list-group-item">
+                    <small class="text-muted d-block">Date de candidature</small>
+                    <strong>@Model.ApplicationDate.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("fr-FR"))</strong>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.CVPath))
+                {
+                    <div class="list-group-item">
+                        <small class="text-muted d-block mb-2">CV</small>
+                        <a href="@Model.CVPath" class="btn btn-sm btn-primary w-100" target="_blank">
+                            <i class="fas fa-download me-2"></i>Télécharger le CV
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="card shadow-sm mt-3">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-cogs me-2"></i>Actions</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" asp-action="UpdateCandidateStatus" class="mb-3">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="candidateId" value="@Model.CandidateId" />
+                    <label class="form-label">Changer le statut</label>
+                    <select name="status" class="form-select mb-2">
+                        <option value="0" selected="@(Model.Status == HRMS.Enums.CandidateStatus.CandidatureReçue)">Candidature Reçue</option>
+                        <option value="1" selected="@(Model.Status == HRMS.Enums.CandidateStatus.Entretien)">Entretien</option>
+                        <option value="2" selected="@(Model.Status == HRMS.Enums.CandidateStatus.Accepté)">Accepté</option>
+                        <option value="3" selected="@(Model.Status == HRMS.Enums.CandidateStatus.Refusé)">Refusé</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-sync me-2"></i>Mettre à jour
+                    </button>
+                </form>
+
+                <a asp-action="ScheduleInterview" asp-route-candidateId="@Model.CandidateId" 
+                   class="btn btn-success w-100 mb-2">
+                    <i class="fas fa-calendar-plus me-2"></i>Planifier un Entretien
+                </a>
+
+                @if (Model.Status == HRMS.Enums.CandidateStatus.Accepté)
+                {
+                    <a asp-action="ConvertToEmployee" asp-route-candidateId="@Model.CandidateId" 
+                       class="btn btn-warning w-100">
+                        <i class="fas fa-user-check me-2"></i>Convertir en Employé
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Colonne Droite: Offre et Entretiens -->
+    <div class="col-lg-8">
+        <!-- Offre d'emploi -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-briefcase me-2"></i>Offre d'Emploi</h5>
+            </div>
+            <div class="card-body">
+                <h5>@Model.JobOffer.Title</h5>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p class="mb-1"><i class="fas fa-building me-2 text-muted"></i><strong>Département:</strong> @Model.JobOffer.Department.Name</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-1"><i class="fas fa-user-tie me-2 text-muted"></i><strong>Poste:</strong> @Model.JobOffer.Position.Title</p>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <strong class="d-block mb-2">Description:</strong>
+                    <p class="text-muted" style="white-space: pre-line;">@Model.JobOffer.Description</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Entretiens -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-calendar-check me-2"></i>Entretiens</h5>
+                <a asp-action="ScheduleInterview" asp-route-candidateId="@Model.CandidateId" 
+                   class="btn btn-sm btn-success">
+                    <i class="fas fa-plus me-1"></i>Nouvel Entretien
+                </a>
+            </div>
+            <div class="card-body">
+                @if (interviews != null && interviews.Any())
+                {
+                    <div class="list-group">
+                        @foreach (var interview in interviews.OrderByDescending(i => i.InterviewDate))
+                        {
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-2">
+                                            <i class="far fa-calendar me-2"></i>
+                                            @interview.InterviewDate.ToString("dd MMMM yyyy à HH:mm", new System.Globalization.CultureInfo("fr-FR"))
+                                        </h6>
+                                        @if (!string.IsNullOrEmpty(interview.Location))
+                                        {
+                                            <p class="mb-1"><i class="fas fa-map-marker-alt me-2 text-muted"></i>@interview.Location</p>
+                                        }
+                                        @if (!string.IsNullOrEmpty(interview.InterviewerName))
+                                        {
+                                            <p class="mb-1"><i class="fas fa-user me-2 text-muted"></i>Interviewer: @interview.InterviewerName</p>
+                                        }
+                                        @if (!string.IsNullOrEmpty(interview.Notes))
+                                        {
+                                            <div class="mt-2">
+                                                <small class="text-muted d-block">Notes:</small>
+                                                <p class="mb-0">@interview.Notes</p>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="ms-3">
+                                        @if (interview.Result.HasValue)
+                                        {
+                                            <span class="badge bg-@(interview.Result == HRMS.Enums.InterviewResult.Réussi ? "success" : 
+                                                                    interview.Result == HRMS.Enums.InterviewResult.Échoué ? "danger" : "warning")">
+                                                @interview.Result
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">En attente</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4 text-muted">
+                        <i class="fas fa-calendar-times fa-3x mb-3"></i>
+                        <p class="mb-0">Aucun entretien planifié</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

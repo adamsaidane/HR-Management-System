@@ -1,185 +1,258 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>@ViewData["Title"] - HRMS</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SGRH</title>
 
-    <!-- Bootstrap CSS (version unique) -->
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
-    <link rel="stylesheet" href="~/HRMS.styles.css" asp-append-version="true"/>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
     <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --sidebar-bg: #2c3e50;
+            --sidebar-hover: #34495e;
+        }
+
         body {
-            padding-top: 70px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f5f7fa;
         }
+
+        /* Navbar */
+        .navbar-custom {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
         .navbar-brand {
             font-weight: bold;
             font-size: 24px;
+            color: white !important;
         }
+
+        /* Sidebar */
         .sidebar {
             position: fixed;
-            top: 70px;
+            top: 56px;
             bottom: 0;
             left: 0;
-            z-index: 1000;
-            display: block;
-            padding: 20px;
-            overflow-x: hidden;
+            z-index: 100;
+            padding: 20px 0;
+            background-color: var(--sidebar-bg);
+            width: 260px;
             overflow-y: auto;
-            background-color: #2c3e50;
-            border-right: 1px solid #eee;
-            width: 250px;
         }
-        .sidebar .nav > li > a {
+
+        .sidebar .nav-link {
             color: #ecf0f1;
             padding: 12px 20px;
-            border-radius: 5px;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
+            margin: 5px 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
         }
-        .sidebar .nav > li > a:hover,
-        .sidebar .nav > li.active > a {
-            background-color: #34495e;
-            color: #fff;
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: var(--sidebar-hover);
+            color: white;
         }
-        .sidebar .nav i {
+
+        .sidebar .nav-link i {
             margin-right: 10px;
+            width: 20px;
         }
+
+        /* Main content */
         .main-content {
-            margin-left: 250px;
-            padding: 20px;
+            margin-left: 260px;
+            padding: 30px;
+            min-height: calc(100vh - 56px);
         }
+
+        /* Cards */
         .stat-card {
             background: white;
-            border-radius: 8px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 25px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
         }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
         .stat-card h3 {
             margin: 0 0 10px 0;
             color: #7f8c8d;
             font-size: 14px;
             text-transform: uppercase;
+            font-weight: 600;
         }
+
         .stat-card .value {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: bold;
             color: #2c3e50;
+            margin: 10px 0;
         }
+
         .stat-card .icon {
             float: right;
-            font-size: 40px;
-            opacity: 0.3;
+            font-size: 48px;
+            opacity: 0.2;
         }
-        
-        .sidebar {
-            position: relative;
-            width: 100%;
-            top: 0;
+
+        /* Page header */
+        .page-header {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
-        .main-content {
-            margin-left: 0;
+
+        .page-header h1 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 28px;
+        }
+
+        /* Alerts */
+        .alert {
+            border-radius: 8px;
+            border: none;
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                top: 0;
+            }
+            .main-content {
+                margin-left: 0;
+            }
         }
     </style>
 
-    @RenderSection("styles", required: false)
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
-<!-- Navigation Bar -->
-<nav class="navbar navbar-inverse navbar-fixed-top">
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
     <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            @Html.ActionLink("SGRH", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-        </div>
-        <div class="collapse navbar-collapse" id="navbar-collapse">
-            <ul class="nav navbar-nav navbar-right">
-                @if (User.Identity.IsAuthenticated)
+        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+            <i class="fas fa-users-cog me-2"></i>SGRH
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                @if (User.Identity?.IsAuthenticated == true)
                 {
-                <li><a href="#"><i class="fa fa-user"></i> @User.Identity.Name</a></li>
-                <li>@Html.ActionLink("Déconnexion", "Logout", "Account", null, new { @class = "btn btn-link" })</li>
-                }
-                else
-                {
-                <li>@Html.ActionLink("Connexion", "Login", "Account")</li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle me-1"></i>@User.Identity.Name
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" asp-controller="Account" asp-action="ChangePassword">
+                                <i class="fas fa-key me-2"></i>Changer mot de passe
+                            </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout">
+                                <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+                            </a></li>
+                    </ul>
+                </li>
                 }
             </ul>
         </div>
     </div>
 </nav>
 
-<div class="container-fluid">
+<div class="container-fluid" style="margin-top: 56px;">
     <div class="row">
-        @if (User.Identity.IsAuthenticated)
+        @if (User.Identity?.IsAuthenticated == true)
         {
         <!-- Sidebar -->
         <div class="sidebar">
-            <ul class="nav nav-pills nav-stacked">
-                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")">
-                    @Html.ActionLink("Dashboard", "Index", "Home", null, new { })
-                    <i class="fa fa-dashboard"></i>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")"
+                       asp-controller="Home" asp-action="Index">
+                        <i class="fas fa-tachometer-alt"></i>Dashboard
+                    </a>
                 </li>
-                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Employees" ? "active" : "")">
-                    @Html.ActionLink("Employés", "Index", "Employees", null, new { })
-                    <i class="fa fa-users"></i>
+                <li class="nav-item">
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Employees" ? "active" : "")"
+                       asp-controller="Employees" asp-action="Index">
+                        <i class="fas fa-users"></i>Employés
+                    </a>
                 </li>
-                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Recruitment" ? "active" : "")">
-                    @Html.ActionLink("Recrutement", "JobOffers", "Recruitment", null, new { })
-                    <i class="fa fa-briefcase"></i>
+                <li class="nav-item">
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Recruitment" ? "active" : "")"
+                       asp-controller="Recruitment" asp-action="JobOffers">
+                        <i class="fas fa-briefcase"></i>Recrutement
+                    </a>
                 </li>
-                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Salaries" ? "active" : "")">
-                    @Html.ActionLink("Salaires", "Index", "Salaries", null, new { })
-                    <i class="fa fa-money"></i>
+                <li class="nav-item">
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Salaries" ? "active" : "")"
+                       asp-controller="Salaries" asp-action="Index">
+                        <i class="fas fa-money-bill-wave"></i>Salaires
+                    </a>
                 </li>
-                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Equipment" ? "active" : "")">
-                    @Html.ActionLink("Équipements", "Index", "Equipment", null, new { })
-                    <i class="fa fa-laptop"></i>
+                <li class="nav-item">
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Equipment" ? "active" : "")"
+                       asp-controller="Equipment" asp-action="Index">
+                        <i class="fas fa-laptop"></i>Équipements
+                    </a>
                 </li>
-                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Promotions" ? "active" : "")">
-                    @Html.ActionLink("Promotions", "Index", "Promotions", null, new { })
-                    <i class="fa fa-line-chart"></i>
+                <li class="nav-item">
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Promotions" ? "active" : "")"
+                       asp-controller="Promotions" asp-action="Index">
+                        <i class="fas fa-chart-line"></i>Promotions
+                    </a>
                 </li>
             </ul>
         </div>
         }
 
         <!-- Main Content -->
-        <div class="main-content">
+        <main class="main-content">
             @if (TempData["Success"] != null)
             {
-            <div class="alert alert-success alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <i class="fa fa-check-circle"></i> @TempData["Success"]
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
             }
             @if (TempData["Error"] != null)
             {
-            <div class="alert alert-danger alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <i class="fa fa-exclamation-circle"></i> @TempData["Error"]
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
             }
 
             @RenderBody()
-        </div>
+        </main>
     </div>
 </div>
 
-<!-- Scripts -->
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
 
-@RenderSection("scripts", required: false)
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

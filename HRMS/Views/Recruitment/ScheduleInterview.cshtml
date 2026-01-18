@@ -1,0 +1,87 @@
+﻿@model HRMS.Models.Interview
+@{
+    ViewData["Title"] = "Planifier un Entretien";
+    var candidate = ViewBag.Candidate as HRMS.Models.Candidate;
+}
+
+<div class="page-header mb-4">
+    <h1><i class="fas fa-calendar-plus me-2"></i>Planifier un Entretien</h1>
+    <p class="text-muted mb-0">Candidat: <strong>@candidate.FullName</strong> - Offre: <strong>@candidate.JobOffer.Title</strong></p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="post" asp-action="ScheduleInterview">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="CandidateId" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="InterviewDate" class="form-label"></label>
+                            <input asp-for="InterviewDate" class="form-control" type="datetime-local" />
+                            <span asp-validation-for="InterviewDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Location" class="form-label"></label>
+                            <input asp-for="Location" class="form-control" 
+                                   placeholder="Ex: Bureau RH - Salle de réunion A" />
+                            <span asp-validation-for="Location" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="InterviewerName" class="form-label"></label>
+                            <input asp-for="InterviewerName" class="form-control" 
+                                   placeholder="Ex: Fatma Trabelsi, DRH" />
+                            <span asp-validation-for="InterviewerName" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Notes" class="form-label"></label>
+                            <textarea asp-for="Notes" class="form-control" rows="5" 
+                                      placeholder="Points à aborder, préparation particulière, documents à demander..."></textarea>
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Note:</strong> Un email de confirmation sera automatiquement envoyé au candidat 
+                                à l'adresse <strong>@candidate.Email</strong>.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-check me-2"></i>Planifier l'Entretien
+                        </button>
+                        <a asp-action="CandidateDetails" asp-route-id="@candidate.CandidateId" 
+                           class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-times me-2"></i>Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Définir la date/heure par défaut à J+7 à 10h
+        document.addEventListener('DOMContentLoaded', function() {
+            const interviewDateInput = document.querySelector('input[name="InterviewDate"]');
+            if (!interviewDateInput.value) {
+                const nextWeek = new Date();
+                nextWeek.setDate(nextWeek.getDate() + 7);
+                nextWeek.setHours(10, 0, 0, 0);
+                interviewDateInput.value = nextWeek.toISOString().slice(0, 16);
+            }
+        });
+    </script>
+}

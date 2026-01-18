@@ -1,0 +1,212 @@
+﻿@model IEnumerable<HRMS.Models.Promotion>
+@{
+    ViewData["Title"] = "Historique des Promotions";
+    var employee = ViewBag.Employee as HRMS.Models.Employee;
+}
+
+<div class="page-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1><i class="fas fa-chart-line me-2"></i>Historique des Promotions</h1>
+        <p class="text-muted mb-0">Employé: <strong>@employee.FullName</strong> (@employee.Matricule)</p>
+    </div>
+    <a asp-controller="Employees" asp-action="Details" asp-route-id="@employee.EmployeeId" 
+       class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Retour au profil
+    </a>
+</div>
+
+@if (Model.Any())
+{
+    <!-- Statistiques -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <h6>Nombre de Promotions</h6>
+                <h3 class="text-primary">@Model.Count()</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <h6>Augmentation Totale</h6>
+                <h3 class="text-success">
+                    +@Model.Sum(p => p.NewSalary - p.OldSalary).ToString("N2") DT
+                </h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <h6>Salaire Initial</h6>
+                <h3>@Model.OrderBy(p => p.PromotionDate).First().OldSalary.ToString("N2") DT</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <h6>Salaire Actuel</h6>
+                <h3 class="text-warning">@Model.OrderByDescending(p => p.PromotionDate).First().NewSalary.ToString("N2") DT</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline des promotions -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="mb-0"><i class="fas fa-history me-2"></i>Chronologie des Promotions</h5>
+        </div>
+        <div class="card-body">
+            <div class="timeline">
+                @foreach (var promotion in Model.OrderByDescending(p => p.PromotionDate))
+                {
+                    <div class="timeline-item mb-4">
+                        <div class="row">
+                            <div class="col-md-2 text-center">
+                                <div class="timeline-date">
+                                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                         style="width:60px;height:60px;">
+                                        <div>
+                                            <div style="font-size:20px;font-weight:bold;">@promotion.PromotionDate.Day</div>
+                                            <div style="font-size:11px;">@promotion.PromotionDate.ToString("MMM yyyy")</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-10">
+                                <div class="card border-start border-primary border-4">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="fas fa-arrow-up text-success me-2"></i>
+                                            @promotion.OldPosition.Title → <strong class="text-primary">@promotion.NewPosition.Title</strong>
+                                        </h5>
+                                        <div class="row mt-3">
+                                            <div class="col-md-4">
+                                                <small class="text-muted d-block">Ancien Salaire</small>
+                                                <h6>@promotion.OldSalary.ToString("N2") DT</h6>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <small class="text-muted d-block">Nouveau Salaire</small>
+                                                <h6 class="text-success">@promotion.NewSalary.ToString("N2") DT</h6>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <small class="text-muted d-block">Augmentation</small>
+                                                <h6 class="text-success">
+                                                    +@((promotion.NewSalary - promotion.OldSalary).ToString("N2")) DT
+                                                    <small>(@(((promotion.NewSalary - promotion.OldSalary) / promotion.OldSalary * 100).ToString("N1"))%)</small>
+                                                </h6>
+                                            </div>
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(promotion.Justification))
+                                        {
+                                            <div class="mt-3">
+                                                <small class="text-muted d-block mb-1"><i class="fas fa-comment me-1"></i>Justification:</small>
+                                                <p class="mb-0">@promotion.Justification</p>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphique d'évolution -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-white">
+            <h5 class="mb-0"><i class="fas fa-chart-area me-2"></i>Évolution Salariale</h5>
+        </div>
+        <div class="card-body">
+            <canvas id="salaryEvolutionChart"></canvas>
+        </div>
+    </div>
+}
+else
+{
+    <div class="card shadow-sm">
+        <div class="card-body text-center py-5">
+            <i class="fas fa-chart-line fa-4x text-muted mb-3"></i>
+            <h4>Aucune Promotion</h4>
+            <p class="text-muted">Cet employé n'a pas encore bénéficié de promotion.</p>
+        </div>
+    </div>
+}
+
+@section Scripts {
+@if (Model.Any())
+{
+    <script>
+        // Graphique d'évolution salariale
+        const ctx = document.getElementById('salaryEvolutionChart').getContext('2d');
+        
+        const dates = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.OrderBy(p => p.PromotionDate).Select(p => p.PromotionDate.ToString("MMM yyyy"))));
+        const salaries = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.OrderBy(p => p.PromotionDate).Select(p => p.NewSalary)));
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: 'Salaire (DT)',
+                    data: salaries,
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    pointBackgroundColor: 'rgba(102, 126, 234, 1)',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Salaire: ' + context.parsed.y.toFixed(2) + ' DT';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toFixed(0) + ' DT';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}
+}
+
+<style>
+    .timeline {
+        position: relative;
+    }
+    
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 30px;
+        top: 30px;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(to bottom, #667eea, #764ba2);
+    }
+    
+    .timeline-item {
+        position: relative;
+    }
+</style>

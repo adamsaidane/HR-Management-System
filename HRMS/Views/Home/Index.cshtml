@@ -1,67 +1,70 @@
 ﻿@model HRMS.ViewModels.DashboardViewModel
 @{
-    ViewBag.Title = "Dashboard";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="page-header">
-    <h1><i class="fa fa-dashboard"></i> Tableau de Bord</h1>
+<div class="page-header d-flex justify-content-between align-items-center">
+    <h1><i class="fas fa-tachometer-alt me-2"></i>Tableau de Bord</h1>
+    <div class="text-muted">
+        <i class="far fa-calendar-alt me-2"></i>@DateTime.Now.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("fr-FR"))
+    </div>
 </div>
 
 <!-- Statistiques Principales -->
 <div class="row">
-    <div class="col-md-3">
+    <div class="col-lg-3 col-md-6 mb-4">
         <div class="stat-card">
-            <i class="fa fa-users icon text-primary"></i>
+            <i class="fas fa-users icon text-primary"></i>
             <h3>Employés Actifs</h3>
             <div class="value text-primary">@Model.ActiveEmployees</div>
-            <small>sur @Model.TotalEmployees total</small>
+            <small class="text-muted">sur @Model.TotalEmployees total</small>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-lg-3 col-md-6 mb-4">
         <div class="stat-card">
-            <i class="fa fa-briefcase icon text-success"></i>
+            <i class="fas fa-briefcase icon text-success"></i>
             <h3>Offres Ouvertes</h3>
             <div class="value text-success">@Model.OpenJobOffers</div>
-            <small>@Model.PendingCandidates candidats en attente</small>
+            <small class="text-muted">@Model.PendingCandidates candidats en attente</small>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-lg-3 col-md-6 mb-4">
         <div class="stat-card">
-            <i class="fa fa-money icon text-warning"></i>
+            <i class="fas fa-money-bill-wave icon text-warning"></i>
             <h3>Masse Salariale</h3>
             <div class="value text-warning">@Model.TotalMonthlySalary.ToString("N0") DT</div>
-            <small>Moyenne: @Model.AverageSalary.ToString("N0") DT</small>
+            <small class="text-muted">Moyenne: @Model.AverageSalary.ToString("N0") DT</small>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-lg-3 col-md-6 mb-4">
         <div class="stat-card">
-            <i class="fa fa-laptop icon text-info"></i>
+            <i class="fas fa-laptop icon text-info"></i>
             <h3>Équipements</h3>
             <div class="value text-info">@Model.AssignedEquipment</div>
-            <small>@Model.AvailableEquipment disponibles</small>
+            <small class="text-muted">@Model.AvailableEquipment disponibles</small>
         </div>
     </div>
 </div>
 
 <!-- Graphiques -->
 <div class="row">
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-bar-chart"></i> Employés par Département</h3>
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Employés par Département</h5>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 <canvas id="departmentChart"></canvas>
             </div>
         </div>
     </div>
 
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-pie-chart"></i> Répartition par Statut</h3>
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Répartition par Statut</h5>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 <canvas id="statusChart"></canvas>
             </div>
         </div>
@@ -70,12 +73,12 @@
 
 <!-- Évolution Salariale -->
 <div class="row">
-    <div class="col-md-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-line-chart"></i> Évolution de la Masse Salariale</h3>
+    <div class="col-12 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Évolution de la Masse Salariale</h5>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 <canvas id="salaryChart"></canvas>
             </div>
         </div>
@@ -84,119 +87,122 @@
 
 <!-- Promotions Récentes -->
 <div class="row">
-    <div class="col-md-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-trophy"></i> Promotions Récentes</h3>
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-trophy me-2"></i>Promotions Récentes</h5>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 @if (Model.RecentPromotions != null && Model.RecentPromotions.Any())
                 {
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Employé</th>
-                                <th>Ancien Poste</th>
-                                <th>Nouveau Poste</th>
-                                <th>Date</th>
-                                <th>Augmentation</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var promo in Model.RecentPromotions)
-                            {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
                                 <tr>
-                                    <td><strong>@promo.EmployeeName</strong></td>
-                                    <td>@promo.OldPosition</td>
-                                    <td><span class="badge badge-success">@promo.NewPosition</span></td>
-                                    <td>@promo.PromotionDate.ToString("dd/MM/yyyy")</td>
-                                    <td class="text-success"><strong>+@promo.SalaryIncrease.ToString("N0") DT</strong></td>
+                                    <th>Employé</th>
+                                    <th>Ancien Poste</th>
+                                    <th>Nouveau Poste</th>
+                                    <th>Date</th>
+                                    <th>Augmentation</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach (var promo in Model.RecentPromotions)
+                                {
+                                    <tr>
+                                        <td><strong>@promo.EmployeeName</strong></td>
+                                        <td>@promo.OldPosition</td>
+                                        <td><span class="badge bg-success">@promo.NewPosition</span></td>
+                                        <td>@promo.PromotionDate.ToString("dd/MM/yyyy")</td>
+                                        <td class="text-success fw-bold">+@promo.SalaryIncrease.ToString("N0") DT</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 }
                 else
                 {
-                    <p class="text-muted">Aucune promotion récente</p>
+                    <p class="text-muted mb-0">Aucune promotion récente</p>
                 }
             </div>
         </div>
     </div>
 </div>
 
-@section scripts {
+@section Scripts {
 <script>
-    // Vérifier que les données existent avant de créer les graphiques
-    @if (Model.EmployeesByDepartment != null && Model.EmployeesByDepartment.Any())
-    {
-        <text>
-        var deptCtx = document.getElementById('departmentChart').getContext('2d');
-        new Chart(deptCtx, {
-            type: 'bar',
-            data: {
-                labels: @Html.Raw(Json.Serialize(Model.EmployeesByDepartment.Keys)),
-                datasets: [{
-                    label: 'Nombre d\'employés',
-                    data: @Html.Raw(Json.Serialize(Model.EmployeesByDepartment.Values)),
-                    backgroundColor: 'rgba(52, 152, 219, 0.7)',
-                    borderColor: 'rgba(52, 152, 219, 1)',
-                    borderWidth: 1
-                }]
+    // Graphique Départements
+    const deptCtx = document.getElementById('departmentChart').getContext('2d');
+    new Chart(deptCtx, {
+        type: 'bar',
+        data: {
+            labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.EmployeesByDepartment.Keys)),
+            datasets: [{
+                label: 'Nombre d\'employés',
+                data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.EmployeesByDepartment.Values)),
+                backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                borderColor: 'rgba(52, 152, 219, 1)',
+                borderWidth: 2,
+                borderRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: false }
             },
-            options: {
-                responsive: true,
-                scales: { y: { beginAtZero: true } }
+            scales: {
+                y: { beginAtZero: true }
             }
-        });
-        </text>
-    }
+        }
+    });
 
-    @if (Model.EmployeesByStatus != null && Model.EmployeesByStatus.Any())
-    {
-        <text>
-        var statusCtx = document.getElementById('statusChart').getContext('2d');
-        new Chart(statusCtx, {
-            type: 'pie',
-            data: {
-                labels: @Html.Raw(Json.Serialize(Model.EmployeesByStatus.Keys)),
-                datasets: [{
-                    data: @Html.Raw(Json.Serialize(Model.EmployeesByStatus.Values)),
-                    backgroundColor: [
-                        'rgba(46, 204, 113, 0.7)',
-                        'rgba(241, 196, 15, 0.7)',
-                        'rgba(231, 76, 60, 0.7)'
-                    ]
-                }]
-            },
-            options: { responsive: true }
-        });
-        </text>
-    }
+    // Graphique Statuts
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.EmployeesByStatus.Keys)),
+            datasets: [{
+                data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.EmployeesByStatus.Values)),
+                backgroundColor: [
+                    'rgba(46, 204, 113, 0.8)',
+                    'rgba(241, 196, 15, 0.8)',
+                    'rgba(231, 76, 60, 0.8)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true
+        }
+    });
 
-    @if (Model.SalaryEvolution != null && Model.SalaryEvolution.Any())
-    {
-        <text>
-        var salaryCtx = document.getElementById('salaryChart').getContext('2d');
-        new Chart(salaryCtx, {
-            type: 'line',
-            data: {
-                labels: @Html.Raw(Json.Serialize(Model.SalaryEvolution.Select(s => s.Month))),
-                datasets: [{
-                    label: 'Masse Salariale Mensuelle (DT)',
-                    data: @Html.Raw(Json.Serialize(Model.SalaryEvolution.Select(s => s.TotalSalary))),
-                    backgroundColor: 'rgba(155, 89, 182, 0.2)',
-                    borderColor: 'rgba(155, 89, 182, 1)',
-                    borderWidth: 2,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: { y: { beginAtZero: true } }
+    // Graphique Évolution Salariale
+    const salaryCtx = document.getElementById('salaryChart').getContext('2d');
+    new Chart(salaryCtx, {
+        type: 'line',
+        data: {
+            labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SalaryEvolution.Select(s => s.Month))),
+            datasets: [{
+                label: 'Masse Salariale Mensuelle (DT)',
+                data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SalaryEvolution.Select(s => s.TotalSalary))),
+                backgroundColor: 'rgba(155, 89, 182, 0.2)',
+                borderColor: 'rgba(155, 89, 182, 1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                y: { beginAtZero: true }
             }
-        });
-        </text>
-    }
+        }
+    });
 </script>
 }

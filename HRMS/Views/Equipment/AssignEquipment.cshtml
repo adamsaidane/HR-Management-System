@@ -1,0 +1,94 @@
+﻿@model HRMS.ViewModels.EquipmentAssignmentViewModel
+@{
+    ViewData["Title"] = "Affecter un Équipement";
+}
+
+<div class="page-header mb-4">
+    <h1><i class="fas fa-hand-holding me-2"></i>Affecter un Équipement</h1>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="post" asp-action="AssignEquipment">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label asp-for="EquipmentId" class="form-label"></label>
+                            <select asp-for="EquipmentId" class="form-select" id="equipmentSelect">
+                                <option value="">-- Sélectionner un équipement --</option>
+                                @foreach (var equipment in Model.AvailableEquipment)
+                                {
+                                    <option value="@equipment.EquipmentId">
+                                        @equipment.EquipmentType - @equipment.Brand @equipment.Model 
+                                        @(!string.IsNullOrEmpty(equipment.SerialNumber) ? $"(SN: {equipment.SerialNumber})" : "")
+                                    </option>
+                                }
+                            </select>
+                            <span asp-validation-for="EquipmentId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="EmployeeId" class="form-label"></label>
+                            <select asp-for="EmployeeId" class="form-select" id="employeeSelect">
+                                <option value="">-- Sélectionner un employé --</option>
+                                @foreach (var employee in Model.Employees)
+                                {
+                                    <option value="@employee.EmployeeId">
+                                        @employee.FullName - @employee.Matricule (@employee.Department.Name)
+                                    </option>
+                                }
+                            </select>
+                            <span asp-validation-for="EmployeeId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Condition" class="form-label"></label>
+                            <select asp-for="Condition" class="form-select">
+                                <option value="">-- État de l'équipement --</option>
+                                @foreach (var condition in Model.Conditions)
+                                {
+                                    <option value="@condition">@condition</option>
+                                }
+                            </select>
+                            <span asp-validation-for="Condition" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Date d'affectation</label>
+                            <input type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" readonly />
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Notes" class="form-label"></label>
+                            <textarea asp-for="Notes" class="form-control" rows="3" 
+                                      placeholder="Notes additionnelles (optionnel)"></textarea>
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        L'équipement sera automatiquement marqué comme "Affecté" après validation.
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-check me-2"></i>Affecter l'Équipement
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-times me-2"></i>Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

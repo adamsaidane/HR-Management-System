@@ -1,0 +1,136 @@
+﻿@model HRMS.ViewModels.CandidateFormViewModel
+@{
+    ViewData["Title"] = "Nouveau Candidat";
+}
+
+<div class="page-header mb-4">
+    <h1><i class="fas fa-user-graduate me-2"></i>Enregistrer un Candidat</h1>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="post" asp-action="CreateCandidate" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <h5 class="mb-3"><i class="fas fa-user me-2"></i>Informations Personnelles</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="FirstName" class="form-label"></label>
+                            <input asp-for="FirstName" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="LastName" class="form-label"></label>
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" type="email" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Phone" class="form-label"></label>
+                            <input asp-for="Phone" class="form-control" 
+                                   placeholder="+216 XX XXX XXX" />
+                            <span asp-validation-for="Phone" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <h5 class="mb-3"><i class="fas fa-briefcase me-2"></i>Candidature</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="JobOfferId" class="form-label"></label>
+                            <select asp-for="JobOfferId" class="form-select" id="jobOfferSelect">
+                                <option value="">-- Sélectionner une offre --</option>
+                                @foreach (var offer in Model.JobOffers)
+                                {
+                                    <option value="@offer.JobOfferId" 
+                                            data-dept="@offer.Department.Name"
+                                            data-position="@offer.Position.Title">
+                                        @offer.Title (@offer.Department.Name)
+                                    </option>
+                                }
+                            </select>
+                            <span asp-validation-for="JobOfferId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">CV (PDF, Word, etc.) *</label>
+                            <input type="file" name="cvFile" class="form-control" 
+                                   accept=".pdf,.doc,.docx" required />
+                            <small class="text-muted">Formats acceptés: PDF, DOC, DOCX (max 5 MB)</small>
+                        </div>
+
+                        <!-- Informations de l'offre sélectionnée -->
+                        <div class="col-12" id="offerDetails" style="display:none;">
+                            <div class="alert alert-info">
+                                <h6 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Détails de l'Offre</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p class="mb-0"><strong>Département:</strong> <span id="offerDept">-</span></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="mb-0"><strong>Poste:</strong> <span id="offerPosition">-</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-shield-alt me-2"></i>Confidentialité des Données
+                                    </h6>
+                                    <p class="small mb-0">
+                                        Les informations fournies seront traitées de manière confidentielle 
+                                        et uniquement dans le cadre du processus de recrutement.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-paper-plane me-2"></i>Enregistrer la Candidature
+                        </button>
+                        <a asp-action="Candidates" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-times me-2"></i>Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const jobOfferSelect = document.getElementById('jobOfferSelect');
+            const offerDetails = document.getElementById('offerDetails');
+            const offerDept = document.getElementById('offerDept');
+            const offerPosition = document.getElementById('offerPosition');
+
+            jobOfferSelect.addEventListener('change', function() {
+                const selected = this.options[this.selectedIndex];
+                if (this.value) {
+                    offerDept.textContent = selected.getAttribute('data-dept');
+                    offerPosition.textContent = selected.getAttribute('data-position');
+                    offerDetails.style.display = 'block';
+                } else {
+                    offerDetails.style.display = 'none';
+                }
+            });
+        });
+    </script>
+}

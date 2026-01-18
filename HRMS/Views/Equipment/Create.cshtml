@@ -1,0 +1,87 @@
+﻿@model HRMS.Models.Equipment
+@{
+    ViewData["Title"] = "Nouvel Équipement";
+}
+
+<div class="page-header mb-4">
+    <h1><i class="fas fa-laptop me-2"></i>Ajouter un Équipement</h1>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="post" asp-action="Create">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="EquipmentType" class="form-label"></label>
+                            <select asp-for="EquipmentType" class="form-select">
+                                <option value="">-- Type d'équipement --</option>
+                                <option value="Ordinateur">Ordinateur</option>
+                                <option value="Téléphone">Téléphone</option>
+                                <option value="Tablette">Tablette</option>
+                                <option value="Badge">Badge</option>
+                                <option value="Tenue">Tenue professionnelle</option>
+                                <option value="Clés">Clés</option>
+                                <option value="Véhicule">Véhicule</option>
+                                <option value="Autre">Autre</option>
+                            </select>
+                            <span asp-validation-for="EquipmentType" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="SerialNumber" class="form-label"></label>
+                            <input asp-for="SerialNumber" class="form-control" />
+                            <span asp-validation-for="SerialNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Brand" class="form-label"></label>
+                            <input asp-for="Brand" class="form-control" placeholder="Ex: Dell, HP, Samsung..." />
+                            <span asp-validation-for="Brand" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Model" class="form-label"></label>
+                            <input asp-for="Model" class="form-control" placeholder="Ex: Latitude 5520, iPhone 13..." />
+                            <span asp-validation-for="Model" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="PurchaseDate" class="form-label"></label>
+                            <input asp-for="PurchaseDate" class="form-control" type="date" />
+                            <span asp-validation-for="PurchaseDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Status" class="form-label"></label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="0">Disponible</option>
+                                <option value="1">Affecté</option>
+                                <option value="2">En Maintenance</option>
+                                <option value="3">Retiré</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save me-2"></i>Enregistrer
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-times me-2"></i>Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

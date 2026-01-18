@@ -1,0 +1,124 @@
+﻿@model HRMS.Models.JobOffer
+@{
+    ViewData["Title"] = "Nouvelle Offre d'Emploi";
+}
+
+<div class="page-header mb-4">
+    <h1><i class="fas fa-briefcase me-2"></i>Créer une Offre d'Emploi</h1>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="post" asp-action="CreateJobOffer">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label asp-for="Title" class="form-label"></label>
+                            <input asp-for="Title" class="form-control" 
+                                   placeholder="Ex: Développeur Full Stack Senior" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="DepartmentId" class="form-label"></label>
+                            <select asp-for="DepartmentId" class="form-select">
+                                <option value="">-- Sélectionner un département --</option>
+                                @foreach (var dept in ViewBag.Departments as List<HRMS.Models.Department>)
+                                {
+                                    <option value="@dept.DepartmentId">@dept.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="PositionId" class="form-label"></label>
+                            <select asp-for="PositionId" class="form-select">
+                                <option value="">-- Sélectionner un poste --</option>
+                                @foreach (var pos in ViewBag.Positions as List<HRMS.Models.Position>)
+                                {
+                                    <option value="@pos.PositionId">
+                                        @pos.Title (Salaire: @pos.BaseSalary.ToString("N0") DT)
+                                    </option>
+                                }
+                            </select>
+                            <span asp-validation-for="PositionId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="PostDate" class="form-label"></label>
+                            <input asp-for="PostDate" class="form-control" type="date" />
+                            <span asp-validation-for="PostDate" class="text-danger"></span>
+                            <small class="text-muted">Date de publication de l'offre</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="ExpiryDate" class="form-label"></label>
+                            <input asp-for="ExpiryDate" class="form-control" type="date" />
+                            <span asp-validation-for="ExpiryDate" class="text-danger"></span>
+                            <small class="text-muted">Date limite de candidature (optionnel)</small>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="10" 
+                                      placeholder="Décrivez le poste, les responsabilités, les compétences requises, les avantages..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title"><i class="fas fa-lightbulb me-2"></i>Conseils pour une bonne description</h6>
+                                    <ul class="mb-0 small">
+                                        <li>Décrivez clairement les missions et responsabilités du poste</li>
+                                        <li>Listez les compétences techniques et soft skills requises</li>
+                                        <li>Mentionnez les qualifications et l'expérience nécessaires</li>
+                                        <li>Indiquez les avantages offerts (salaire, formations, évolution...)</li>
+                                        <li>Précisez le processus de candidature</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Status" class="form-label"></label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="0" selected>Ouverte</option>
+                                <option value="1">Fermée</option>
+                                <option value="2">Pourvue</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save me-2"></i>Publier l'Offre
+                        </button>
+                        <a asp-action="JobOffers" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-times me-2"></i>Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Définir la date du jour par défaut
+        document.addEventListener('DOMContentLoaded', function() {
+            const postDateInput = document.querySelector('input[name="PostDate"]');
+            if (!postDateInput.value) {
+                postDateInput.value = new Date().toISOString().split('T')[0];
+            }
+        });
+    </script>
+}

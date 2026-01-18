@@ -1,0 +1,152 @@
+﻿@model HRMS.ViewModels.EmployeeFormViewModel
+@{
+    ViewData["Title"] = "Convertir en Employé";
+    var candidate = ViewBag.Candidate as HRMS.Models.Candidate;
+}
+
+<div class="page-header mb-4">
+    <h1><i class="fas fa-user-check me-2"></i>Convertir le Candidat en Employé</h1>
+    <p class="text-muted mb-0">Candidat: <strong>@candidate.FullName</strong></p>
+</div>
+
+<div class="alert alert-success mb-4">
+    <h5 class="alert-heading"><i class="fas fa-check-circle me-2"></i>Candidat Accepté</h5>
+    <p class="mb-0">
+        Le candidat <strong>@candidate.FullName</strong> a été accepté pour le poste de 
+        <strong>@candidate.JobOffer.Position.Title</strong> dans le département 
+        <strong>@candidate.JobOffer.Department.Name</strong>.
+    </p>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form method="post" asp-action="ConvertToEmployee" asp-route-candidateId="@candidate.CandidateId" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <h5 class="mb-3"><i class="fas fa-user me-2"></i>Informations Personnelles</h5>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label asp-for="FirstName" class="form-label"></label>
+                    <input asp-for="FirstName" class="form-control" value="@candidate.FirstName" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="LastName" class="form-label"></label>
+                    <input asp-for="LastName" class="form-control" value="@candidate.LastName" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="DateOfBirth" class="form-label"></label>
+                    <input asp-for="DateOfBirth" class="form-control" type="date" />
+                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" type="email" value="@candidate.Email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Phone" class="form-label"></label>
+                    <input asp-for="Phone" class="form-control" value="@candidate.Phone" />
+                    <span asp-validation-for="Phone" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Photo</label>
+                    <input type="file" name="photoFile" class="form-control" accept="image/*" />
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="Address" class="form-label"></label>
+                    <textarea asp-for="Address" class="form-control" rows="2"></textarea>
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+            </div>
+
+            <h5 class="mb-3"><i class="fas fa-briefcase me-2"></i>Informations Professionnelles</h5>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label asp-for="DepartmentId" class="form-label"></label>
+                    <select asp-for="DepartmentId" class="form-select">
+                        @foreach (var dept in Model.Departments)
+                        {
+                            <option value="@dept.DepartmentId" selected="@(dept.DepartmentId == candidate.JobOffer.DepartmentId)">
+                                @dept.Name
+                            </option>
+                        }
+                    </select>
+                    <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="PositionId" class="form-label"></label>
+                    <select asp-for="PositionId" class="form-select">
+                        @foreach (var pos in Model.Positions)
+                        {
+                            <option value="@pos.PositionId" selected="@(pos.PositionId == candidate.JobOffer.PositionId)">
+                                @pos.Title (Salaire: @pos.BaseSalary.ToString("N2") DT)
+                            </option>
+                        }
+                    </select>
+                    <span asp-validation-for="PositionId" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="HireDate" class="form-label"></label>
+                    <input asp-for="HireDate" class="form-control" type="date" />
+                    <span asp-validation-for="HireDate" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ContractType" class="form-label"></label>
+                    <select asp-for="ContractType" class="form-select">
+                        @foreach (var type in Model.ContractTypes)
+                        {
+                            <option value="@type">@type</option>
+                        }
+                    </select>
+                    <span asp-validation-for="ContractType" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Important:</strong> 
+                <ul class="mb-0 mt-2">
+                    <li>Le matricule sera automatiquement généré</li>
+                    <li>Le salaire sera défini selon le poste sélectionné</li>
+                    <li>Le CV du candidat sera automatiquement attaché au dossier employé</li>
+                    <li>Le statut du candidat passera à "Accepté"</li>
+                </ul>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-success btn-lg">
+                    <i class="fas fa-user-plus me-2"></i>Créer l'Employé
+                </button>
+                <a asp-action="CandidateDetails" asp-route-id="@candidate.CandidateId" 
+                   class="btn btn-outline-secondary btn-lg">
+                    <i class="fas fa-times me-2"></i>Annuler
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Définir la date d'embauche par défaut
+        document.addEventListener('DOMContentLoaded', function() {
+            const hireDateInput = document.querySelector('input[name="HireDate"]');
+            if (!hireDateInput.value) {
+                hireDateInput.value = new Date().toISOString().split('T')[0];
+            }
+        });
+    </script>
+}

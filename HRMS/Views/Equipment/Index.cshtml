@@ -1,0 +1,85 @@
+﻿@model IEnumerable<HRMS.Models.Equipment>
+@{
+    ViewData["Title"] = "Gestion des Équipements";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-laptop me-2"></i>Équipements</h1>
+    <div>
+        <a asp-action="Create" class="btn btn-primary me-2">
+            <i class="fas fa-plus me-1"></i>Nouvel Équipement
+        </a>
+        <a asp-action="AssignEquipment" class="btn btn-success">
+            <i class="fas fa-hand-holding me-1"></i>Affecter
+        </a>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <h6>Total</h6>
+            <h3>@Model.Count()</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <h6>Disponibles</h6>
+            <h3 class="text-success">@Model.Count(e => e.Status == HRMS.Enums.EquipmentStatus.Disponible)</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <h6>Affectés</h6>
+            <h3 class="text-warning">@Model.Count(e => e.Status == HRMS.Enums.EquipmentStatus.Affecté)</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <h6>Maintenance</h6>
+            <h3 class="text-danger">@Model.Count(e => e.Status == HRMS.Enums.EquipmentStatus.EnMaintenance)</h3>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Type</th>
+                        <th>Marque</th>
+                        <th>Modèle</th>
+                        <th>N° Série</th>
+                        <th>Date d'achat</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var equipment in Model)
+                    {
+                        <tr>
+                            <td><i class="fas fa-@(equipment.EquipmentType == "Ordinateur" ? "laptop" : equipment.EquipmentType == "Téléphone" ? "mobile-alt" : "tag") me-2"></i>@equipment.EquipmentType</td>
+                            <td>@equipment.Brand</td>
+                            <td>@equipment.Model</td>
+                            <td>@equipment.SerialNumber</td>
+                            <td>@equipment.PurchaseDate?.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <span class="badge bg-@(equipment.Status == HRMS.Enums.EquipmentStatus.Disponible ? "success" : equipment.Status == HRMS.Enums.EquipmentStatus.Affecté ? "warning" : "danger")">
+                                    @equipment.Status
+                                </span>
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@equipment.EquipmentId" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

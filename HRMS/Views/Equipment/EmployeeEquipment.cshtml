@@ -1,0 +1,180 @@
+﻿@model IEnumerable<HRMS.Models.EquipmentAssignment>
+@{
+    ViewData["Title"] = "Équipements de l'Employé";
+    var employee = ViewBag.Employee as HRMS.Models.Employee;
+}
+
+<div class="page-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1><i class="fas fa-laptop me-2"></i>Équipements</h1>
+        <p class="text-muted mb-0">Employé: <strong>@employee.FullName</strong> (@employee.Matricule)</p>
+    </div>
+    <a asp-controller="Employees" asp-action="Details" asp-route-id="@employee.EmployeeId" 
+       class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Retour au profil
+    </a>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <h6>Total Équipements</h6>
+            <h3>@Model.Count()</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <h6>En Cours</h6>
+            <h3 class="text-success">@Model.Count(e => e.ReturnDate == null)</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <h6>Restitués</h6>
+            <h3 class="text-muted">@Model.Count(e => e.ReturnDate != null)</h3>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Historique des Équipements</h5>
+    </div>
+    <div class="card-body p-0">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Type</th>
+                            <th>Équipement</th>
+                            <th>N° Série</th>
+                            <th>Date d'affectation</th>
+                            <th>État à l'affectation</th>
+                            <th>Date de retour</th>
+                            <th>État au retour</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var assignment in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <i class="fas fa-@(assignment.Equipment.EquipmentType == "Ordinateur" ? "laptop" : 
+                                                        assignment.Equipment.EquipmentType == "Téléphone" ? "mobile-alt" : 
+                                                        "tag") me-2"></i>
+                                    @assignment.Equipment.EquipmentType
+                                </td>
+                                <td>
+                                    <strong>@assignment.Equipment.Brand @assignment.Equipment.Model</strong>
+                                </td>
+                                <td>@assignment.Equipment.SerialNumber</td>
+                                <td>@assignment.AssignmentDate.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <span class="badge bg-@(assignment.Condition == "Neuf" ? "success" : 
+                                                            assignment.Condition == "Bon" ? "info" : "warning")">
+                                        @assignment.Condition
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (assignment.ReturnDate.HasValue)
+                                    {
+                                        @assignment.ReturnDate.Value.ToString("dd/MM/yyyy")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (assignment.ReturnDate.HasValue)
+                                    {
+                                        <span class="badge bg-secondary">@assignment.Condition</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (assignment.ReturnDate.HasValue)
+                                    {
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-check me-1"></i>Restitué
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-circle me-1"></i>En cours
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!assignment.ReturnDate.HasValue)
+                                    {
+                                        <button type="button" class="btn btn-sm btn-warning" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#returnModal@(assignment.AssignmentId)">
+                                            <i class="fas fa-undo me-1"></i>Restituer
+                                        </button>
+
+                                        <!-- Modal de restitution -->
+                                        <div class="modal fade" id="returnModal@(assignment.AssignmentId)" tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <form method="post" asp-controller="Equipment" asp-action="ReturnEquipment">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="assignmentId" value="@assignment.AssignmentId" />
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Restituer l'Équipement</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p><strong>Équipement:</strong> @assignment.Equipment.Brand @assignment.Equipment.Model</p>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">État de l'équipement *</label>
+                                                                <select name="condition" class="form-select" required>
+                                                                    <option value="Neuf">Neuf</option>
+                                                                    <option value="Bon" selected>Bon</option>
+                                                                    <option value="Acceptable">Acceptable</option>
+                                                                    <option value="Endommagé">Endommagé</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                            <button type="submit" class="btn btn-primary">Confirmer la Restitution</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="p-5 text-center text-muted">
+                <i class="fas fa-inbox fa-3x mb-3"></i>
+                <p class="mb-0">Aucun équipement affecté à cet employé</p>
+            </div>
+        }
+    </div>
+</div>
+
+@if (Model.Any(a => a.ReturnDate == null))
+{
+    <div class="alert alert-info mt-4">
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>Note:</strong> Les équipements en cours d'utilisation peuvent être restitués en cliquant sur le bouton "Restituer".
+    </div>
+}

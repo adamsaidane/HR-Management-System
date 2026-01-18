@@ -1,0 +1,143 @@
+﻿@model IEnumerable<HRMS.Models.Employee>
+@{
+    ViewData["Title"] = "Gestion des Employés";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-users me-2"></i>Employés</h1>
+    <a asp-action="Create" class="btn btn-primary btn-lg">
+        <i class="fas fa-user-plus me-2"></i>Nouvel Employé
+    </a>
+</div>
+
+<!-- Filtres -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" asp-action="Index" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Recherche</label>
+                <input type="text" name="searchString" value="@ViewBag.SearchString" 
+                       class="form-control" placeholder="Nom, matricule, email..." />
+            </div>
+            
+            <div class="col-md-3">
+                <label class="form-label">Département</label>
+                <select name="departmentId" class="form-select">
+                    <option value="">Tous</option>
+                    @foreach (var dept in ViewBag.Departments as List<HRMS.Models.Department>)
+                    {
+                        <option value="@dept.DepartmentId" selected="@(ViewBag.DepartmentId == dept.DepartmentId)">
+                            @dept.Name
+                        </option>
+                    }
+                </select>
+            </div>
+            
+            <div class="col-md-3">
+                <label class="form-label">Statut</label>
+                <select name="status" class="form-select">
+                    <option value="">Tous</option>
+                    <option value="0">Actif</option>
+                    <option value="1">Suspendu</option>
+                    <option value="2">Démissionné</option>
+                </select>
+            </div>
+            
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2">
+                    <i class="fas fa-search"></i> Filtrer
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-redo"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Liste des Employés -->
+<div class="card shadow-sm">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Liste des Employés (@Model.Count())</h5>
+    </div>
+    <div class="card-body p-0">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Photo</th>
+                            <th>Matricule</th>
+                            <th>Nom Complet</th>
+                            <th>Email</th>
+                            <th>Département</th>
+                            <th>Poste</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var employee in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(employee.PhotoPath))
+                                    {
+                                        <img src="@employee.PhotoPath" alt="Photo" class="rounded-circle" 
+                                             style="width:45px;height:45px;object-fit:cover;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white" 
+                                             style="width:45px;height:45px;">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                    }
+                                </td>
+                                <td><strong>@employee.Matricule</strong></td>
+                                <td>@employee.FullName</td>
+                                <td><a href="mailto:@employee.Email">@employee.Email</a></td>
+                                <td>@employee.Department.Name</td>
+                                <td>@employee.Position.Title</td>
+                                <td>
+                                    @switch (employee.Status)
+                                    {
+                                        case HRMS.Enums.EmployeeStatus.Actif:
+                                            <span class="badge bg-success">Actif</span>
+                                            break;
+                                        case HRMS.Enums.EmployeeStatus.Suspendu:
+                                            <span class="badge bg-warning">Suspendu</span>
+                                            break;
+                                        case HRMS.Enums.EmployeeStatus.Démissionné:
+                                            <span class="badge bg-danger">Démissionné</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Details" asp-route-id="@employee.EmployeeId" 
+                                           class="btn btn-info" title="Détails">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@employee.EmployeeId" 
+                                           class="btn btn-warning" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="p-4 text-center text-muted">
+                <i class="fas fa-info-circle fa-2x mb-3"></i>
+                <p class="mb-0">Aucun employé trouvé avec les critères sélectionnés.</p>
+            </div>
+        }
+    </div>
+</div>

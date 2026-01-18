@@ -1,0 +1,458 @@
+﻿@* =========================================== *@
+@* Views/Salaries/EmployeeSalary.cshtml *@
+@* =========================================== *@
+
+@{
+    ViewData["Title"] = "Gestion Salaire";
+    var employee = ViewBag.Employee as HRMS.Models.Employee;
+    var currentSalary = ViewBag.CurrentSalary as decimal?;
+    var salaryHistory = ViewBag.SalaryHistory as IEnumerable<HRMS.Models.Salary>;
+    var bonuses = ViewBag.Bonuses as IEnumerable<HRMS.Models.Bonus>;
+    var benefits = ViewBag.Benefits as IEnumerable<HRMS.Models.EmployeeBenefit>;
+    var totalBenefits = ViewBag.TotalBenefits as decimal?;
+    var grossSalary = ViewBag.GrossSalary as decimal?;
+    var allBenefits = ViewBag.AllBenefits as IEnumerable<HRMS.Models.Benefit>;
+}
+
+<div class="page-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1><i class="fas fa-money-bill-wave me-2"></i>Gestion du Salaire</h1>
+        <p class="text-muted mb-0">Employé: <strong>@employee.FullName</strong> (@employee.Matricule)</p>
+    </div>
+    <a asp-controller="Employees" asp-action="Details" asp-route-id="@employee.EmployeeId" 
+       class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Retour au profil
+    </a>
+</div>
+
+<!-- Cartes de Statistiques -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <i class="fas fa-money-bill icon text-primary"></i>
+            <h6>Salaire de Base</h6>
+            <h3 class="text-primary">@((currentSalary ?? 0).ToString("N2")) DT</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <i class="fas fa-gift icon text-success"></i>
+            <h6>Total Avantages</h6>
+            <h3 class="text-success">@((totalBenefits ?? 0).ToString("N2")) DT</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <i class="fas fa-calculator icon text-warning"></i>
+            <h6>Salaire Brut</h6>
+            <h3 class="text-warning">@((grossSalary ?? 0).ToString("N2")) DT</h3>
+        </div>
+    </div>
+</div>
+
+<!-- Onglets -->
+<ul class="nav nav-tabs" id="salaryTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#updateSalary">
+            <i class="fas fa-edit me-1"></i>Modifier Salaire
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#salaryHistory">
+            <i class="fas fa-history me-1"></i>Historique (@(salaryHistory?.Count() ?? 0))
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#bonusesTab">
+            <i class="fas fa-gift me-1"></i>Primes (@(bonuses?.Count() ?? 0))
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#benefitsTab">
+            <i class="fas fa-star me-1"></i>Avantages (@(benefits?.Count() ?? 0))
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content border border-top-0 p-4 bg-white" id="salaryTabsContent">
+    <!-- Modifier Salaire -->
+    <div class="tab-pane fade show active" id="updateSalary">
+        <div class="row">
+            <div class="col-md-8">
+                <h5 class="mb-3"><i class="fas fa-edit me-2"></i>Mettre à Jour le Salaire</h5>
+                <form method="post" asp-action="UpdateSalary">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="employeeId" value="@employee.EmployeeId" />
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Salaire Actuel</label>
+                            <div class="input-group input-group-lg">
+                                <input type="text" class="form-control" value="@((currentSalary ?? 0).ToString("N2"))" readonly />
+                                <span class="input-group-text">DT</span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Nouveau Salaire *</label>
+                            <div class="input-group input-group-lg">
+                                <input type="number" name="newSalary" class="form-control" 
+                                       step="0.01" min="0" required id="newSalaryInput" 
+                                       value="@(currentSalary ?? 0)" />
+                                <span class="input-group-text">DT</span>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Justification *</label>
+                            <textarea name="justification" class="form-control" rows="4" required 
+                                      placeholder="Expliquez la raison de cette modification..."></textarea>
+                        </div>
+
+                        <div class="col-12" id="salaryComparison" style="display:none;">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title"><i class="fas fa-chart-line me-2"></i>Aperçu de la Modification</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Différence:</strong> <span id="difference" class="text-success">-</span></p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Variation:</strong> <span id="percentage" class="text-success">-</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-3">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save me-2"></i>Enregistrer la Modification
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-4">
+                <div class="alert alert-info">
+                    <h6 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Information</h6>
+                    <ul class="small mb-0">
+                        <li>L'ancien salaire sera automatiquement clôturé</li>
+                        <li>Le nouveau salaire prendra effet aujourd'hui</li>
+                        <li>L'historique sera conservé</li>
+                        <li>Une justification est obligatoire</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historique des Salaires -->
+    <div class="tab-pane fade" id="salaryHistory">
+        <h5 class="mb-3"><i class="fas fa-history me-2"></i>Historique des Salaires</h5>
+        @if (salaryHistory != null && salaryHistory.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date d'Effet</th>
+                            <th>Date de Fin</th>
+                            <th>Salaire</th>
+                            <th>Variation</th>
+                            <th>Justification</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var previousSalary = 0m;
+                            foreach (var salary in salaryHistory.OrderByDescending(s => s.EffectiveDate))
+                            {
+                                var difference = previousSalary > 0 ? salary.BaseSalary - previousSalary : 0;
+                                var percent = previousSalary > 0 ? (difference / previousSalary * 100) : 0;
+                                
+                                <tr>
+                                    <td><strong>@salary.EffectiveDate.ToString("dd/MM/yyyy")</strong></td>
+                                    <td>
+                                        @if (salary.EndDate.HasValue)
+                                        {
+                                            @salary.EndDate.Value.ToString("dd/MM/yyyy")
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">En cours</span>
+                                        }
+                                    </td>
+                                    <td><strong>@salary.BaseSalary.ToString("N2") DT</strong></td>
+                                    <td>
+                                        @if (difference != 0)
+                                        {
+                                            <span class="@(difference > 0 ? "text-success" : "text-danger")">
+                                                @(difference > 0 ? "+" : "")@difference.ToString("N2") DT
+                                                (@(percent > 0 ? "+" : "")@percent.ToString("N1")%)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td>@salary.Justification</td>
+                                </tr>
+                                
+                                previousSalary = salary.BaseSalary;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5 text-muted">
+                <i class="fas fa-inbox fa-3x mb-3"></i>
+                <p class="mb-0">Aucun historique de salaire</p>
+            </div>
+        }
+    </div>
+
+    <!-- Primes -->
+    <div class="tab-pane fade" id="bonusesTab">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5><i class="fas fa-gift me-2"></i>Primes</h5>
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addBonusModal">
+                <i class="fas fa-plus me-2"></i>Ajouter une Prime
+            </button>
+        </div>
+
+        @if (bonuses != null && bonuses.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Montant</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var bonus in bonuses.OrderByDescending(b => b.Date))
+                        {
+                            <tr>
+                                <td>@bonus.Date.ToString("dd/MM/yyyy")</td>
+                                <td><span class="badge bg-info">@bonus.BonusType</span></td>
+                                <td><strong class="text-success">@bonus.Amount.ToString("N2") DT</strong></td>
+                                <td>@bonus.Description</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-light">
+                            <td colspan="2"><strong>Total des Primes (@DateTime.Now.Year)</strong></td>
+                            <td colspan="2">
+                                <strong class="text-success">
+                                    @bonuses.Where(b => b.Date.Year == DateTime.Now.Year).Sum(b => b.Amount).ToString("N2") DT
+                                </strong>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5 text-muted">
+                <i class="fas fa-gift fa-3x mb-3"></i>
+                <p class="mb-0">Aucune prime enregistrée</p>
+            </div>
+        }
+    </div>
+
+    <!-- Avantages -->
+    <div class="tab-pane fade" id="benefitsTab">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5><i class="fas fa-star me-2"></i>Avantages</h5>
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#assignBenefitModal">
+                <i class="fas fa-plus me-2"></i>Assigner un Avantage
+            </button>
+        </div>
+
+        @if (benefits != null && benefits.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Valeur Mensuelle</th>
+                            <th>Date de Début</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var eb in benefits)
+                        {
+                            <tr>
+                                <td><span class="badge bg-primary">@eb.Benefit.BenefitType</span></td>
+                                <td>@eb.Benefit.Description</td>
+                                <td><strong>@eb.Benefit.Value.ToString("N2") DT</strong></td>
+                                <td>@eb.StartDate.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @if (!eb.EndDate.HasValue || eb.EndDate > DateTime.Now)
+                                    {
+                                        <span class="badge bg-success">Actif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Terminé le @eb.EndDate.Value.ToString("dd/MM/yyyy")</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-light">
+                            <td colspan="2"><strong>Total Mensuel des Avantages Actifs</strong></td>
+                            <td colspan="3">
+                                <strong class="text-success">@((totalBenefits ?? 0).ToString("N2")) DT</strong>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5 text-muted">
+                <i class="fas fa-star fa-3x mb-3"></i>
+                <p class="mb-0">Aucun avantage assigné</p>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Modal Ajouter Prime -->
+<div class="modal fade" id="addBonusModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-action="AddBonus">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="EmployeeId" value="@employee.EmployeeId" />
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-gift me-2"></i>Ajouter une Prime</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Type de Prime *</label>
+                        <select name="BonusType" class="form-select" required>
+                            <option value="">-- Sélectionner --</option>
+                            <option value="Performance">Performance</option>
+                            <option value="Objectifs">Atteinte d'Objectifs</option>
+                            <option value="Ancienneté">Ancienneté</option>
+                            <option value="13ème Mois">13ème Mois</option>
+                            <option value="Projet">Prime de Projet</option>
+                            <option value="Exceptionnelle">Exceptionnelle</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Montant (DT) *</label>
+                        <input type="number" name="Amount" class="form-control" step="0.01" min="0" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Date *</label>
+                        <input type="date" name="Date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="Description" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save me-2"></i>Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Assigner Avantage -->
+<div class="modal fade" id="assignBenefitModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-action="AssignBenefit">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="employeeId" value="@employee.EmployeeId" />
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-star me-2"></i>Assigner un Avantage</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Avantage *</label>
+                        <select name="benefitId" class="form-select" required>
+                            <option value="">-- Sélectionner un avantage --</option>
+                            @if (allBenefits != null)
+                            {
+                                @foreach (var benefit in allBenefits)
+                                {
+                                    <option value="@benefit.BenefitId">
+                                        @benefit.BenefitType - @benefit.Value.ToString("N2") DT/mois
+                                    </option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="alert alert-info small">
+                        <i class="fas fa-info-circle me-1"></i>
+                        L'avantage sera actif à partir d'aujourd'hui
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check me-2"></i>Assigner
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Calculer la différence de salaire en temps réel
+        document.addEventListener('DOMContentLoaded', function() {
+            const newSalaryInput = document.getElementById('newSalaryInput');
+            const currentSalary = @(currentSalary ?? 0);
+            const comparisonDiv = document.getElementById('salaryComparison');
+            const differenceSpan = document.getElementById('difference');
+            const percentageSpan = document.getElementById('percentage');
+
+            newSalaryInput.addEventListener('input', function() {
+                const newValue = parseFloat(this.value) || 0;
+                const diff = newValue - currentSalary;
+                const percent = currentSalary > 0 ? (diff / currentSalary * 100) : 0;
+
+                if (diff !== 0) {
+                    differenceSpan.textContent = (diff > 0 ? '+' : '') + diff.toFixed(2) + ' DT';
+                    differenceSpan.className = diff > 0 ? 'text-success' : 'text-danger';
+                    
+                    percentageSpan.textContent = (percent > 0 ? '+' : '') + percent.toFixed(2) + '%';
+                    percentageSpan.className = percent > 0 ? 'text-success' : 'text-danger';
+                    
+                    comparisonDiv.style.display = 'block';
+                } else {
+                    comparisonDiv.style.display = 'none';
+                }
+            });
+        });
+    </script>
+}

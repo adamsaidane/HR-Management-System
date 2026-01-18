@@ -18,7 +18,7 @@ public class EmployeeService : IEmployeeService
             return _context.Employees
                 .Include(e => e.Department)
                 .Include(e => e.Position)
-                .OrderBy(e => e.LastName)
+                .OrderBy(e => e.Matricule)
                 .ToList();
         }
 
@@ -34,6 +34,10 @@ public class EmployeeService : IEmployeeService
                 .ThenInclude(eb => eb.Benefit)
                 .Include(e => e.EquipmentAssignments)
                 .ThenInclude(ea => ea.Equipment)
+                .Include(e => e.Promotions)
+                .ThenInclude(p => p.OldPosition)
+                .Include(e => e.Promotions)
+                .ThenInclude(p => p.NewPosition) 
                 .FirstOrDefault(e => e.EmployeeId == id);
         }
 

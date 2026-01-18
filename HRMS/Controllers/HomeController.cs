@@ -1,31 +1,50 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using HRMS.Models;
+using HRMS.Service;
+using HRMS.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HRMS.Controllers;
 
+[Authorize]
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly IDashboardService _dashboardService;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(IDashboardService dashboardService)
     {
-        _logger = logger;
+        _dashboardService = dashboardService;
     }
 
-    public IActionResult Index()
+    // GET: Home/Index - Dashboard
+    public ActionResult Index()
     {
+        var stats = _dashboardService.GetDashboardStatistics();
+
+        var viewModel = new DashboardViewModel
+        {
+            TotalEmployees = stats.TotalEmployees,
+            ActiveEmployees = stats.ActiveEmployees,
+            OpenJobOffers = stats.OpenJobOffers,
+            PendingCandidates = stats.PendingCandidates,
+            TotalMonthlySalary = stats.TotalMonthlySalary,
+            AverageSalary = stats.AverageSalary,
+            AssignedEquipment = stats.AssignedEquipment,
+            AvailableEquipment = stats.AvailableEquipment,
+            EmployeesByDepartment = stats.EmployeesByDepartment,
+            EmployeesByStatus = stats.EmployeesByStatus,
+            SalaryEvolution = stats.SalaryEvolutionData,
+            RecentPromotions = stats.RecentPromotions
+        };
+
+        return View(viewModel);
+    }
+
+    // GET: Home/About
+    public ActionResult About()
+    {
+        ViewBag.Message = "Système de Gestion des Ressources Humaines";
         return View();
-    }
-
-    public IActionResult Privacy()
-    {
-        return View();
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

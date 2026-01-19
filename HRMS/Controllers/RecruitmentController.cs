@@ -115,6 +115,7 @@ public class RecruitmentController : Controller
             LastName = model.LastName,
             Email = model.Email,
             Phone = model.Phone,
+            Address = model.Address,
             JobOfferId = model.JobOfferId.Value
         };
 
@@ -203,6 +204,7 @@ public class RecruitmentController : Controller
             LastName = candidate.LastName,
             Email = candidate.Email,
             Phone = candidate.Phone,
+            Address = candidate.Address,
             HireDate = DateTime.Today,
             Departments = _context.Departments.ToList(),
             Positions = _context.Positions.ToList()

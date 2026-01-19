@@ -48,6 +48,13 @@
                     <small class="text-muted d-block">Téléphone</small>
                     <strong>@Model.Phone</strong>
                 </div>
+                @if (!string.IsNullOrWhiteSpace(Model.Address))
+                {
+                    <div class="list-group-item">
+                        <small class="text-muted d-block">Adresse</small>
+                        <strong>@Model.Address</strong>
+                    </div>
+                }
                 <div class="list-group-item">
                     <small class="text-muted d-block">Date de candidature</small>
                     <strong>@Model.ApplicationDate.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("fr-FR"))</strong>

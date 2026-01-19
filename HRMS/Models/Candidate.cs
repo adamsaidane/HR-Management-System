@@ -30,6 +30,10 @@ public class Candidate
     [Phone(ErrorMessage = "Numéro de téléphone invalide")]
     public string Phone { get; set; }
 
+    [StringLength(200)]
+    [Display(Name = "Adresse")]
+    public string Address { get; set; }
+
     [Display(Name = "CV")]
     public string CVPath { get; set; }
 

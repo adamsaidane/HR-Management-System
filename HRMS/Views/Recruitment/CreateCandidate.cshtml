@@ -41,6 +41,12 @@
                                    placeholder="+216 XX XXX XXX" />
                             <span asp-validation-for="Phone" class="text-danger"></span>
                         </div>
+
+                        <div class="col-12">
+                            <label asp-for="Address" class="form-label"></label>
+                            <textarea asp-for="Address" class="form-control" rows="2" placeholder="Adresse complète"></textarea>
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
                     </div>
 
                     <h5 class="mb-3"><i class="fas fa-briefcase me-2"></i>Candidature</h5>

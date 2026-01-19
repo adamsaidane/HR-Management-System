@@ -21,6 +21,10 @@ public class CandidateFormViewModel
 
     [Display(Name = "Téléphone")]
     public string Phone { get; set; }
+
+    [StringLength(200)]
+    [Display(Name = "Adresse")]
+    public string Address { get; set; }
     
     [Display(Name = "CV")]
     public IFormFile CVFile { get; set; }

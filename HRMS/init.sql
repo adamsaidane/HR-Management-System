@@ -157,11 +157,11 @@ SET IDENTITY_INSERT JobOffers OFF;
 
 -- Candidates
 SET IDENTITY_INSERT Candidates ON;
-INSERT INTO Candidates (CandidateId, FirstName, LastName, Email, Phone, CVPath, JobOfferId, Status, ApplicationDate)
+INSERT INTO Candidates (CandidateId, FirstName, LastName, Email, Phone, Address, CVPath, JobOfferId, Status, ApplicationDate)
 VALUES
-    (1, 'Ali', 'Ben Ahmed', 'ali.benahmed@example.com', '11122233', '/cv/ali.pdf', 1, 1, GETDATE()),
-    (2, 'Leila', 'Sghaier', 'leila.sghaier@example.com', '22233344', '/cv/leila.pdf', 2, 0, GETDATE()),
-    (3, 'Omar', 'Jaziri', 'omar.jaziri@example.com', '33344455', '/cv/omar.pdf', 3, 0, GETDATE());
+    (1, 'Ali', 'Ben Ahmed', 'ali.benahmed@example.com', '11122233','Tunis', '/cv/ali.pdf', 1, 1, GETDATE()),
+    (2, 'Leila', 'Sghaier', 'leila.sghaier@example.com', '22233344', 'Tunis','/cv/leila.pdf', 2, 0, GETDATE()),
+    (3, 'Omar', 'Jaziri', 'omar.jaziri@example.com', '33344455', 'Tunis','/cv/omar.pdf', 3, 0, GETDATE());
 SET IDENTITY_INSERT Candidates OFF;
 
 -- Interviews

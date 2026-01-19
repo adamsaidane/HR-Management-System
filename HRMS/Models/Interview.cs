@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using HRMS.Enums;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace HRMS.Models;
 
@@ -36,6 +37,7 @@ public class Interview
 
     // Navigation property
     [ForeignKey("CandidateId")]
+    [ValidateNever]
     public virtual Candidate Candidate { get; set; }
 
     public Interview()

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "DzCw0az0ugT+2mmBnrD1XSkfhqYFtwFXXnVLwzupaoI=",
+  "Hash": "eyXXaEIugpZMPN2gVz81C1tpiRT+mGSLgs88IAGUw4w=",
   "Source": "HRMS",
   "BasePath": "_content/HRMS",
   "Mode": "Default",
@@ -53,25 +53,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\Workspace\\HRMS\\HRMS\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\HRMS.bundle.scp.css"
-    },
-    {
-      "Identity": "C:\\Workspace\\HRMS\\HRMS\\wwwroot\\Content\\Photos\\449733500_1708967029638757_7605657563885785838_n.jpg",
-      "SourceId": "HRMS",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Workspace\\HRMS\\HRMS\\wwwroot\\",
-      "BasePath": "_content/HRMS",
-      "RelativePath": "Content/Photos/449733500_1708967029638757_7605657563885785838_n.jpg",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\Content\\Photos\\449733500_1708967029638757_7605657563885785838_n.jpg"
     },
     {
       "Identity": "C:\\Workspace\\HRMS\\HRMS\\wwwroot\\css\\site.css",

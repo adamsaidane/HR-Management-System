@@ -1,0 +1,340 @@
+﻿@* =========================================== *@
+@* Views/Salaries/Index.cshtml *@
+@* Liste des Employés avec Gestion des Salaires *@
+@* =========================================== *@
+
+@model IEnumerable<HRMS.Models.Employee>
+@{
+    ViewData["Title"] = "Gestion des Salaires";
+}
+
+<div class="page-header mb-4">
+    <h1><i class="fas fa-money-bill-wave me-2"></i>Gestion des Salaires</h1>
+    <p class="text-muted mb-0">Consultation et gestion des rémunérations des employés actifs</p>
+</div>
+
+<!-- Statistiques Globales -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <i class="fas fa-users icon text-primary"></i>
+            <h6>Employés Actifs</h6>
+            <h3 class="text-primary">@ViewBag.TotalEmployees</h3>
+            <small class="text-muted">Personnel actif</small>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <i class="fas fa-money-bill-wave icon text-success"></i>
+            <h6>Masse Salariale Mensuelle</h6>
+            <h3 class="text-success">@ViewBag.TotalMasseSalariale.ToString("N0") DT</h3>
+            <small class="text-muted">Total des salaires de base</small>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <i class="fas fa-calculator icon text-warning"></i>
+            <h6>Salaire Moyen</h6>
+            <h3 class="text-warning">@ViewBag.AverageSalary.ToString("N0") DT</h3>
+            <small class="text-muted">Par employé</small>
+        </div>
+    </div>
+</div>
+
+<!-- Filtres de Recherche -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" asp-action="Index" class="row g-3">
+            <div class="col-md-5">
+                <label class="form-label"><i class="fas fa-search me-1"></i>Recherche</label>
+                <input type="text" name="searchString" value="@ViewBag.SearchString" 
+                       class="form-control" placeholder="Nom, prénom ou matricule..." />
+            </div>
+            
+            <div class="col-md-5">
+                <label class="form-label"><i class="fas fa-building me-1"></i>Département</label>
+                <select name="departmentId" class="form-select">
+                    <option value="">Tous les départements</option>
+                    @foreach (var dept in ViewBag.Departments as List<HRMS.Models.Department>)
+                    {
+                        <option value="@dept.DepartmentId" selected="@(ViewBag.DepartmentId == dept.DepartmentId)">
+                            @dept.Name
+                        </option>
+                    }
+                </select>
+            </div>
+            
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-filter me-1"></i>Filtrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Table des Salaires -->
+<div class="card shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+            <i class="fas fa-list me-2"></i>Liste des Employés et Salaires 
+            <span class="badge bg-primary ms-2">@Model.Count()</span>
+        </h5>
+        @if (User.IsInRole("AdminRH"))
+        {
+            <div class="btn-group">
+                <a asp-action="SalaryReport" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-file-alt me-1"></i>Rapport Global
+                </a>
+                <a asp-action="DepartmentSalaries" class="btn btn-sm btn-outline-success">
+                    <i class="fas fa-chart-pie me-1"></i>Par Département
+                </a>
+            </div>
+        }
+    </div>
+    <div class="card-body p-0">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" id="salariesTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 5%;">#</th>
+                            <th style="width: 12%;">Matricule</th>
+                            <th style="width: 20%;">Nom Complet</th>
+                            <th style="width: 15%;">Département</th>
+                            <th style="width: 15%;">Poste</th>
+                            <th style="width: 12%;" class="text-end">Salaire de Base</th>
+                            <th style="width: 10%;" class="text-center">Ancienneté</th>
+                            <th style="width: 11%;" class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int rowNumber = 1;
+                        }
+                        @foreach (var employee in Model)
+                        {
+                            var currentSalary = employee.Salaries
+                                .Where(s => s.EndDate == null || s.EndDate > DateTime.Now)
+                                .OrderByDescending(s => s.EffectiveDate)
+                                .FirstOrDefault();
+                            
+                            var salaryAmount = currentSalary?.BaseSalary ?? 0;
+                            var anciennete = (DateTime.Now - employee.HireDate).Days / 365;
+
+                            <tr>
+                                <td class="text-muted">@rowNumber</td>
+                                <td>
+                                    <strong class="text-primary">@employee.Matricule</strong>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        @if (!string.IsNullOrEmpty(employee.PhotoPath))
+                                        {
+                                            <img src="@employee.PhotoPath" alt="Photo" 
+                                                 class="rounded-circle me-2" 
+                                                 style="width:35px;height:35px;object-fit:cover;" />
+                                        }
+                                        else
+                                        {
+                                            <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white me-2" 
+                                                 style="width:35px;height:35px;">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                        }
+                                        <span><strong>@employee.FullName</strong></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">@employee.Department.Name</span>
+                                </td>
+                                <td>@employee.Position.Title</td>
+                                <td class="text-end">
+                                    <strong class="text-success fs-6">@salaryAmount.ToString("N2") DT</strong>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-secondary">@anciennete an(s)</span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="EmployeeSalary" 
+                                           asp-route-employeeId="@employee.EmployeeId" 
+                                           class="btn btn-primary" 
+                                           title="Gérer le salaire">
+                                            <i class="fas fa-cog"></i>
+                                        </a>
+                                        <a asp-controller="Employees" 
+                                           asp-action="Details" 
+                                           asp-route-id="@employee.EmployeeId" 
+                                           class="btn btn-info" 
+                                           title="Voir le profil">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            rowNumber++;
+                        }
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr>
+                            <td colspan="5" class="text-end"><strong>Total Masse Salariale:</strong></td>
+                            <td class="text-end">
+                                <strong class="text-success fs-5">
+                                    @Model.Sum(e => e.Salaries
+                                        .Where(s => s.EndDate == null || s.EndDate > DateTime.Now)
+                                        .OrderByDescending(s => s.EffectiveDate)
+                                        .FirstOrDefault()?.BaseSalary ?? 0).ToString("N2") DT
+                                </strong>
+                            </td>
+                            <td colspan="2"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="p-5 text-center text-muted">
+                <i class="fas fa-inbox fa-4x mb-3"></i>
+                <h5>Aucun employé trouvé</h5>
+                <p class="mb-0">Aucun employé actif ne correspond aux critères de recherche.</p>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Informations complémentaires -->
+@if (User.IsInRole("AdminRH"))
+{
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informations</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li>Le salaire affiché est le <strong>salaire de base actuel</strong></li>
+                        <li>Pour voir le <strong>salaire brut</strong> (avec avantages), cliquez sur l'icône de gestion</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Actions Disponibles</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-success" onclick="exportTableToCSV('salaires.csv')">
+                            <i class="fas fa-file-csv me-2"></i>Exporter en CSV
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" onclick="window.print()">
+                            <i class="fas fa-print me-2"></i>Imprimer la Liste
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Fonction d'export CSV
+        function exportTableToCSV(filename) {
+            const table = document.getElementById('salariesTable');
+            let csv = [];
+            const rows = table.querySelectorAll('tr');
+            
+            for (let row of rows) {
+                const cols = row.querySelectorAll('td, th');
+                let csvRow = [];
+                for (let col of cols) {
+                    // Nettoyer le texte
+                    let text = col.innerText.replace(/"/g, '""');
+                    csvRow.push('"' + text + '"');
+                }
+                csv.push(csvRow.join(','));
+            }
+            
+            // Créer le fichier CSV
+            const csvString = csv.join('\n');
+            const blob = new Blob(['\ufeff' + csvString], { type: 'text/csv;charset=utf-8;' });
+            
+            // Télécharger
+            const link = document.createElement('a');
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        // Highlight de la ligne au survol
+        document.addEventListener('DOMContentLoaded', function() {
+            const rows = document.querySelectorAll('#salariesTable tbody tr');
+            rows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#f8f9fa';
+                });
+                row.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                });
+            });
+        });
+    </script>
+}
+
+<style>
+    /* Styles pour l'impression */
+    @@media print {
+        .page-header,
+        .card-header .btn-group,
+        .btn,
+        .stat-card,
+        .card:last-child {
+            display: none !important;
+        }
+        
+        .table {
+            font-size: 12px;
+        }
+        
+        .table td, .table th {
+            padding: 5px !important;
+        }
+    }
+
+    /* Animation au chargement */
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    #salariesTable tbody tr {
+        animation: fadeInUp 0.3s ease-out;
+    }
+
+    #salariesTable tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+
+    #salariesTable tbody tr:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+</style>

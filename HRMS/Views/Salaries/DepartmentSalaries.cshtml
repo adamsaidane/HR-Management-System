@@ -1,0 +1,192 @@
+﻿@model dynamic
+@{
+    ViewData["Title"] = "Salaires par Département";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1><i class="fas fa-building me-2"></i>Analyse des Salaires par Département</h1>
+        <p class="text-muted mb-0">Comparaison et statistiques départementales</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-1"></i>Retour
+    </a>
+</div>
+
+@{
+    var deptData = Model as IEnumerable<dynamic>;
+    var totalEmployees = deptData.Sum(d => (int)d.EmployeeCount);
+    var totalSalaries = deptData.Sum(d => (decimal)d.TotalSalary);
+}
+
+<!-- Statistiques Globales -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <i class="fas fa-building icon text-primary"></i>
+            <h6>Départements</h6>
+            <h3 class="text-primary">@deptData.Count()</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <i class="fas fa-users icon text-success"></i>
+            <h6>Total Employés</h6>
+            <h3 class="text-success">@totalEmployees</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <i class="fas fa-money-bill-wave icon text-warning"></i>
+            <h6>Masse Salariale Totale</h6>
+            <h3 class="text-warning">@totalSalaries.ToString("N0") DT</h3>
+        </div>
+    </div>
+</div>
+
+<!-- Cartes par Département -->
+<div class="row">
+    @foreach (var item in deptData.OrderByDescending(d => (decimal)d.TotalSalary))
+    {
+        var dept = item.Department as HRMS.Models.Department;
+        var empCount = (int)item.EmployeeCount;
+        var totalSal = (decimal)item.TotalSalary;
+        var avgSal = (decimal)item.AverageSalary;
+        var percentage = totalSalaries > 0 ? (totalSal / totalSalaries * 100) : 0;
+
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-building me-2"></i>@dept.Name
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Employés</small>
+                        <h4 class="text-primary mb-0">@empCount</h4>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Masse Salariale Mensuelle</small>
+                        <h4 class="text-success mb-0">@totalSal.ToString("N0") DT</h4>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Salaire Moyen</small>
+                        <h4 class="text-warning mb-0">@avgSal.ToString("N0") DT</h4>
+                    </div>
+                    <div class="progress" style="height: 25px;">
+                        <div class="progress-bar bg-info" role="progressbar" 
+                             style="width: @percentage.ToString("N2")%"
+                             aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100">
+                            @percentage.ToString("N1")% du total
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Graphiques de Comparaison -->
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Masse Salariale par Département</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="departmentSalaryChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Effectifs vs Salaire Moyen</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="effectifsChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const deptNames = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            deptData.Select(d => ((HRMS.Models.Department)d.Department).Name)));
+        const deptSalaries = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            deptData.Select(d => (decimal)d.TotalSalary)));
+        const deptEmployees = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            deptData.Select(d => (int)d.EmployeeCount)));
+        const deptAvgSalaries = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            deptData.Select(d => (decimal)d.AverageSalary)));
+
+        // Graphique Masse Salariale
+        const salaryCtx = document.getElementById('departmentSalaryChart').getContext('2d');
+        new Chart(salaryCtx, {
+            type: 'bar',
+            data: {
+                labels: deptNames,
+                datasets: [{
+                    label: 'Masse Salariale (DT)',
+                    data: deptSalaries,
+                    backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        // Graphique Effectifs vs Salaire Moyen
+        const effectifsCtx = document.getElementById('effectifsChart').getContext('2d');
+        new Chart(effectifsCtx, {
+            type: 'line',
+            data: {
+                labels: deptNames,
+                datasets: [
+                    {
+                        label: 'Nombre d\'Employés',
+                        data: deptEmployees,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        yAxisID: 'y',
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Salaire Moyen (DT)',
+                        data: deptAvgSalaries,
+                        borderColor: 'rgba(255, 159, 64, 1)',
+                        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                        yAxisID: 'y1',
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: { mode: 'index', intersect: false },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: { display: true, text: 'Employés' }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: { display: true, text: 'Salaire (DT)' },
+                        grid: { drawOnChartArea: false }
+                    }
+                }
+            }
+        });
+    </script>
+}

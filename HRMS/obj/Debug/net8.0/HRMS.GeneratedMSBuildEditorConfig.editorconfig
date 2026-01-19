@@ -110,8 +110,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVjcnVpdG1lbnRcU2NoZWR1bGVJbnRlcnZpZXcuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Workspace/HRMS/HRMS/Views/Salaries/DepartmentSalaries.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FsYXJpZXNcRGVwYXJ0bWVudFNhbGFyaWVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Workspace/HRMS/HRMS/Views/Salaries/EmployeeSalary.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FsYXJpZXNcRW1wbG95ZWVTYWxhcnkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Workspace/HRMS/HRMS/Views/Salaries/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FsYXJpZXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Workspace/HRMS/HRMS/Views/Salaries/SalaryReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FsYXJpZXNcU2FsYXJ5UmVwb3J0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Workspace/HRMS/HRMS/Views/Shared/Error.cshtml]

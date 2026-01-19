@@ -12,12 +12,12 @@ namespace HRMS.Controllers;
 public class EquipmentController : Controller
 {
     private readonly IEquipmentService _equipmentService;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IEmployeeService _employeeService;
 
-    public EquipmentController(IEquipmentService equipmentService, IUnitOfWork unitOfWork)
+    public EquipmentController(IEquipmentService equipmentService, IEmployeeService employeeService)
     {
         _equipmentService = equipmentService;
-        _unitOfWork = unitOfWork;
+        _employeeService = employeeService;
     }
 
     // GET: Equipment
@@ -68,7 +68,7 @@ public class EquipmentController : Controller
         var viewModel = new EquipmentAssignmentViewModel
         {
             AvailableEquipment = (await _equipmentService.GetAvailableEquipmentAsync()).ToList(),
-            Employees = (await _unitOfWork.Employees.FindAsync(e => e.Status == EmployeeStatus.Actif)).ToList()
+            Employees = (await _employeeService.GetEmployeesByStatusAsync(EmployeeStatus.Actif)).ToList()
         };
         return View(viewModel);
     }
@@ -98,7 +98,7 @@ public class EquipmentController : Controller
         }
 
         model.AvailableEquipment = (await _equipmentService.GetAvailableEquipmentAsync()).ToList();
-        model.Employees = (await _unitOfWork.Employees.FindAsync(e => e.Status == EmployeeStatus.Actif)).ToList();
+        model.Employees = (await _employeeService.GetEmployeesByStatusAsync(EmployeeStatus.Actif)).ToList();
         return View(model);
     }
 
@@ -125,7 +125,7 @@ public class EquipmentController : Controller
     [HttpGet("Equipment/EmployeeEquipment/{employeeId}")]
     public async Task<IActionResult> EmployeeEquipment(int employeeId)
     {
-        var employee = await _unitOfWork.Employees.GetByIdAsync(employeeId);
+        var employee = await _employeeService.GetEmployeeByIdAsync(employeeId);
         if (employee == null)
             return NotFound();
 

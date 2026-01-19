@@ -21,6 +21,7 @@ public class RecruitmentService : IRecruitmentService
             return _context.JobOffers
                 .Include(j => j.Department)
                 .Include(j => j.Position)
+                .Include(j => j.Candidates)
                 .OrderByDescending(j => j.PostDate)
                 .ToList();
         }

@@ -10,6 +10,7 @@ public class DashboardViewModel
     public decimal AverageSalary { get; set; }
     public int AssignedEquipment { get; set; }
     public int AvailableEquipment { get; set; }
+    public int TotalEquipment { get; set; }
     public Dictionary<string, int> EmployeesByDepartment { get; set; }
     public Dictionary<string, int> EmployeesByStatus { get; set; }
     public List<SalaryEvolution> SalaryEvolution { get; set; }

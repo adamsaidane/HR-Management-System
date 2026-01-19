@@ -35,7 +35,8 @@ public class HomeController : Controller
             EmployeesByDepartment = stats.EmployeesByDepartment,
             EmployeesByStatus = stats.EmployeesByStatus,
             SalaryEvolution = stats.SalaryEvolutionData,
-            RecentPromotions = stats.RecentPromotions
+            RecentPromotions = stats.RecentPromotions,
+            TotalEquipment = stats.TotalEquipment
         };
 
         return View(viewModel);

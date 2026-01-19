@@ -48,15 +48,6 @@ public class PromotionsController : Controller
     [Authorize(Roles = "AdminRH")]
     public IActionResult Create(PromotionFormViewModel model)
     {
-        if (!ModelState.IsValid)
-        {
-            var errors = ModelState.Values.SelectMany(v => v.Errors);
-            foreach (var error in errors) 
-            {
-                Console.WriteLine(error.ErrorMessage);
-            }
-            return View(model);
-        }
         if (ModelState.IsValid)
         {
             try
@@ -72,11 +63,6 @@ public class PromotionsController : Controller
             }
             catch (Exception ex)
             {
-                var errors = ModelState.Values.SelectMany(v => v.Errors);
-                foreach (var error in errors) 
-                {
-                    Console.WriteLine(error.ErrorMessage);
-                }
                 ModelState.AddModelError("", "Erreur: " + ex.Message);
             }
         }

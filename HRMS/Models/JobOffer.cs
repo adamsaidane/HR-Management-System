@@ -46,10 +46,10 @@ public class JobOffer
 
     // Navigation properties
     [ForeignKey("DepartmentId")]
-    public virtual Department Department { get; set; }
+    public virtual Department? Department { get; set; }
 
     [ForeignKey("PositionId")]
-    public virtual Position Position { get; set; }
+    public virtual Position? Position { get; set; }
 
     public virtual ICollection<Candidate> Candidates { get; set; }
 

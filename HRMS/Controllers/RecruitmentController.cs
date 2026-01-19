@@ -46,8 +46,15 @@ public class RecruitmentController : Controller
     public IActionResult CreateJobOffer(JobOffer model)
     {
         if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+            foreach (var error in errors) 
+            {
+                Console.WriteLine(error.ErrorMessage);
+            }
             return View(model);
-
+        }
+        
         _recruitmentService.CreateJobOffer(model);
         TempData["Success"] = "Offre d'emploi créée avec succès!";
         return RedirectToAction(nameof(JobOffers));

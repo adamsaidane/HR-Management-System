@@ -1,26 +1,21 @@
-﻿using HRMS.Models;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using HRMS.Enums;
-using HRMS.Repositories;
-using Microsoft.EntityFrameworkCore;
 
-[AllowAnonymous]
 public class AccountController : Controller
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly HRMS.Service.IAccountService _accountService;
 
-    public AccountController(IUnitOfWork unitOfWork)
+    public AccountController(HRMS.Service.IAccountService accountService)
     {
-        _unitOfWork = unitOfWork;
+        _accountService = accountService;
     }
 
     // GET: Login
+    [AllowAnonymous]
     public IActionResult Login(string returnUrl)
     {
         ViewBag.ReturnUrl = returnUrl;
@@ -28,6 +23,7 @@ public class AccountController : Controller
     }
 
     // POST: Account/Login
+    [AllowAnonymous]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(string username, string password, string? returnUrl = null)
@@ -38,19 +34,10 @@ public class AccountController : Controller
             return View();
         }
 
-        var passwordHash = HashPassword(password);
-        var user = await _unitOfWork.Users.FirstOrDefaultAsync(u =>
-            u.Username == username &&
-            u.PasswordHash == passwordHash &&
-            u.IsActive);
+        var user = await _accountService.AuthenticateAsync(username, password);
 
         if (user != null)
         {
-            // Charger l'employé si nécessaire
-            if (user.EmployeeId.HasValue && user.Employee == null)
-            {
-                user.Employee = await _unitOfWork.Employees.GetByIdAsync(user.EmployeeId.Value);
-            }
 
             var claims = new List<Claim>
             {
@@ -101,6 +88,7 @@ public class AccountController : Controller
     }
 
     // GET: Account/AccessDenied
+    [AllowAnonymous]
     public IActionResult AccessDenied()
     {
         return View();
@@ -110,7 +98,7 @@ public class AccountController : Controller
     [Authorize(Roles = "AdminRH")]
     public async Task<IActionResult> Register()
     {
-        ViewBag.Employees = (await _unitOfWork.Employees.FindAsync(e => e.User == null)).ToList();
+        ViewBag.Employees = (await _accountService.GetEmployeesWithoutUserAsync()).ToList();
         return View();
     }
 
@@ -120,30 +108,16 @@ public class AccountController : Controller
     [Authorize(Roles = "AdminRH")]
     public async Task<IActionResult> Register(string username, string password, string email, int? employeeId, UserRole role)
     {
-        if (await _unitOfWork.Users.ExistsAsync(u => u.Username == username))
+        var result = await _accountService.RegisterAsync(username, password, email, employeeId, role);
+        if (!result.Success)
         {
-            ModelState.AddModelError("", "Ce nom d'utilisateur existe déjà");
-            ViewBag.Employees = (await _unitOfWork.Employees.FindAsync(e => e.User == null)).ToList();
+            ModelState.AddModelError("", result.Error ?? "Erreur lors de la création de l'utilisateur");
+            ViewBag.Employees = (await _accountService.GetEmployeesWithoutUserAsync()).ToList();
             return View();
         }
 
-        var user = new User
-        {
-            Username = username,
-            PasswordHash = HashPassword(password),
-            Email = email,
-            EmployeeId = employeeId,
-            Role = role,
-            IsActive = true,
-            CreatedDate = DateTime.Now,
-            ModifiedDate = DateTime.Now
-        };
-
-        await _unitOfWork.Users.AddAsync(user);
-        await _unitOfWork.SaveChangesAsync();
-
         TempData["Success"] = "Utilisateur créé avec succès!";
-        return RedirectToAction("Login");
+        return RedirectToAction("Index", "Home");
     }
 
     // GET: Account/ChangePassword
@@ -165,28 +139,16 @@ public class AccountController : Controller
             return View();
         }
 
-        var username = User.Identity?.Name;
-        var user = await _unitOfWork.Users.FirstOrDefaultAsync(u => u.Username == username);
-
-        if (user != null && user.PasswordHash == HashPassword(currentPassword))
+        var username = User.Identity?.Name ?? string.Empty;
+        var result = await _accountService.ChangePasswordAsync(username, currentPassword, newPassword);
+        if (result.Success)
         {
-            user.PasswordHash = HashPassword(newPassword);
-            user.ModifiedDate = DateTime.Now;
-            _unitOfWork.Users.Update(user);
-            await _unitOfWork.SaveChangesAsync();
-
             TempData["Success"] = "Mot de passe modifié avec succès!";
             return RedirectToAction("Index", "Home");
         }
 
-        ModelState.AddModelError("", "Mot de passe actuel incorrect");
+        ModelState.AddModelError("", result.Error ?? "Erreur lors de la modification du mot de passe");
         return View();
     }
 
-    private string HashPassword(string password)
-    {
-        using var sha256 = SHA256.Create();
-        var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-        return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
-    }
 }

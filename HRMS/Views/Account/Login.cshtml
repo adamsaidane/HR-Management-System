@@ -66,15 +66,27 @@
 
         @if (ViewData.ModelState.ErrorCount > 0)
         {
-            <div class="alert alert-danger">
-                <i class="fas fa-exclamation-circle"></i>
-                @Html.ValidationSummary(false, "", new { @class = "mb-0" })
-            </div>
+            var errors = ViewData.ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Where(e => !e.ErrorMessage.Contains("returnUrl"));
+
+            if (errors.Any())
+            {
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <ul class="mb-0">
+                        @foreach (var error in errors)
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    </ul>
+                </div>
+            }
         }
 
         <form method="post" asp-action="Login" asp-controller="Account">
             @Html.AntiForgeryToken()
-            <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+            <input type="hidden" name="returnUrl" value="@(ViewBag.ReturnUrl ?? "/")" />
 
             <div class="mb-3">
                 <div class="input-group">

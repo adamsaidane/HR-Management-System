@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Accès refusé";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-danger shadow-sm">
+                <div class="card-body text-center p-5">
+                    <div class="display-4 text-danger">403</div>
+                    <h1 class="h3 mt-3">Accès refusé</h1>
+                    <p class="mt-3 mb-4">
+                        Désolé, vous n'avez pas l'autorisation d'accéder à cette ressource.
+                    </p>
+
+                    @if (User?.Identity?.IsAuthenticated ?? false)
+                    {
+                        <p class="text-muted">Vous êtes connecté en tant que <strong>@User.Identity!.Name</strong>.</p>
+                        <a class="btn btn-primary me-2" asp-controller="Home" asp-action="Index">Retour à l'accueil</a>
+                        <a class="btn btn-outline-secondary" asp-controller="Account" asp-action="Logout">Se déconnecter</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-primary" asp-controller="Account" asp-action="Login">Se connecter</a>
+                    }
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <small class="text-muted">Si vous pensez qu'il s'agit d'une erreur, veuillez contacter un administrateur.</small>
+            </div>
+        </div>
+    </div>
+</div>

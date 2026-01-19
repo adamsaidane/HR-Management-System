@@ -576,9 +576,7 @@ VALUES
     (60, 46, 'Diplôme', 'Diplome_Doctorat_Daoud.pdf', '/docs/diplomas/diplome_daoud.pdf', '2021-03-25');
 SET IDENTITY_INSERT Documents OFF;
 
--- =====================================================
--- INSERTION DES OFFRES D'EMPLOI (12 offres)
--- =====================================================
+-- offres d'emploi
 
 SET IDENTITY_INSERT JobOffers ON;
 INSERT INTO JobOffers (JobOfferId, Title, Description, DepartmentId, PositionId, PostDate, ExpiryDate, Status, CreatedDate, ModifiedDate)

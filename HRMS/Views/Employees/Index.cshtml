@@ -14,14 +14,16 @@
 <div class="card shadow-sm mb-4">
     <div class="card-body">
         <form method="get" asp-action="Index" class="row g-3">
+            <input type="hidden" name="sortOrder" value="@ViewBag.CurrentSort" />
+            
             <div class="col-md-4">
-                <label class="form-label">Recherche</label>
+                <label class="form-label"><i class="fas fa-search me-1"></i>Recherche</label>
                 <input type="text" name="searchString" value="@ViewBag.SearchString" 
                        class="form-control" placeholder="Nom, matricule, email..." />
             </div>
             
             <div class="col-md-3">
-                <label class="form-label">Département</label>
+                <label class="form-label"><i class="fas fa-building me-1"></i>Département</label>
                 <select name="departmentId" class="form-select">
                     <option value="">Tous</option>
                     @foreach (var dept in ViewBag.Departments as List<HRMS.Models.Department>)
@@ -34,17 +36,17 @@
             </div>
             
             <div class="col-md-3">
-                <label class="form-label">Statut</label>
+                <label class="form-label"><i class="fas fa-filter me-1"></i>Statut</label>
                 <select name="status" class="form-select">
                     <option value="">Tous</option>
-                    <option value="0">Actif</option>
-                    <option value="1">Suspendu</option>
-                    <option value="2">Démissionné</option>
+                    <option value="0" selected="@(ViewBag.Status == HRMS.Enums.EmployeeStatus.Actif)">Actif</option>
+                    <option value="1" selected="@(ViewBag.Status == HRMS.Enums.EmployeeStatus.Suspendu)">Suspendu</option>
+                    <option value="2" selected="@(ViewBag.Status == HRMS.Enums.EmployeeStatus.Démissionné)">Démissionné</option>
                 </select>
             </div>
             
             <div class="col-md-2 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary me-2">
+                <button type="submit" class="btn btn-primary me-2 w-100">
                     <i class="fas fa-search"></i> Filtrer
                 </button>
                 <a asp-action="Index" class="btn btn-outline-secondary">
@@ -55,10 +57,13 @@
     </div>
 </div>
 
-<!-- Liste des Employés -->
+<!-- Table des Employés -->
 <div class="card shadow-sm">
     <div class="card-header bg-white">
-        <h5 class="mb-0">Liste des Employés (@Model.Count())</h5>
+        <h5 class="mb-0">
+            Liste des Employés 
+            <span class="badge bg-primary ms-2">@Model.Count()</span>
+        </h5>
     </div>
     <div class="card-body p-0">
         @if (Model.Any())
@@ -67,14 +72,140 @@
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Photo</th>
-                            <th>Matricule</th>
-                            <th>Nom Complet</th>
-                            <th>Email</th>
-                            <th>Département</th>
-                            <th>Poste</th>
-                            <th>Statut</th>
-                            <th>Actions</th>
+                            <th style="width: 60px;">Photo</th>
+                            <th style="width: 120px;">
+                                <a asp-action="Index" 
+                                   asp-route-sortOrder="@ViewBag.MatriculeSortParam" 
+                                   asp-route-currentFilter="@ViewBag.CurrentFilter"
+                                   asp-route-departmentId="@ViewBag.DepartmentId"
+                                   asp-route-status="@ViewBag.Status"
+                                   class="text-decoration-none text-dark">
+                                    Matricule 
+                                    @if (ViewBag.CurrentSort == "" || ViewBag.CurrentSort == null)
+                                    {
+                                        <i class="fas fa-sort-up text-primary"></i>
+                                    }
+                                    else if (ViewBag.CurrentSort == "matricule_desc")
+                                    {
+                                        <i class="fas fa-sort-down text-primary"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-sort text-muted"></i>
+                                    }
+                                </a>
+                            </th>
+                            <th>
+                                <a asp-action="Index" 
+                                   asp-route-sortOrder="@ViewBag.NameSortParam" 
+                                   asp-route-currentFilter="@ViewBag.CurrentFilter"
+                                   asp-route-departmentId="@ViewBag.DepartmentId"
+                                   asp-route-status="@ViewBag.Status"
+                                   class="text-decoration-none text-dark">
+                                    Nom Complet 
+                                    @if (ViewBag.CurrentSort == "name")
+                                    {
+                                        <i class="fas fa-sort-up text-primary"></i>
+                                    }
+                                    else if (ViewBag.CurrentSort == "name_desc")
+                                    {
+                                        <i class="fas fa-sort-down text-primary"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-sort text-muted"></i>
+                                    }
+                                </a>
+                            </th>
+                            <th>
+                                <a asp-action="Index" 
+                                   asp-route-sortOrder="@ViewBag.EmailSortParam" 
+                                   asp-route-currentFilter="@ViewBag.CurrentFilter"
+                                   asp-route-departmentId="@ViewBag.DepartmentId"
+                                   asp-route-status="@ViewBag.Status"
+                                   class="text-decoration-none text-dark">
+                                    Email 
+                                    @if (ViewBag.CurrentSort == "email")
+                                    {
+                                        <i class="fas fa-sort-up text-primary"></i>
+                                    }
+                                    else if (ViewBag.CurrentSort == "email_desc")
+                                    {
+                                        <i class="fas fa-sort-down text-primary"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-sort text-muted"></i>
+                                    }
+                                </a>
+                            </th>
+                            <th>
+                                <a asp-action="Index" 
+                                   asp-route-sortOrder="@ViewBag.DepartmentSortParam" 
+                                   asp-route-currentFilter="@ViewBag.CurrentFilter"
+                                   asp-route-departmentId="@ViewBag.DepartmentId"
+                                   asp-route-status="@ViewBag.Status"
+                                   class="text-decoration-none text-dark">
+                                    Département 
+                                    @if (ViewBag.CurrentSort == "department")
+                                    {
+                                        <i class="fas fa-sort-up text-primary"></i>
+                                    }
+                                    else if (ViewBag.CurrentSort == "department_desc")
+                                    {
+                                        <i class="fas fa-sort-down text-primary"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-sort text-muted"></i>
+                                    }
+                                </a>
+                            </th>
+                            <th>
+                                <a asp-action="Index" 
+                                   asp-route-sortOrder="@ViewBag.PositionSortParam" 
+                                   asp-route-currentFilter="@ViewBag.CurrentFilter"
+                                   asp-route-departmentId="@ViewBag.DepartmentId"
+                                   asp-route-status="@ViewBag.Status"
+                                   class="text-decoration-none text-dark">
+                                    Poste 
+                                    @if (ViewBag.CurrentSort == "position")
+                                    {
+                                        <i class="fas fa-sort-up text-primary"></i>
+                                    }
+                                    else if (ViewBag.CurrentSort == "position_desc")
+                                    {
+                                        <i class="fas fa-sort-down text-primary"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-sort text-muted"></i>
+                                    }
+                                </a>
+                            </th>
+                            <th>
+                                <a asp-action="Index" 
+                                   asp-route-sortOrder="@ViewBag.StatusSortParam" 
+                                   asp-route-currentFilter="@ViewBag.CurrentFilter"
+                                   asp-route-departmentId="@ViewBag.DepartmentId"
+                                   asp-route-status="@ViewBag.Status"
+                                   class="text-decoration-none text-dark">
+                                    Statut 
+                                    @if (ViewBag.CurrentSort == "status")
+                                    {
+                                        <i class="fas fa-sort-up text-primary"></i>
+                                    }
+                                    else if (ViewBag.CurrentSort == "status_desc")
+                                    {
+                                        <i class="fas fa-sort-down text-primary"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-sort text-muted"></i>
+                                    }
+                                </a>
+                            </th>
+                            <th style="width: 130px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -95,22 +226,36 @@
                                         </div>
                                     }
                                 </td>
-                                <td><strong>@employee.Matricule</strong></td>
-                                <td>@employee.FullName</td>
-                                <td><a href="mailto:@employee.Email">@employee.Email</a></td>
-                                <td>@employee.Department.Name</td>
+                                <td><strong class="text-primary">@employee.Matricule</strong></td>
+                                <td>
+                                    <strong>@employee.FullName</strong>
+                                </td>
+                                <td>
+                                    <a href="mailto:@employee.Email" class="text-decoration-none">
+                                        @employee.Email
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">@employee.Department.Name</span>
+                                </td>
                                 <td>@employee.Position.Title</td>
                                 <td>
                                     @switch (employee.Status)
                                     {
                                         case HRMS.Enums.EmployeeStatus.Actif:
-                                            <span class="badge bg-success">Actif</span>
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check-circle me-1"></i>Actif
+                                            </span>
                                             break;
                                         case HRMS.Enums.EmployeeStatus.Suspendu:
-                                            <span class="badge bg-warning">Suspendu</span>
+                                            <span class="badge bg-warning">
+                                                <i class="fas fa-pause-circle me-1"></i>Suspendu
+                                            </span>
                                             break;
                                         case HRMS.Enums.EmployeeStatus.Démissionné:
-                                            <span class="badge bg-danger">Démissionné</span>
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-times-circle me-1"></i>Démissionné
+                                            </span>
                                             break;
                                     }
                                 </td>
@@ -134,10 +279,51 @@
         }
         else
         {
-            <div class="p-4 text-center text-muted">
-                <i class="fas fa-info-circle fa-2x mb-3"></i>
-                <p class="mb-0">Aucun employé trouvé avec les critères sélectionnés.</p>
+            <div class="p-5 text-center text-muted">
+                <i class="fas fa-info-circle fa-3x mb-3"></i>
+                <h5>Aucun employé trouvé</h5>
+                <p class="mb-0">Aucun employé ne correspond aux critères sélectionnés.</p>
             </div>
         }
     </div>
 </div>
+
+<style>
+    /* Style pour les en-têtes triables */
+    thead th a {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 0;
+        transition: all 0.2s;
+    }
+
+    thead th a:hover {
+        color: #667eea !important;
+    }
+
+    thead th a i {
+        margin-left: 5px;
+        font-size: 0.9em;
+    }
+
+    /* Animation pour les lignes */
+    tbody tr {
+        transition: all 0.2s;
+    }
+
+    tbody tr:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    /* Badge avec icônes */
+    .badge {
+        padding: 6px 12px;
+        font-weight: 500;
+    }
+
+    /* Amélioration des boutons d'action */
+    .btn-group-sm .btn {
+        padding: 5px 10px;
+    }
+</style>

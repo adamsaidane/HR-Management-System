@@ -4,6 +4,7 @@ using HRMS.Service;
 using HRMS.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HRMS.Controllers;
 
@@ -25,10 +26,42 @@ public class EmployeesController : Controller
     }
 
     // GET: Employees
-    public IActionResult Index(string searchString, int? departmentId, EmployeeStatus? status)
+    public IActionResult Index(
+        string searchString, 
+        int? departmentId, 
+        EmployeeStatus? status,
+        string sortOrder,
+        string currentFilter)
     {
-        var employees = _employeeService.GetAllEmployees().AsQueryable();
+        // Conserver les paramètres de tri
+        ViewBag.CurrentSort = sortOrder;
+        ViewBag.MatriculeSortParam = string.IsNullOrEmpty(sortOrder) ? "matricule_desc" : "";
+        ViewBag.NameSortParam = sortOrder == "name" ? "name_desc" : "name";
+        ViewBag.EmailSortParam = sortOrder == "email" ? "email_desc" : "email";
+        ViewBag.DepartmentSortParam = sortOrder == "department" ? "department_desc" : "department";
+        ViewBag.PositionSortParam = sortOrder == "position" ? "position_desc" : "position";
+        ViewBag.HireDateSortParam = sortOrder == "hiredate" ? "hiredate_desc" : "hiredate";
+        ViewBag.StatusSortParam = sortOrder == "status" ? "status_desc" : "status";
 
+        // Reset page si nouveau filtre
+        if (searchString != null)
+        { 
+            searchString = searchString;
+        }
+        else
+        { 
+            searchString = currentFilter;
+        }
+
+        ViewBag.CurrentFilter = searchString;
+
+        // Récupérer tous les employés avec leurs relations
+        var employees = _context.Employees
+            .Include(e => e.Department)
+            .Include(e => e.Position)
+            .AsQueryable();
+
+        // Filtres
         if (!string.IsNullOrEmpty(searchString))
         {
             employees = employees.Where(e =>
@@ -39,16 +72,68 @@ public class EmployeesController : Controller
         }
 
         if (departmentId.HasValue)
+        {
             employees = employees.Where(e => e.DepartmentId == departmentId);
+        }
 
         if (status.HasValue)
-            employees = employees.Where(e => e.Status == status);
+        {
+                employees = employees.Where(e => e.Status == status);
+        }
 
-        ViewBag.Departments = _context.Departments.ToList();
-        ViewBag.SearchString = searchString;
+        // Tri
+        switch (sortOrder)
+        {
+            case "matricule_desc":
+                employees = employees.OrderByDescending(e => e.Matricule);
+                break;
+            case "name":
+                employees = employees.OrderBy(e => e.LastName).ThenBy(e => e.FirstName);
+                break;
+            case "name_desc":
+                employees = employees.OrderByDescending(e => e.LastName).ThenByDescending(e => e.FirstName);
+                break;
+            case "email":
+                employees = employees.OrderBy(e => e.Email);
+                break;
+            case "email_desc":
+                employees = employees.OrderByDescending(e => e.Email);
+                break;
+            case "department":
+                employees = employees.OrderBy(e => e.Department.Name);
+                break;
+            case "department_desc":
+                employees = employees.OrderByDescending(e => e.Department.Name);
+                break;
+            case "position":
+                employees = employees.OrderBy(e => e.Position.Title);
+                break;
+            case "position_desc":
+                employees = employees.OrderByDescending(e => e.Position.Title);
+                break;
+            case "hiredate":
+                employees = employees.OrderBy(e => e.HireDate);
+                break;
+            case "hiredate_desc":
+                employees = employees.OrderByDescending(e => e.HireDate);
+                break;
+            case "status":
+                employees = employees.OrderBy(e => e.Status);
+                break;
+            case "status_desc":
+                employees = employees.OrderByDescending(e => e.Status);
+                break; 
+            default:
+                employees = employees.OrderBy(e => e.Matricule); 
+                break;
+        }
+
+        // Données pour les filtres
+        ViewBag.Departments = _context.Departments.OrderBy(d => d.Name).ToList();
+        ViewBag.SearchString = searchString; 
         ViewBag.DepartmentId = departmentId;
         ViewBag.Status = status;
-
+            
         return View(employees.ToList());
     }
 

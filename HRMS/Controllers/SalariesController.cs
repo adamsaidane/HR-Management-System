@@ -98,6 +98,7 @@ public class SalariesController : Controller
         ViewBag.Bonuses = _salaryService.GetBonusesByEmployee(employeeId);
         ViewBag.Benefits = _salaryService.GetEmployeeBenefits(employeeId);
         ViewBag.TotalBenefits = _salaryService.GetTotalBenefitsValue(employeeId);
+        ViewBag.AllBenefits = _salaryService.GetAllBenefits();
         ViewBag.GrossSalary = _salaryService.CalculateGrossSalary(employeeId);
 
         return View();

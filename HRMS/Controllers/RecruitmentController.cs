@@ -216,6 +216,11 @@ public class RecruitmentController : Controller
     {
         if (!ModelState.IsValid)
         {
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+            foreach (var error in errors) 
+            {
+                Console.WriteLine(error.ErrorMessage);
+            }
             model.Departments = _context.Departments.ToList();
             model.Positions = _context.Positions.ToList();
             ViewBag.Candidate = _recruitmentService.GetCandidateById(candidateId);

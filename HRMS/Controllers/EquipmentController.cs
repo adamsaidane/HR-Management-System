@@ -117,6 +117,7 @@ public class EquipmentController : Controller
     }
 
     // GET: Equipment/EmployeeEquipment/5
+    [HttpGet("Equipment/EmployeeEquipment/{employeeId}")]
     public IActionResult EmployeeEquipment(int employeeId)
     {
         var employee = _context.Employees.Find(employeeId);

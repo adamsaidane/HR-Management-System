@@ -1,5 +1,6 @@
 ﻿using HRMS.Enums;
 using HRMS.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace HRMS.Service;
 
@@ -15,4 +16,11 @@ public interface IEmployeeService
     Task<IEnumerable<Employee>> GetEmployeesByDepartmentAsync(int departmentId);
     Task<IEnumerable<Employee>> GetEmployeesByStatusAsync(EmployeeStatus status);
     Task<decimal> GetEmployeeCurrentSalaryAsync(int employeeId);
+
+    // Abstractions for EmployeesController
+    Task<List<Employee>> GetEmployeesForIndexAsync(string searchString, int? departmentId, EmployeeStatus? status, string sortOrder);
+    Task<List<Department>> GetAllDepartmentsAsync();
+    Task<List<Position>> GetAllPositionsAsync();
+    Task<string?> SaveEmployeePhotoAsync(IFormFile file);
+    Task UploadEmployeeDocumentAsync(int employeeId, string documentType, IFormFile file);
 }

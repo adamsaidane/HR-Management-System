@@ -48,9 +48,9 @@
                 <div class="col-md-6">
                     <label class="form-label">Nouvelle Photo</label>
                     <input type="file" name="photoFile" class="form-control" accept="image/*" />
-                    @if (!string.IsNullOrEmpty(Model.PhotoPath))
+                    @if (!string.IsNullOrEmpty(Model.Photo.FileName))
                     {
-                        <small class="text-muted">Photo actuelle: <img src="@Model.PhotoPath" style="width:30px;height:30px;border-radius:50%;" /></small>
+                        <small class="text-muted">Photo actuelle: <img src="@Model.Photo" style="width:30px;height:30px;border-radius:50%;" /></small>
                     }
                 </div>
 

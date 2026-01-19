@@ -92,10 +92,18 @@ public class EmployeesController : Controller
     // POST: Employees/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Create(EmployeeFormViewModel model, IFormFile photoFile)
+    public IActionResult Create(EmployeeFormViewModel model)
     {
         if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+            foreach (var error in errors)
+            {
+                Console.WriteLine(error.ErrorMessage);
+            }
+
             return View(model);
+        }
 
         var employee = new Employee
         {
@@ -105,23 +113,23 @@ public class EmployeesController : Controller
             Address = model.Address,
             Phone = model.Phone,
             Email = model.Email,
-            DepartmentId = model.DepartmentId,
-            PositionId = model.PositionId,
+            DepartmentId = model.DepartmentId.Value,
+            PositionId = model.PositionId.Value,
             HireDate = model.HireDate,
             ContractType = model.ContractType,
             Status = EmployeeStatus.Actif
         };
 
-        if (photoFile != null && photoFile.Length > 0)
+        if (model.Photo != null && model.Photo.Length > 0)
         {
             var folder = Path.Combine(_environment.WebRootPath, "Content/Photos");
             Directory.CreateDirectory(folder);
 
-            var fileName = Path.GetFileName(photoFile.FileName);
+            var fileName = Path.GetFileName(model.Photo.FileName);
             var path = Path.Combine(folder, fileName);
 
             using var stream = new FileStream(path, FileMode.Create);
-            photoFile.CopyTo(stream);
+            model.Photo.CopyTo(stream);
 
             employee.PhotoPath = "/Content/Photos/" + fileName;
         }

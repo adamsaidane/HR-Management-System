@@ -21,6 +21,7 @@
 
     <ItemGroup>
       <Folder Include="wwwroot\Content\CVs\" />
+      <Folder Include="wwwroot\Content\Photos\" />
     </ItemGroup>
 
 </Project>

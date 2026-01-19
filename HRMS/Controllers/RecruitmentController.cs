@@ -225,8 +225,8 @@ public class RecruitmentController : Controller
             Address = model.Address,
             Phone = model.Phone,
             Email = model.Email,
-            DepartmentId = model.DepartmentId,
-            PositionId = model.PositionId,
+            DepartmentId = model.DepartmentId.Value,
+            PositionId = model.PositionId.Value,
             HireDate = model.HireDate,
             ContractType = model.ContractType,
             Status = EmployeeStatus.Actif

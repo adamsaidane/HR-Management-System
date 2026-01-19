@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using HRMS.Models;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace HRMS.ViewModels;
 
@@ -33,11 +34,11 @@ public class EmployeeFormViewModel
 
     [Required(ErrorMessage = "Le département est requis")]
     [Display(Name = "Département")]
-    public int DepartmentId { get; set; }
+    public int? DepartmentId { get; set; }
 
     [Required(ErrorMessage = "Le poste est requis")]
     [Display(Name = "Poste")]
-    public int PositionId { get; set; }
+    public int? PositionId { get; set; }
 
     [Required(ErrorMessage = "La date d'embauche est requise")]
     [Display(Name = "Date d'embauche")]
@@ -49,11 +50,13 @@ public class EmployeeFormViewModel
     public string ContractType { get; set; }
 
     [Display(Name = "Photo")]
-    public string PhotoPath { get; set; }
+    public IFormFile Photo { get; set; }
 
-    // Listes déroulantes
+    [ValidateNever]
     public IEnumerable<Department> Departments { get; set; }
+    [ValidateNever]
     public IEnumerable<Position> Positions { get; set; }
+    [ValidateNever]
     public List<string> ContractTypes { get; set; } = new List<string> 
     { 
         "CDI", "CDD", "Stage", "Freelance", "Intérim" 

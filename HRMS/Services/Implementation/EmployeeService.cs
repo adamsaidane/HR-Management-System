@@ -61,6 +61,12 @@ public class EmployeeService : IEmployeeService
 
             _context.Employees.Add(employee);
             _context.SaveChanges();
+            
+            var position = _context.Positions
+                .FirstOrDefault(p => p.PositionId == employee.PositionId);
+
+            if (position == null)
+                throw new Exception("Position introuvable");
 
             // Créer le premier enregistrement de salaire
             var salary = new Salary

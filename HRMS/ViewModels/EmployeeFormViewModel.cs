@@ -50,6 +50,7 @@ public class EmployeeFormViewModel
     public string ContractType { get; set; }
 
     [Display(Name = "Photo")]
+    [ValidateNever]
     public IFormFile Photo { get; set; }
 
     [ValidateNever]

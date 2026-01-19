@@ -4,13 +4,13 @@
 }
 
 <div class="page-header mb-4">
-    <h1><i class="fas fa-user-edit me-2"></i>Modifier Employé</h1>
+    <h1><i class="fas fa-user-edit me-2"></i>Modifier l'Employé</h1>
 </div>
 
 <div class="card shadow-sm">
     <div class="card-body">
-        <form method="post" asp-action="Edit" enctype="multipart/form-data">
-            <input type="hidden" asp-for="EmployeeId" />
+        <form method="post" asp-action="Edit" asp-route-id="@Model.EmployeeId" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
             <h4 class="mb-3"><i class="fas fa-user me-2"></i>Informations Personnelles</h4>
@@ -46,11 +46,13 @@
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label">Nouvelle Photo</label>
-                    <input type="file" name="photoFile" class="form-control" accept="image/*" />
-                    @if (!string.IsNullOrEmpty(Model.Photo.FileName))
+                    <label class="form-label" asp-for="Photo">Photo</label>
+                    <input type="file" asp-for="Photo" class="form-control" accept="image/*" data-val="false"/>
+                    @if (ViewBag.CurrentPhoto != null)
                     {
-                        <small class="text-muted">Photo actuelle: <img src="@Model.Photo" style="width:30px;height:30px;border-radius:50%;" /></small>
+                        <div class="mt-2">
+                            <img src="@ViewBag.CurrentPhoto" alt="Photo actuelle" class="img-thumbnail" style="max-height:120px;" />
+                        </div>
                     }
                 </div>
 
@@ -68,7 +70,7 @@
                     <select asp-for="DepartmentId" class="form-select">
                         @foreach (var dept in Model.Departments)
                         {
-                            <option value="@dept.DepartmentId">@dept.Name</option>
+                            <option value="@dept.DepartmentId" selected="@(Model.DepartmentId == dept.DepartmentId)">@dept.Name</option>
                         }
                     </select>
                     <span asp-validation-for="DepartmentId" class="text-danger"></span>
@@ -79,7 +81,7 @@
                     <select asp-for="PositionId" class="form-select">
                         @foreach (var pos in Model.Positions)
                         {
-                            <option value="@pos.PositionId">@pos.Title</option>
+                            <option value="@pos.PositionId" selected="@(Model.PositionId == pos.PositionId)">@pos.Title</option>
                         }
                     </select>
                     <span asp-validation-for="PositionId" class="text-danger"></span>
@@ -96,7 +98,7 @@
                     <select asp-for="ContractType" class="form-select">
                         @foreach (var type in Model.ContractTypes)
                         {
-                            <option value="@type">@type</option>
+                            <option value="@type" selected="@(Model.ContractType == type)">@type</option>
                         }
                     </select>
                     <span asp-validation-for="ContractType" class="text-danger"></span>
@@ -105,7 +107,7 @@
 
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary btn-lg">
-                    <i class="fas fa-save me-2"></i>Enregistrer
+                    <i class="fas fa-save me-2"></i>Enregistrer les modifications
                 </button>
                 <a asp-action="Details" asp-route-id="@Model.EmployeeId" class="btn btn-outline-secondary btn-lg">
                     <i class="fas fa-times me-2"></i>Annuler

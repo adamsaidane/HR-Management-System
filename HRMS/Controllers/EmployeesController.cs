@@ -225,6 +225,81 @@ public class EmployeesController : Controller
         return RedirectToAction(nameof(Details), new { id = employee.EmployeeId });
     }
 
+    // GET: Employees/Edit/5
+    public IActionResult Edit(int id)
+    {
+        var employee = _employeeService.GetEmployeeById(id);
+        if (employee == null)
+            return NotFound();
+
+        var model = new EmployeeFormViewModel
+        {
+            EmployeeId = employee.EmployeeId,
+            FirstName = employee.FirstName,
+            LastName = employee.LastName,
+            DateOfBirth = employee.DateOfBirth,
+            Address = employee.Address,
+            Phone = employee.Phone,
+            Email = employee.Email,
+            DepartmentId = employee.DepartmentId,
+            PositionId = employee.PositionId,
+            HireDate = employee.HireDate,
+            ContractType = employee.ContractType,
+            Departments = _context.Departments.ToList(),
+            Positions = _context.Positions.ToList()
+        };
+
+        return View(model);
+    }
+
+    // POST: Employees/Edit/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Edit(int id, EmployeeFormViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            model.Departments = _context.Departments.ToList();
+            model.Positions = _context.Positions.ToList();
+            return View(model);
+        }
+
+        var employee = _employeeService.GetEmployeeById(id);
+        if (employee == null)
+            return NotFound();
+
+        // Mettre à jour les champs éditables
+        employee.FirstName = model.FirstName;
+        employee.LastName = model.LastName;
+        employee.DateOfBirth = model.DateOfBirth;
+        employee.Address = model.Address;
+        employee.Phone = model.Phone;
+        employee.Email = model.Email;
+        employee.DepartmentId = model.DepartmentId!.Value;
+        employee.PositionId = model.PositionId!.Value;
+        employee.HireDate = model.HireDate;
+        employee.ContractType = model.ContractType;
+
+        // Gestion de la photo (optionnelle)
+        if (model.Photo != null && model.Photo.Length > 0)
+        {
+            var folder = Path.Combine(_environment.WebRootPath, "Content/Photos");
+            Directory.CreateDirectory(folder);
+
+            var fileName = Path.GetFileName(model.Photo.FileName);
+            var path = Path.Combine(folder, fileName);
+
+            using var stream = new FileStream(path, FileMode.Create);
+            model.Photo.CopyTo(stream);
+
+            employee.PhotoPath = "/Content/Photos/" + fileName;
+        }
+
+        _employeeService.UpdateEmployee(employee);
+        TempData["Success"] = "Employé modifié avec succès!";
+        return RedirectToAction(nameof(Details), new { id = employee.EmployeeId });
+    }
+
     // POST: Employees/UploadDocument
     [HttpPost]
     [ValidateAntiForgeryToken]

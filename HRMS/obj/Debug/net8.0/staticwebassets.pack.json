@@ -5,6 +5,10 @@
       "PackagePath": "staticwebassets\\HRMS.bundle.scp.css"
     },
     {
+      "Id": "C:\\Workspace\\HRMS\\HRMS\\wwwroot\\Content\\Photos\\577108976_2587779951588471_2953106268853911080_n.jpg",
+      "PackagePath": "staticwebassets\\Content\\Photos\\577108976_2587779951588471_2953106268853911080_n.jpg"
+    },
+    {
       "Id": "C:\\Workspace\\HRMS\\HRMS\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },

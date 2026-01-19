@@ -72,8 +72,8 @@
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 60px;">Photo</th>
-                            <th style="width: 120px;">
+                            <th style="width: 60px;"  class="align-middle">Photo</th>
+                            <th style="width: 120px;"  class="align-middle">
                                 <a asp-action="Index" 
                                    asp-route-sortOrder="@ViewBag.MatriculeSortParam" 
                                    asp-route-currentFilter="@ViewBag.CurrentFilter"
@@ -205,14 +205,14 @@
                                     }
                                 </a>
                             </th>
-                            <th style="width: 130px;">Actions</th>
+                            <th style="width: 130px;"  class="align-middle">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var employee in Model)
                         {
                             <tr>
-                                <td>
+                                <td  class="align-middle">
                                     @if (!string.IsNullOrEmpty(employee.PhotoPath))
                                     {
                                         <img src="@employee.PhotoPath" alt="Photo" class="rounded-circle" 
@@ -226,20 +226,20 @@
                                         </div>
                                     }
                                 </td>
-                                <td><strong class="text-primary">@employee.Matricule</strong></td>
-                                <td>
+                                <td class="align-middle"><strong class="text-primary">@employee.Matricule</strong></td>
+                                <td class="align-middle">
                                     <strong>@employee.FullName</strong>
                                 </td>
-                                <td>
+                                <td class="align-middle">
                                     <a href="mailto:@employee.Email" class="text-decoration-none">
                                         @employee.Email
                                     </a>
                                 </td>
-                                <td>
+                                <td class="align-middle">
                                     <span class="badge bg-info">@employee.Department.Name</span>
                                 </td>
-                                <td>@employee.Position.Title</td>
-                                <td>
+                                <td class="align-middle">@employee.Position.Title</td>
+                                <td class="align-middle">
                                     @switch (employee.Status)
                                     {
                                         case HRMS.Enums.EmployeeStatus.Actif:
@@ -259,7 +259,7 @@
                                             break;
                                     }
                                 </td>
-                                <td>
+                                <td class="align-middle">
                                     <div class="btn-group btn-group-sm">
                                         <a asp-action="Details" asp-route-id="@employee.EmployeeId" 
                                            class="btn btn-info" title="Détails">

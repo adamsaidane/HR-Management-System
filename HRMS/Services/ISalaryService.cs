@@ -4,25 +4,18 @@ namespace HRMS.Service;
 
 public interface ISalaryService
 {
-    // Salaires
-    decimal GetCurrentSalary(int employeeId);
-    IEnumerable<Salary> GetSalaryHistory(int employeeId);
-    void AddSalary(Salary salary);
-    void UpdateSalary(int employeeId, decimal newSalary, string justification);
-
-    // Primes
-    IEnumerable<Bonus> GetBonusesByEmployee(int employeeId);
-    void AddBonus(Bonus bonus);
-    decimal GetTotalBonuses(int employeeId, int year);
-
-    // Avantages
-    IEnumerable<Benefit> GetAllBenefits();
-    IEnumerable<EmployeeBenefit> GetEmployeeBenefits(int employeeId);
-    void AssignBenefitToEmployee(int employeeId, int benefitId, DateTime startDate);
-    void RemoveBenefitFromEmployee(int employeeBenefitId, DateTime endDate);
-    decimal GetTotalBenefitsValue(int employeeId);
-
-    // Calculs
-    decimal CalculateGrossSalary(int employeeId);
-    decimal CalculateTotalCompensation(int employeeId, int year);
+    Task<decimal> GetCurrentSalaryAsync(int employeeId);
+    Task<IEnumerable<Salary>> GetSalaryHistoryAsync(int employeeId);
+    Task AddSalaryAsync(Salary salary);
+    Task UpdateSalaryAsync(int employeeId, decimal newSalary, string justification);
+    Task<IEnumerable<Bonus>> GetBonusesByEmployeeAsync(int employeeId);
+    Task AddBonusAsync(Bonus bonus);
+    Task<decimal> GetTotalBonusesAsync(int employeeId, int year);
+    Task<IEnumerable<Benefit>> GetAllBenefitsAsync();
+    Task<IEnumerable<EmployeeBenefit>> GetEmployeeBenefitsAsync(int employeeId);
+    Task AssignBenefitToEmployeeAsync(int employeeId, int benefitId, DateTime startDate);
+    Task RemoveBenefitFromEmployeeAsync(int employeeBenefitId, DateTime endDate);
+    Task<decimal> GetTotalBenefitsValueAsync(int employeeId);
+    Task<decimal> CalculateGrossSalaryAsync(int employeeId);
+    Task<decimal> CalculateTotalCompensationAsync(int employeeId, int year);
 }

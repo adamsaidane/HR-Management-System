@@ -2,6 +2,7 @@
 using HRMS.Models;
 using HRMS.Service;
 using HRMS.ViewModels;
+using HRMS.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,18 +12,18 @@ namespace HRMS.Controllers;
 public class EquipmentController : Controller
 {
     private readonly IEquipmentService _equipmentService;
-    private readonly HRMSDbContext _context;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public EquipmentController(IEquipmentService equipmentService, HRMSDbContext context)
+    public EquipmentController(IEquipmentService equipmentService, IUnitOfWork unitOfWork)
     {
         _equipmentService = equipmentService;
-        _context = context;
+        _unitOfWork = unitOfWork;
     }
 
     // GET: Equipment
-    public IActionResult Index(string equipmentType, EquipmentStatus? status)
+    public async Task<IActionResult> Index(string equipmentType, EquipmentStatus? status)
     {
-        var equipment = _equipmentService.GetAllEquipment().AsQueryable();
+        var equipment = await _equipmentService.GetAllEquipmentAsync();
 
         if (!string.IsNullOrEmpty(equipmentType))
             equipment = equipment.Where(e => e.EquipmentType == equipmentType);
@@ -42,13 +43,13 @@ public class EquipmentController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "AdminRH")]
-    public IActionResult Create(Equipment equipment)
+    public async Task<IActionResult> Create(Equipment equipment)
     {
         if (ModelState.IsValid)
         {
             try
             {
-                _equipmentService.CreateEquipment(equipment);
+                await _equipmentService.CreateEquipmentAsync(equipment);
                 TempData["Success"] = "Équipement créé avec succès!";
                 return RedirectToAction(nameof(Index));
             }
@@ -62,12 +63,12 @@ public class EquipmentController : Controller
 
     // GET: Equipment/AssignEquipment
     [Authorize(Roles = "AdminRH")]
-    public IActionResult AssignEquipment()
+    public async Task<IActionResult> AssignEquipment()
     {
         var viewModel = new EquipmentAssignmentViewModel
         {
-            AvailableEquipment = _equipmentService.GetAvailableEquipment(),
-            Employees = _context.Employees.Where(e => e.Status == EmployeeStatus.Actif).ToList()
+            AvailableEquipment = (await _equipmentService.GetAvailableEquipmentAsync()).ToList(),
+            Employees = (await _unitOfWork.Employees.FindAsync(e => e.Status == EmployeeStatus.Actif)).ToList()
         };
         return View(viewModel);
     }
@@ -76,13 +77,17 @@ public class EquipmentController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "AdminRH")]
-    public IActionResult AssignEquipment(EquipmentAssignmentViewModel model)
+    public async Task<IActionResult> AssignEquipment(EquipmentAssignmentViewModel model)
     {
         if (ModelState.IsValid)
         {
             try
             {
-                _equipmentService.AssignEquipment(model.EquipmentId, model.EmployeeId, model.Condition, model.Notes);
+                await _equipmentService.AssignEquipmentAsync(
+                    model.EquipmentId, 
+                    model.EmployeeId, 
+                    model.Condition, 
+                    model.Notes);
                 TempData["Success"] = "Équipement affecté avec succès!";
                 return RedirectToAction(nameof(Index));
             }
@@ -92,8 +97,8 @@ public class EquipmentController : Controller
             }
         }
 
-        model.AvailableEquipment = _equipmentService.GetAvailableEquipment();
-        model.Employees = _context.Employees.Where(e => e.Status == EmployeeStatus.Actif).ToList();
+        model.AvailableEquipment = (await _equipmentService.GetAvailableEquipmentAsync()).ToList();
+        model.Employees = (await _unitOfWork.Employees.FindAsync(e => e.Status == EmployeeStatus.Actif)).ToList();
         return View(model);
     }
 
@@ -101,11 +106,11 @@ public class EquipmentController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "AdminRH")]
-    public IActionResult ReturnEquipment(int assignmentId, string condition)
+    public async Task<IActionResult> ReturnEquipment(int assignmentId, string condition)
     {
         try
         {
-            _equipmentService.ReturnEquipment(assignmentId, DateTime.Now, condition);
+            await _equipmentService.ReturnEquipmentAsync(assignmentId, DateTime.Now, condition);
             TempData["Success"] = "Équipement restitué avec succès!";
         }
         catch (Exception ex)
@@ -118,14 +123,14 @@ public class EquipmentController : Controller
 
     // GET: Equipment/EmployeeEquipment/5
     [HttpGet("Equipment/EmployeeEquipment/{employeeId}")]
-    public IActionResult EmployeeEquipment(int employeeId)
+    public async Task<IActionResult> EmployeeEquipment(int employeeId)
     {
-        var employee = _context.Employees.Find(employeeId);
+        var employee = await _unitOfWork.Employees.GetByIdAsync(employeeId);
         if (employee == null)
             return NotFound();
 
         ViewBag.Employee = employee;
-        var assignments = _equipmentService.GetEmployeeEquipment(employeeId);
+        var assignments = await _equipmentService.GetEmployeeEquipmentAsync(employeeId);
         return View(assignments);
     }
 }

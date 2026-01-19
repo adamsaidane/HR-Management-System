@@ -4,23 +4,17 @@ namespace HRMS.Service;
 
 public interface IEquipmentService
 {
-    // Equipment CRUD
-    IEnumerable<Equipment> GetAllEquipment();
-    IEnumerable<Equipment> GetAvailableEquipment();
-    Equipment GetEquipmentById(int id);
-    void CreateEquipment(Equipment equipment);
-    void UpdateEquipment(Equipment equipment);
-    void DeleteEquipment(int id);
-
-    // Assignments
-    IEnumerable<EquipmentAssignment> GetEmployeeEquipment(int employeeId);
-    IEnumerable<EquipmentAssignment> GetEquipmentHistory(int equipmentId);
-    void AssignEquipment(int equipmentId, int employeeId, string condition, string notes);
-    void ReturnEquipment(int assignmentId, DateTime returnDate, string condition);
-
-    // Statistics
-    int GetTotalEquipment();
-    int GetAssignedEquipmentCount();
-    int GetAvailableEquipmentCount();
-    Dictionary<string, int> GetEquipmentByType();
+    Task<IEnumerable<Equipment>> GetAllEquipmentAsync();
+    Task<IEnumerable<Equipment>> GetAvailableEquipmentAsync();
+    Task<Equipment?> GetEquipmentByIdAsync(int id);
+    Task CreateEquipmentAsync(Equipment equipment);
+    Task UpdateEquipmentAsync(Equipment equipment);
+    Task DeleteEquipmentAsync(int id);
+    Task<IEnumerable<EquipmentAssignment>> GetEmployeeEquipmentAsync(int employeeId);
+    Task<IEnumerable<EquipmentAssignment>> GetEquipmentHistoryAsync(int equipmentId);
+    Task AssignEquipmentAsync(int equipmentId, int employeeId, string condition, string notes);
+    Task ReturnEquipmentAsync(int assignmentId, DateTime returnDate, string condition);
+    Task<int> GetTotalEquipmentAsync();
+    Task<int> GetAssignedEquipmentCountAsync();
+    Task<int> GetAvailableEquipmentCountAsync();
 }

@@ -1,9 +1,7 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using HRMS.Models;
 using HRMS.Service;
 using HRMS.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HRMS.Controllers;
 
@@ -18,9 +16,9 @@ public class HomeController : Controller
     }
 
     // GET: Home/Index - Dashboard
-    public ActionResult Index()
+    public async Task<ActionResult> Index()
     {
-        var stats = _dashboardService.GetDashboardStatistics();
+        var stats = await _dashboardService.GetDashboardStatisticsAsync();
 
         var viewModel = new DashboardViewModel
         {

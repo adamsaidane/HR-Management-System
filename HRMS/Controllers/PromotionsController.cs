@@ -1,7 +1,7 @@
 ﻿using HRMS.Enums;
-using HRMS.Models;
 using HRMS.Service;
 using HRMS.ViewModels;
+using HRMS.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,31 +11,29 @@ namespace HRMS.Controllers;
 public class PromotionsController : Controller
 {
     private readonly IPromotionService _promotionService;
-    private readonly ISalaryService _salaryService;
-    private readonly HRMSDbContext _context;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public PromotionsController(IPromotionService promotionService, ISalaryService salaryService, HRMSDbContext context)
+    public PromotionsController(IPromotionService promotionService, IUnitOfWork unitOfWork)
     {
         _promotionService = promotionService;
-        _salaryService = salaryService;
-        _context = context;
+        _unitOfWork = unitOfWork;
     }
 
     // GET: Promotions
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var promotions = _promotionService.GetAllPromotions();
+        var promotions = await _promotionService.GetAllPromotionsAsync();
         return View(promotions);
     }
 
     // GET: Promotions/Create
     [Authorize(Roles = "AdminRH")]
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
         var viewModel = new PromotionFormViewModel
         {
-            Employees = _context.Employees.Where(e => e.Status == EmployeeStatus.Actif).ToList(),
-            Positions = _context.Positions.ToList(),
+            Employees = (await _unitOfWork.Employees.FindAsync(e => e.Status == EmployeeStatus.Actif)).ToList(),
+            Positions = (await _unitOfWork.Positions.GetAllAsync()).ToList(),
             PromotionDate = DateTime.Today
         };
 
@@ -46,13 +44,13 @@ public class PromotionsController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "AdminRH")]
-    public IActionResult Create(PromotionFormViewModel model)
+    public async Task<IActionResult> Create(PromotionFormViewModel model)
     {
         if (ModelState.IsValid)
         {
             try
             {
-                _promotionService.ProcessPromotion(
+                await _promotionService.ProcessPromotionAsync(
                     model.EmployeeId,
                     model.NewPositionId,
                     model.NewSalary,
@@ -67,21 +65,21 @@ public class PromotionsController : Controller
             }
         }
 
-        model.Employees = _context.Employees.Where(e => e.Status == EmployeeStatus.Actif).ToList();
-        model.Positions = _context.Positions.ToList();
+        model.Employees = (await _unitOfWork.Employees.FindAsync(e => e.Status == EmployeeStatus.Actif)).ToList();
+        model.Positions = (await _unitOfWork.Positions.GetAllAsync()).ToList();
         return View(model);
     }
 
     // GET: Promotions/EmployeePromotions/5
     [HttpGet("Promotions/EmployeePromotions/{employeeId}")]
-    public IActionResult EmployeePromotions(int employeeId)
+    public async Task<IActionResult> EmployeePromotions(int employeeId)
     {
-        var employee = _context.Employees.Find(employeeId);
+        var employee = await _unitOfWork.Employees.GetByIdAsync(employeeId);
         if (employee == null)
             return NotFound();
 
         ViewBag.Employee = employee;
-        var promotions = _promotionService.GetEmployeePromotions(employeeId);
+        var promotions = await _promotionService.GetEmployeePromotionsAsync(employeeId);
         return View(promotions);
     }
 }

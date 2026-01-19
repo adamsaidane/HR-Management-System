@@ -1,61 +1,59 @@
-﻿namespace HRMS.Controllers;
-
-using HRMS.Enums;
+﻿using HRMS.Enums;
 using HRMS.Models;
 using HRMS.Service;
 using HRMS.ViewModels;
+using HRMS.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
+namespace HRMS.Controllers;
 
 [Authorize]
 public class RecruitmentController : Controller
 {
     private readonly IRecruitmentService _recruitmentService;
-    private readonly HRMSDbContext _context;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IWebHostEnvironment _environment;
 
     public RecruitmentController(
         IRecruitmentService recruitmentService,
-        HRMSDbContext context,
+        IUnitOfWork unitOfWork,
         IWebHostEnvironment environment)
     {
         _recruitmentService = recruitmentService;
-        _context = context;
+        _unitOfWork = unitOfWork;
         _environment = environment;
     }
 
     // ==================== Offres d'emploi ====================
 
-    public IActionResult JobOffers()
+    public async Task<IActionResult> JobOffers()
     {
-        var jobOffers = _recruitmentService.GetAllJobOffers();
+        var jobOffers = await _recruitmentService.GetAllJobOffersAsync();
         return View(jobOffers);
     }
 
     [Authorize(Roles = "AdminRH")]
-    public IActionResult CreateJobOffer()
+    public async Task<IActionResult> CreateJobOffer()
     {
-        ViewBag.Departments = _context.Departments.ToList();
-        ViewBag.Positions = _context.Positions.ToList();
+        ViewBag.Departments = await _unitOfWork.Departments.GetAllAsync();
+        ViewBag.Positions = await _unitOfWork.Positions.GetAllAsync();
         return View();
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "AdminRH")]
-    public IActionResult CreateJobOffer(JobOffer model)
+    public async Task<IActionResult> CreateJobOffer(JobOffer model)
     {
         if (!ModelState.IsValid)
         {
-            var errors = ModelState.Values.SelectMany(v => v.Errors);
-            foreach (var error in errors) 
-            {
-                Console.WriteLine(error.ErrorMessage);
-            }
+            ViewBag.Departments = await _unitOfWork.Departments.GetAllAsync();
+            ViewBag.Positions = await _unitOfWork.Positions.GetAllAsync();
             return View(model);
         }
-        
-        _recruitmentService.CreateJobOffer(model);
+
+        await _recruitmentService.CreateJobOfferAsync(model);
         TempData["Success"] = "Offre d'emploi créée avec succès!";
         return RedirectToAction(nameof(JobOffers));
     }
@@ -63,56 +61,51 @@ public class RecruitmentController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "AdminRH")]
-    public IActionResult CloseJobOffer(int id)
+    public async Task<IActionResult> CloseJobOffer(int id)
     {
-        _recruitmentService.CloseJobOffer(id);
+        await _recruitmentService.CloseJobOfferAsync(id);
         TempData["Success"] = "Offre fermée avec succès!";
         return RedirectToAction(nameof(JobOffers));
     }
 
     // ==================== Candidats ====================
 
-    public IActionResult Candidates(int? jobOfferId)
+    public async Task<IActionResult> Candidates(int? jobOfferId)
     {
         var candidates = jobOfferId.HasValue
-            ? _recruitmentService.GetCandidatesByJobOffer(jobOfferId.Value)
-            : _recruitmentService.GetAllCandidates();
+            ? await _recruitmentService.GetCandidatesByJobOfferAsync(jobOfferId.Value)
+            : await _recruitmentService.GetAllCandidatesAsync();
 
-        ViewBag.JobOffers = _context.JobOffers.ToList();
+        ViewBag.JobOffers = await _unitOfWork.JobOffers.GetAllAsync();
         ViewBag.SelectedJobOffer = jobOfferId;
         return View(candidates);
     }
 
-    public IActionResult CandidateDetails(int id)
+    public async Task<IActionResult> CandidateDetails(int id)
     {
-        var candidate = _recruitmentService.GetCandidateById(id);
+        var candidate = await _recruitmentService.GetCandidateByIdAsync(id);
         if (candidate == null)
             return NotFound();
 
-        ViewBag.Interviews = _recruitmentService.GetInterviewsByCandidate(id);
+        ViewBag.Interviews = await _recruitmentService.GetInterviewsByCandidateAsync(id);
         return View(candidate);
     }
 
-    public IActionResult CreateCandidate()
+    public async Task<IActionResult> CreateCandidate()
     {
         return View(new CandidateFormViewModel
         {
-            JobOffers = _recruitmentService.GetActiveJobOffers()
+            JobOffers = (await _recruitmentService.GetActiveJobOffersAsync()).ToList()
         });
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult CreateCandidate(CandidateFormViewModel model)
+    public async Task<IActionResult> CreateCandidate(CandidateFormViewModel model)
     {
         if (!ModelState.IsValid)
         {
-            var errors = ModelState.Values.SelectMany(v => v.Errors);
-            foreach (var error in errors) 
-            {
-                Console.WriteLine(error.ErrorMessage);
-            }
-            model.JobOffers = _recruitmentService.GetActiveJobOffers();
+            model.JobOffers = (await _recruitmentService.GetActiveJobOffersAsync()).ToList();
             return View(model);
         }
 
@@ -135,12 +128,12 @@ public class RecruitmentController : Controller
             var path = Path.Combine(folder, fileName);
 
             using var stream = new FileStream(path, FileMode.Create);
-            model.CVFile.CopyTo(stream);
+            await model.CVFile.CopyToAsync(stream);
 
             candidate.CVPath = "/Content/CVs/" + fileName;
         }
 
-        _recruitmentService.CreateCandidate(candidate);
+        await _recruitmentService.CreateCandidateAsync(candidate);
         TempData["Success"] = "Candidature enregistrée avec succès!";
         return RedirectToAction(nameof(Candidates));
     }
@@ -148,9 +141,9 @@ public class RecruitmentController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "AdminRH,Manager")]
-    public IActionResult UpdateCandidateStatus(int candidateId, CandidateStatus status)
+    public async Task<IActionResult> UpdateCandidateStatus(int candidateId, CandidateStatus status)
     {
-        _recruitmentService.UpdateCandidateStatus(candidateId, status);
+        await _recruitmentService.UpdateCandidateStatusAsync(candidateId, status);
         TempData["Success"] = "Statut mis à jour!";
         return RedirectToAction(nameof(CandidateDetails), new { id = candidateId });
     }
@@ -158,9 +151,9 @@ public class RecruitmentController : Controller
     // ==================== Entretiens ====================
 
     [Authorize(Roles = "AdminRH,Manager")]
-    public IActionResult ScheduleInterview(int candidateId)
+    public async Task<IActionResult> ScheduleInterview(int candidateId)
     {
-        var candidate = _recruitmentService.GetCandidateById(candidateId);
+        var candidate = await _recruitmentService.GetCandidateByIdAsync(candidateId);
         if (candidate == null)
             return NotFound();
 
@@ -176,20 +169,15 @@ public class RecruitmentController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "AdminRH,Manager")]
-    public IActionResult ScheduleInterview(Interview interview)
+    public async Task<IActionResult> ScheduleInterview(Interview interview)
     {
         if (!ModelState.IsValid)
         {
-            var errors = ModelState.Values.SelectMany(v => v.Errors);
-            foreach (var error in errors) 
-            {
-                Console.WriteLine(error.ErrorMessage);
-            }
-            ViewBag.Candidate = _recruitmentService.GetCandidateById(interview.CandidateId);
+            ViewBag.Candidate = await _recruitmentService.GetCandidateByIdAsync(interview.CandidateId);
             return View(interview);
         }
 
-        _recruitmentService.ScheduleInterview(interview);
+        await _recruitmentService.ScheduleInterviewAsync(interview);
         TempData["Success"] = "Entretien programmé avec succès!";
         return RedirectToAction(nameof(CandidateDetails), new { id = interview.CandidateId });
     }
@@ -197,9 +185,9 @@ public class RecruitmentController : Controller
     // ==================== Conversion Candidat -> Employé ====================
 
     [Authorize(Roles = "AdminRH")]
-    public IActionResult ConvertToEmployee(int candidateId)
+    public async Task<IActionResult> ConvertToEmployee(int candidateId)
     {
-        var candidate = _recruitmentService.GetCandidateById(candidateId);
+        var candidate = await _recruitmentService.GetCandidateByIdAsync(candidateId);
         if (candidate == null)
             return NotFound();
 
@@ -213,26 +201,21 @@ public class RecruitmentController : Controller
             Phone = candidate.Phone,
             Address = candidate.Address,
             HireDate = DateTime.Today,
-            Departments = _context.Departments.ToList(),
-            Positions = _context.Positions.ToList()
+            Departments = (await _unitOfWork.Departments.GetAllAsync()).ToList(),
+            Positions = (await _unitOfWork.Positions.GetAllAsync()).ToList()
         });
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "AdminRH")]
-    public IActionResult ConvertToEmployee(int candidateId, EmployeeFormViewModel model)
+    public async Task<IActionResult> ConvertToEmployee(int candidateId, EmployeeFormViewModel model)
     {
         if (!ModelState.IsValid)
         {
-            var errors = ModelState.Values.SelectMany(v => v.Errors);
-            foreach (var error in errors) 
-            {
-                Console.WriteLine(error.ErrorMessage);
-            }
-            model.Departments = _context.Departments.ToList();
-            model.Positions = _context.Positions.ToList();
-            ViewBag.Candidate = _recruitmentService.GetCandidateById(candidateId);
+            model.Departments = (await _unitOfWork.Departments.GetAllAsync()).ToList();
+            model.Positions = (await _unitOfWork.Positions.GetAllAsync()).ToList();
+            ViewBag.Candidate = await _recruitmentService.GetCandidateByIdAsync(candidateId);
             return View(model);
         }
 
@@ -251,7 +234,7 @@ public class RecruitmentController : Controller
             Status = EmployeeStatus.Actif
         };
 
-        _recruitmentService.ConvertCandidateToEmployee(candidateId, employee);
+        await _recruitmentService.ConvertCandidateToEmployeeAsync(candidateId, employee);
 
         TempData["Success"] = "Candidat converti en employé avec succès!";
         return RedirectToAction("Details", "Employees", new { id = employee.EmployeeId });

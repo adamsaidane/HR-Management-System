@@ -2,9 +2,9 @@
 using HRMS.Models;
 using HRMS.Service;
 using HRMS.ViewModels;
+using HRMS.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace HRMS.Controllers;
 
@@ -12,28 +12,30 @@ namespace HRMS.Controllers;
 public class EmployeesController : Controller
 {
     private readonly IEmployeeService _employeeService;
-    private readonly HRMSDbContext _context;
+    private readonly ISalaryService _salaryService;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IWebHostEnvironment _environment;
 
     public EmployeesController(
         IEmployeeService employeeService,
-        HRMSDbContext context,
+        ISalaryService salaryService,
+        IUnitOfWork unitOfWork,
         IWebHostEnvironment environment)
     {
         _employeeService = employeeService;
-        _context = context;
+        _salaryService = salaryService;
+        _unitOfWork = unitOfWork;
         _environment = environment;
     }
 
     // GET: Employees
-    public IActionResult Index(
-        string searchString, 
-        int? departmentId, 
+    public async Task<IActionResult> Index(
+        string searchString,
+        int? departmentId,
         EmployeeStatus? status,
         string sortOrder,
         string currentFilter)
     {
-        // Conserver les paramètres de tri
         ViewBag.CurrentSort = sortOrder;
         ViewBag.MatriculeSortParam = string.IsNullOrEmpty(sortOrder) ? "matricule_desc" : "";
         ViewBag.NameSortParam = sortOrder == "name" ? "name_desc" : "name";
@@ -43,23 +45,18 @@ public class EmployeesController : Controller
         ViewBag.HireDateSortParam = sortOrder == "hiredate" ? "hiredate_desc" : "hiredate";
         ViewBag.StatusSortParam = sortOrder == "status" ? "status_desc" : "status";
 
-        // Reset page si nouveau filtre
         if (searchString != null)
-        { 
+        {
             searchString = searchString;
         }
         else
-        { 
+        {
             searchString = currentFilter;
         }
 
         ViewBag.CurrentFilter = searchString;
 
-        // Récupérer tous les employés avec leurs relations
-        var employees = _context.Employees
-            .Include(e => e.Department)
-            .Include(e => e.Position)
-            .AsQueryable();
+        var employees = await _unitOfWork.Employees.GetQueryableWithIncludes();
 
         // Filtres
         if (!string.IsNullOrEmpty(searchString))
@@ -78,83 +75,52 @@ public class EmployeesController : Controller
 
         if (status.HasValue)
         {
-                employees = employees.Where(e => e.Status == status);
+            employees = employees.Where(e => e.Status == status);
         }
 
         // Tri
-        switch (sortOrder)
+        employees = sortOrder switch
         {
-            case "matricule_desc":
-                employees = employees.OrderByDescending(e => e.Matricule);
-                break;
-            case "name":
-                employees = employees.OrderBy(e => e.LastName).ThenBy(e => e.FirstName);
-                break;
-            case "name_desc":
-                employees = employees.OrderByDescending(e => e.LastName).ThenByDescending(e => e.FirstName);
-                break;
-            case "email":
-                employees = employees.OrderBy(e => e.Email);
-                break;
-            case "email_desc":
-                employees = employees.OrderByDescending(e => e.Email);
-                break;
-            case "department":
-                employees = employees.OrderBy(e => e.Department.Name);
-                break;
-            case "department_desc":
-                employees = employees.OrderByDescending(e => e.Department.Name);
-                break;
-            case "position":
-                employees = employees.OrderBy(e => e.Position.Title);
-                break;
-            case "position_desc":
-                employees = employees.OrderByDescending(e => e.Position.Title);
-                break;
-            case "hiredate":
-                employees = employees.OrderBy(e => e.HireDate);
-                break;
-            case "hiredate_desc":
-                employees = employees.OrderByDescending(e => e.HireDate);
-                break;
-            case "status":
-                employees = employees.OrderBy(e => e.Status);
-                break;
-            case "status_desc":
-                employees = employees.OrderByDescending(e => e.Status);
-                break; 
-            default:
-                employees = employees.OrderBy(e => e.Matricule); 
-                break;
-        }
+            "matricule_desc" => employees.OrderByDescending(e => e.Matricule),
+            "name" => employees.OrderBy(e => e.LastName).ThenBy(e => e.FirstName),
+            "name_desc" => employees.OrderByDescending(e => e.LastName).ThenByDescending(e => e.FirstName),
+            "email" => employees.OrderBy(e => e.Email),
+            "email_desc" => employees.OrderByDescending(e => e.Email),
+            "department" => employees.OrderBy(e => e.Department.Name),
+            "department_desc" => employees.OrderByDescending(e => e.Department.Name),
+            "position" => employees.OrderBy(e => e.Position.Title),
+            "position_desc" => employees.OrderByDescending(e => e.Position.Title),
+            "hiredate" => employees.OrderBy(e => e.HireDate),
+            "hiredate_desc" => employees.OrderByDescending(e => e.HireDate),
+            "status" => employees.OrderBy(e => e.Status),
+            "status_desc" => employees.OrderByDescending(e => e.Status),
+            _ => employees.OrderBy(e => e.Matricule)
+        };
 
-        // Données pour les filtres
-        ViewBag.Departments = _context.Departments.OrderBy(d => d.Name).ToList();
-        ViewBag.SearchString = searchString; 
+        ViewBag.Departments = (await _unitOfWork.Departments.GetAllAsync()).OrderBy(d => d.Name).ToList();
+        ViewBag.SearchString = searchString;
         ViewBag.DepartmentId = departmentId;
         ViewBag.Status = status;
-            
+
         return View(employees.ToList());
     }
 
     // GET: Employees/Details/5
-    public IActionResult Details(int id)
+    public async Task<IActionResult> Details(int id)
     {
-        var employee = _employeeService.GetEmployeeById(id);
+        var employee = await _employeeService.GetEmployeeByIdAsync(id);
         if (employee == null)
             return NotFound();
-
-        var salaryService = new SalaryService(_context);
 
         var viewModel = new EmployeeDetailsViewModel
         {
             Employee = employee,
-            CurrentSalary = salaryService.GetCurrentSalary(id),
-            TotalBenefits = salaryService.GetTotalBenefitsValue(id),
-            GrossSalary = salaryService.CalculateGrossSalary(id),
-            SalaryHistory = salaryService.GetSalaryHistory(id).ToList(),
-            Bonuses = salaryService.GetBonusesByEmployee(id).ToList(),
-            Benefits = salaryService.GetEmployeeBenefits(id).ToList(),
+            CurrentSalary = await _salaryService.GetCurrentSalaryAsync(id),
+            TotalBenefits = await _salaryService.GetTotalBenefitsValueAsync(id),
+            GrossSalary = await _salaryService.CalculateGrossSalaryAsync(id),
+            SalaryHistory = (await _salaryService.GetSalaryHistoryAsync(id)).ToList(),
+            Bonuses = (await _salaryService.GetBonusesByEmployeeAsync(id)).ToList(),
+            Benefits = (await _salaryService.GetEmployeeBenefitsAsync(id)).ToList(),
             Equipments = employee.EquipmentAssignments.ToList(),
             Promotions = employee.Promotions.ToList(),
             Documents = employee.Documents.ToList()
@@ -164,12 +130,12 @@ public class EmployeesController : Controller
     }
 
     // GET: Employees/Create
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
         return View(new EmployeeFormViewModel
         {
-            Departments = _context.Departments.ToList(),
-            Positions = _context.Positions.ToList(),
+            Departments = (await _unitOfWork.Departments.GetAllAsync()).ToList(),
+            Positions = (await _unitOfWork.Positions.GetAllAsync()).ToList(),
             HireDate = DateTime.Today
         });
     }
@@ -177,16 +143,12 @@ public class EmployeesController : Controller
     // POST: Employees/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Create(EmployeeFormViewModel model)
+    public async Task<IActionResult> Create(EmployeeFormViewModel model)
     {
         if (!ModelState.IsValid)
         {
-            var errors = ModelState.Values.SelectMany(v => v.Errors);
-            foreach (var error in errors)
-            {
-                Console.WriteLine(error.ErrorMessage);
-            }
-
+            model.Departments = (await _unitOfWork.Departments.GetAllAsync()).ToList();
+            model.Positions = (await _unitOfWork.Positions.GetAllAsync()).ToList();
             return View(model);
         }
 
@@ -214,21 +176,21 @@ public class EmployeesController : Controller
             var path = Path.Combine(folder, fileName);
 
             using var stream = new FileStream(path, FileMode.Create);
-            model.Photo.CopyTo(stream);
+            await model.Photo.CopyToAsync(stream);
 
             employee.PhotoPath = "/Content/Photos/" + fileName;
         }
 
-        _employeeService.CreateEmployee(employee);
+        await _employeeService.CreateEmployeeAsync(employee);
 
         TempData["Success"] = "Employé créé avec succès!";
         return RedirectToAction(nameof(Details), new { id = employee.EmployeeId });
     }
 
     // GET: Employees/Edit/5
-    public IActionResult Edit(int id)
+    public async Task<IActionResult> Edit(int id)
     {
-        var employee = _employeeService.GetEmployeeById(id);
+        var employee = await _employeeService.GetEmployeeByIdAsync(id);
         if (employee == null)
             return NotFound();
 
@@ -245,8 +207,8 @@ public class EmployeesController : Controller
             PositionId = employee.PositionId,
             HireDate = employee.HireDate,
             ContractType = employee.ContractType,
-            Departments = _context.Departments.ToList(),
-            Positions = _context.Positions.ToList()
+            Departments = (await _unitOfWork.Departments.GetAllAsync()).ToList(),
+            Positions = (await _unitOfWork.Positions.GetAllAsync()).ToList()
         };
 
         return View(model);
@@ -255,20 +217,19 @@ public class EmployeesController : Controller
     // POST: Employees/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Edit(int id, EmployeeFormViewModel model)
+    public async Task<IActionResult> Edit(int id, EmployeeFormViewModel model)
     {
         if (!ModelState.IsValid)
         {
-            model.Departments = _context.Departments.ToList();
-            model.Positions = _context.Positions.ToList();
+            model.Departments = (await _unitOfWork.Departments.GetAllAsync()).ToList();
+            model.Positions = (await _unitOfWork.Positions.GetAllAsync()).ToList();
             return View(model);
         }
 
-        var employee = _employeeService.GetEmployeeById(id);
+        var employee = await _employeeService.GetEmployeeByIdAsync(id);
         if (employee == null)
             return NotFound();
 
-        // Mettre à jour les champs éditables
         employee.FirstName = model.FirstName;
         employee.LastName = model.LastName;
         employee.DateOfBirth = model.DateOfBirth;
@@ -280,7 +241,6 @@ public class EmployeesController : Controller
         employee.HireDate = model.HireDate;
         employee.ContractType = model.ContractType;
 
-        // Gestion de la photo (optionnelle)
         if (model.Photo != null && model.Photo.Length > 0)
         {
             var folder = Path.Combine(_environment.WebRootPath, "Content/Photos");
@@ -290,12 +250,12 @@ public class EmployeesController : Controller
             var path = Path.Combine(folder, fileName);
 
             using var stream = new FileStream(path, FileMode.Create);
-            model.Photo.CopyTo(stream);
+            await model.Photo.CopyToAsync(stream);
 
             employee.PhotoPath = "/Content/Photos/" + fileName;
         }
 
-        _employeeService.UpdateEmployee(employee);
+        await _employeeService.UpdateEmployeeAsync(employee);
         TempData["Success"] = "Employé modifié avec succès!";
         return RedirectToAction(nameof(Details), new { id = employee.EmployeeId });
     }
@@ -303,7 +263,7 @@ public class EmployeesController : Controller
     // POST: Employees/UploadDocument
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult UploadDocument(int employeeId, string documentType, IFormFile file)
+    public async Task<IActionResult> UploadDocument(int employeeId, string documentType, IFormFile file)
     {
         if (file == null || file.Length == 0)
             return RedirectToAction(nameof(Details), new { id = employeeId });
@@ -315,9 +275,9 @@ public class EmployeesController : Controller
         var path = Path.Combine(folder, fileName);
 
         using var stream = new FileStream(path, FileMode.Create);
-        file.CopyTo(stream);
+        await file.CopyToAsync(stream);
 
-        _context.Documents.Add(new Document
+        await _unitOfWork.Documents.AddAsync(new Document
         {
             EmployeeId = employeeId,
             DocumentType = documentType,
@@ -325,7 +285,7 @@ public class EmployeesController : Controller
             FilePath = "/Content/Documents/" + fileName
         });
 
-        _context.SaveChanges();
+        await _unitOfWork.SaveChangesAsync();
         TempData["Success"] = "Document uploadé avec succès!";
 
         return RedirectToAction(nameof(Details), new { id = employeeId });

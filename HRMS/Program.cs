@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using HRMS.Models;
+using HRMS.Repositories;
+using HRMS.Repositories.Implementation;
 using HRMS.Service;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,12 +15,33 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<HRMSDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("HRMSConnection")));
 
-// Services métier (Dependency Injection)
+// ==================== ENREGISTREMENT DES REPOSITORIES ====================
+// Unit of Work
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// Repositories individuels
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<IPositionRepository, PositionRepository>();
+builder.Services.AddScoped<ISalaryRepository, SalaryRepository>();
+builder.Services.AddScoped<IBonusRepository, BonusRepository>();
+builder.Services.AddScoped<IBenefitRepository, BenefitRepository>();
+builder.Services.AddScoped<IEmployeeBenefitRepository, EmployeeBenefitRepository>();
+builder.Services.AddScoped<IEquipmentRepository, EquipmentRepository>();
+builder.Services.AddScoped<IEquipmentAssignmentRepository, EquipmentAssignmentRepository>();
+builder.Services.AddScoped<IPromotionRepository, PromotionRepository>();
+builder.Services.AddScoped<IJobOfferRepository, JobOfferRepository>();
+builder.Services.AddScoped<ICandidateRepository, CandidateRepository>();
+builder.Services.AddScoped<IInterviewRepository, InterviewRepository>();
+builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Services
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-builder.Services.AddScoped<IRecruitmentService, RecruitmentService>();
 builder.Services.AddScoped<ISalaryService, SalaryService>();
 builder.Services.AddScoped<IEquipmentService, EquipmentService>();
 builder.Services.AddScoped<IPromotionService, PromotionService>();
+builder.Services.AddScoped<IRecruitmentService, RecruitmentService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 // Configuration de l'authentification par cookies

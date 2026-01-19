@@ -4,9 +4,9 @@ namespace HRMS.Service;
 
 public interface IDashboardService
 {
-    DashboardStatistics GetDashboardStatistics();
-    List<SalaryEvolution> GetSalaryEvolutionLastYear();
-    List<RecentPromotion> GetRecentPromotions(int count = 10);
-    Dictionary<string, int> GetEmployeesByDepartment();
-    Dictionary<string, decimal> GetDepartmentSalaryDistribution();
+    Task<DashboardStatistics> GetDashboardStatisticsAsync();
+    Task<List<SalaryEvolution>> GetSalaryEvolutionLastYearAsync();
+    Task<List<RecentPromotion>> GetRecentPromotionsAsync(int count = 10);
+    Task<Dictionary<string, int>> GetEmployeesByDepartmentAsync();
+    Task<Dictionary<string, decimal>> GetDepartmentSalaryDistributionAsync();
 }

@@ -1,56 +1,45 @@
 ﻿using HRMS.Models;
+using HRMS.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace HRMS.Service;
 
 public class SalaryService : ISalaryService
 {
-    private readonly HRMSDbContext _context;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public SalaryService(HRMSDbContext context)
+    public SalaryService(IUnitOfWork unitOfWork)
     {
-        _context = context;
+        _unitOfWork = unitOfWork;
     }
 
-    // Salaires
-    public decimal GetCurrentSalary(int employeeId)
+    public async Task<decimal> GetCurrentSalaryAsync(int employeeId)
     {
-        var currentSalary = _context.Salaries
-            .Where(s => s.EmployeeId == employeeId &&
-                        (s.EndDate == null || s.EndDate > DateTime.Now))
-            .OrderByDescending(s => s.EffectiveDate)
-            .FirstOrDefault();
-
+        var currentSalary = await _unitOfWork.Salaries.GetCurrentSalaryAsync(employeeId);
         return currentSalary?.BaseSalary ?? 0;
     }
 
-    public IEnumerable<Salary> GetSalaryHistory(int employeeId)
+    public async Task<IEnumerable<Salary>> GetSalaryHistoryAsync(int employeeId)
     {
-        return _context.Salaries
-            .Where(s => s.EmployeeId == employeeId)
-            .OrderByDescending(s => s.EffectiveDate)
-            .ToList();
+        return await _unitOfWork.Salaries.GetSalaryHistoryAsync(employeeId);
     }
 
-    public void AddSalary(Salary salary)
+    public async Task AddSalaryAsync(Salary salary)
     {
         salary.CreatedDate = DateTime.Now;
-        _context.Salaries.Add(salary);
-        _context.SaveChanges();
+        await _unitOfWork.Salaries.AddAsync(salary);
+        await _unitOfWork.SaveChangesAsync();
     }
 
-    public void UpdateSalary(int employeeId, decimal newSalary, string justification)
+    public async Task UpdateSalaryAsync(int employeeId, decimal newSalary, string justification)
     {
         // Clôturer l'ancien salaire
-        var currentSalary = _context.Salaries
-            .Where(s => s.EmployeeId == employeeId && s.EndDate == null)
-            .OrderByDescending(s => s.EffectiveDate)
-            .FirstOrDefault();
+        var currentSalary = await _unitOfWork.Salaries.GetCurrentSalaryAsync(employeeId);
 
         if (currentSalary != null)
         {
             currentSalary.EndDate = DateTime.Now.AddDays(-1);
-            _context.Entry(currentSalary).State = EntityState.Modified;
+            _unitOfWork.Salaries.Update(currentSalary);
         }
 
         // Créer le nouveau salaire
@@ -59,51 +48,42 @@ public class SalaryService : ISalaryService
             EmployeeId = employeeId,
             BaseSalary = newSalary,
             EffectiveDate = DateTime.Now,
-            Justification = justification
+            Justification = justification,
+            CreatedDate = DateTime.Now
         };
 
-        AddSalary(newSalaryRecord);
+        await _unitOfWork.Salaries.AddAsync(newSalaryRecord);
+        await _unitOfWork.SaveChangesAsync();
     }
 
-    // Primes
-    public IEnumerable<Bonus> GetBonusesByEmployee(int employeeId)
+    public async Task<IEnumerable<Bonus>> GetBonusesByEmployeeAsync(int employeeId)
     {
-        return _context.Bonuses
-            .Where(b => b.EmployeeId == employeeId)
-            .OrderByDescending(b => b.Date)
-            .ToList();
+        return await _unitOfWork.Bonuses.GetByEmployeeAsync(employeeId);
     }
 
-    public void AddBonus(Bonus bonus)
+    public async Task AddBonusAsync(Bonus bonus)
     {
         bonus.CreatedDate = DateTime.Now;
-        _context.Bonuses.Add(bonus);
-        _context.SaveChanges();
+        await _unitOfWork.Bonuses.AddAsync(bonus);
+        await _unitOfWork.SaveChangesAsync();
     }
 
-    public decimal GetTotalBonuses(int employeeId, int year)
+    public async Task<decimal> GetTotalBonusesAsync(int employeeId, int year)
     {
-        return _context.Bonuses
-            .Where(b => b.EmployeeId == employeeId && b.Date.Year == year)
-            .Sum(b => (decimal?)b.Amount) ?? 0;
+        return await _unitOfWork.Bonuses.GetTotalBonusesAsync(employeeId, year);
     }
 
-    // Avantages
-    public IEnumerable<Benefit> GetAllBenefits()
+    public async Task<IEnumerable<Benefit>> GetAllBenefitsAsync()
     {
-        return _context.Benefits.ToList();
+        return await _unitOfWork.Benefits.GetAllAsync();
     }
 
-    public IEnumerable<EmployeeBenefit> GetEmployeeBenefits(int employeeId)
+    public async Task<IEnumerable<EmployeeBenefit>> GetEmployeeBenefitsAsync(int employeeId)
     {
-        return _context.EmployeeBenefits
-            .Include(eb => eb.Benefit)
-            .Where(eb => eb.EmployeeId == employeeId &&
-                         (eb.EndDate == null || eb.EndDate > DateTime.Now))
-            .ToList();
+        return await _unitOfWork.EmployeeBenefits.GetEmployeeBenefitsAsync(employeeId);
     }
 
-    public void AssignBenefitToEmployee(int employeeId, int benefitId, DateTime startDate)
+    public async Task AssignBenefitToEmployeeAsync(int employeeId, int benefitId, DateTime startDate)
     {
         var employeeBenefit = new EmployeeBenefit
         {
@@ -112,47 +92,38 @@ public class SalaryService : ISalaryService
             StartDate = startDate
         };
 
-        _context.EmployeeBenefits.Add(employeeBenefit);
-        _context.SaveChanges();
+        await _unitOfWork.EmployeeBenefits.AddAsync(employeeBenefit);
+        await _unitOfWork.SaveChangesAsync();
     }
 
-    public void RemoveBenefitFromEmployee(int employeeBenefitId, DateTime endDate)
+    public async Task RemoveBenefitFromEmployeeAsync(int employeeBenefitId, DateTime endDate)
     {
-        var employeeBenefit = _context.EmployeeBenefits.Find(employeeBenefitId);
+        var employeeBenefit = await _unitOfWork.EmployeeBenefits.GetByIdAsync(employeeBenefitId);
         if (employeeBenefit != null)
         {
             employeeBenefit.EndDate = endDate;
-            _context.SaveChanges();
+            _unitOfWork.EmployeeBenefits.Update(employeeBenefit);
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 
-    public decimal GetTotalBenefitsValue(int employeeId)
+    public async Task<decimal> GetTotalBenefitsValueAsync(int employeeId)
     {
-        return _context.EmployeeBenefits
-            .Include(eb => eb.Benefit)
-            .Where(eb => eb.EmployeeId == employeeId &&
-                         (eb.EndDate == null || eb.EndDate > DateTime.Now))
-            .Sum(eb => (decimal?)eb.Benefit.Value) ?? 0;
+        return await _unitOfWork.EmployeeBenefits.GetTotalBenefitsValueAsync(employeeId);
     }
 
-    // Calculs
-    public decimal CalculateGrossSalary(int employeeId)
+    public async Task<decimal> CalculateGrossSalaryAsync(int employeeId)
     {
-        var baseSalary = GetCurrentSalary(employeeId);
-        var benefits = GetTotalBenefitsValue(employeeId);
+        var baseSalary = await GetCurrentSalaryAsync(employeeId);
+        var benefits = await GetTotalBenefitsValueAsync(employeeId);
         return baseSalary + benefits;
     }
 
-    public decimal CalculateTotalCompensation(int employeeId, int year)
+    public async Task<decimal> CalculateTotalCompensationAsync(int employeeId, int year)
     {
-        var baseSalary = GetCurrentSalary(employeeId) * 12; // Annuel
-        var bonuses = GetTotalBonuses(employeeId, year);
-        var benefits = GetTotalBenefitsValue(employeeId) * 12; // Annuel
+        var baseSalary = await GetCurrentSalaryAsync(employeeId) * 12;
+        var bonuses = await GetTotalBonusesAsync(employeeId, year);
+        var benefits = await GetTotalBenefitsValueAsync(employeeId) * 12;
         return baseSalary + bonuses + benefits;
-    }
-
-    public void Dispose()
-    {
-        _context?.Dispose();
     }
 }

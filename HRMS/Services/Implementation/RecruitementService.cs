@@ -1,183 +1,153 @@
 ﻿using HRMS.Enums;
 using HRMS.Models;
+using HRMS.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace HRMS.Service;
 
 public class RecruitmentService : IRecruitmentService
+{
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IEmployeeService _employeeService;
+
+    public RecruitmentService(IUnitOfWork unitOfWork, IEmployeeService employeeService)
     {
-        private readonly HRMSDbContext _context;
-        private readonly IEmployeeService _employeeService;
+        _unitOfWork = unitOfWork;
+        _employeeService = employeeService;
+    }
 
-        public RecruitmentService(HRMSDbContext context, IEmployeeService employeeService)
-        {
-            _context = context;
-            _employeeService = employeeService;
-        }
+    // JobOffers
+    public async Task<IEnumerable<JobOffer>> GetAllJobOffersAsync()
+    {
+        return await _unitOfWork.JobOffers.GetAllWithDetailsAsync();
+    }
 
-        // JobOffers
-        public IEnumerable<JobOffer> GetAllJobOffers()
-        {
-            return _context.JobOffers
-                .Include(j => j.Department)
-                .Include(j => j.Position)
-                .Include(j => j.Candidates)
-                .OrderByDescending(j => j.PostDate)
-                .ToList();
-        }
+    public async Task<IEnumerable<JobOffer>> GetActiveJobOffersAsync()
+    {
+        return await _unitOfWork.JobOffers.GetActiveJobOffersAsync();
+    }
 
-        public IEnumerable<JobOffer> GetActiveJobOffers()
-        {
-            return _context.JobOffers
-                .Include(j => j.Department)
-                .Include(j => j.Position)
-                .Where(j => j.Status == JobOfferStatus.Ouverte)
-                .OrderByDescending(j => j.PostDate)
-                .ToList();
-        }
+    public async Task<JobOffer?> GetJobOfferByIdAsync(int id)
+    {
+        return await _unitOfWork.JobOffers.GetByIdWithDetailsAsync(id);
+    }
 
-        public JobOffer GetJobOfferById(int id)
-        {
-            return _context.JobOffers
-                .Include(j => j.Department)
-                .Include(j => j.Position)
-                .Include(j => j.Candidates)
-                .FirstOrDefault(j => j.JobOfferId == id);
-        }
+    public async Task CreateJobOfferAsync(JobOffer jobOffer)
+    {
+        jobOffer.PostDate = DateTime.Now;
+        jobOffer.CreatedDate = DateTime.Now;
+        jobOffer.ModifiedDate = DateTime.Now;
+        await _unitOfWork.JobOffers.AddAsync(jobOffer);
+        await _unitOfWork.SaveChangesAsync();
+    }
 
-        public void CreateJobOffer(JobOffer jobOffer)
+    public async Task UpdateJobOfferAsync(JobOffer jobOffer)
+    {
+        jobOffer.ModifiedDate = DateTime.Now;
+        _unitOfWork.JobOffers.Update(jobOffer);
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task CloseJobOfferAsync(int id)
+    {
+        var jobOffer = await _unitOfWork.JobOffers.GetByIdAsync(id);
+        if (jobOffer != null)
         {
-            jobOffer.PostDate = DateTime.Now;
-            jobOffer.CreatedDate = DateTime.Now;
+            jobOffer.Status = JobOfferStatus.Fermée;
             jobOffer.ModifiedDate = DateTime.Now;
-            _context.JobOffers.Add(jobOffer);
-            _context.SaveChanges();
-        }
-
-        public void UpdateJobOffer(JobOffer jobOffer)
-        {
-            jobOffer.ModifiedDate = DateTime.Now;
-            _context.Entry(jobOffer).State = EntityState.Modified;
-            _context.SaveChanges();
-        }
-
-        public void CloseJobOffer(int id)
-        {
-            var jobOffer = _context.JobOffers.Find(id);
-            if (jobOffer != null)
-            {
-                jobOffer.Status = JobOfferStatus.Fermée;
-                jobOffer.ModifiedDate = DateTime.Now;
-                _context.SaveChanges();
-            }
-        }
-
-        // Candidates
-        public IEnumerable<Candidate> GetAllCandidates()
-        {
-            return _context.Candidates
-                .Include(c => c.JobOffer)
-                .OrderByDescending(c => c.ApplicationDate)
-                .ToList();
-        }
-
-        public IEnumerable<Candidate> GetCandidatesByJobOffer(int jobOfferId)
-        {
-            return _context.Candidates
-                .Where(c => c.JobOfferId == jobOfferId)
-                .OrderByDescending(c => c.ApplicationDate)
-                .ToList();
-        }
-
-        public Candidate GetCandidateById(int id)
-        {
-            return _context.Candidates
-                .Include(c => c.JobOffer)
-                .ThenInclude(j => j.Department)
-                .Include(c => c.JobOffer)
-                .ThenInclude(j => j.Position)
-                .Include(c => c.Interviews)
-                .FirstOrDefault(c => c.CandidateId == id);
-        }
-
-        public void CreateCandidate(Candidate candidate)
-        {
-            candidate.ApplicationDate = DateTime.Now;
-            candidate.Status = CandidateStatus.CandidatureReçue;
-            _context.Candidates.Add(candidate);
-            _context.SaveChanges();
-        }
-
-        public void UpdateCandidate(Candidate candidate)
-        {
-            _context.Entry(candidate).State = EntityState.Modified;
-            _context.SaveChanges();
-        }
-
-        public void UpdateCandidateStatus(int candidateId, CandidateStatus status)
-        {
-            var candidate = _context.Candidates.Find(candidateId);
-            if (candidate != null)
-            {
-                candidate.Status = status;
-                _context.SaveChanges();
-            }
-        }
-
-        // Interviews
-        public void ScheduleInterview(Interview interview)
-        {
-            interview.CreatedDate = DateTime.Now;
-            interview.Result = InterviewResult.EnAttente;
-            _context.Interviews.Add(interview);
-            _context.SaveChanges();
-
-            // Mettre à jour le statut du candidat
-            UpdateCandidateStatus(interview.CandidateId, CandidateStatus.Entretien);
-        }
-
-        public IEnumerable<Interview> GetInterviewsByCandidate(int candidateId)
-        {
-            return _context.Interviews
-                .Where(i => i.CandidateId == candidateId)
-                .OrderByDescending(i => i.InterviewDate)
-                .ToList();
-        }
-
-        public void UpdateInterviewResult(int interviewId, InterviewResult result, string notes)
-        {
-            var interview = _context.Interviews.Find(interviewId);
-            if (interview != null)
-            {
-                interview.Result = result;
-                interview.Notes = notes;
-                _context.SaveChanges();
-            }
-        }
-
-        // Conversion Candidat -> Employé
-        public Employee ConvertCandidateToEmployee(int candidateId, Employee employee)
-        {
-            var candidate = GetCandidateById(candidateId);
-            if (candidate == null)
-                throw new Exception("Candidat introuvable");
-
-            // Créer l'employé
-            employee.FirstName = candidate.FirstName;
-            employee.LastName = candidate.LastName;
-            employee.Email = candidate.Email;
-            employee.Phone = candidate.Phone;
-            
-            _employeeService.CreateEmployee(employee);
-
-            // Mettre à jour le statut du candidat
-            UpdateCandidateStatus(candidateId, CandidateStatus.Accepté);
-
-            return employee;
-        }
-
-        public void Dispose()
-        {
-            _context?.Dispose();
+            _unitOfWork.JobOffers.Update(jobOffer);
+            await _unitOfWork.SaveChangesAsync();
         }
     }
+
+    // Candidates
+    public async Task<IEnumerable<Candidate>> GetAllCandidatesAsync()
+    {
+        return await _unitOfWork.Candidates.GetAllWithDetailsAsync();
+    }
+
+    public async Task<IEnumerable<Candidate>> GetCandidatesByJobOfferAsync(int jobOfferId)
+    {
+        return await _unitOfWork.Candidates.GetByJobOfferAsync(jobOfferId);
+    }
+
+    public async Task<Candidate?> GetCandidateByIdAsync(int id)
+    {
+        return await _unitOfWork.Candidates.GetByIdWithDetailsAsync(id);
+    }
+
+    public async Task CreateCandidateAsync(Candidate candidate)
+    {
+        candidate.ApplicationDate = DateTime.Now;
+        candidate.Status = CandidateStatus.CandidatureReçue;
+        await _unitOfWork.Candidates.AddAsync(candidate);
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task UpdateCandidateAsync(Candidate candidate)
+    {
+        _unitOfWork.Candidates.Update(candidate);
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task UpdateCandidateStatusAsync(int candidateId, CandidateStatus status)
+    {
+        var candidate = await _unitOfWork.Candidates.GetByIdAsync(candidateId);
+        if (candidate != null)
+        {
+            candidate.Status = status;
+            _unitOfWork.Candidates.Update(candidate);
+            await _unitOfWork.SaveChangesAsync();
+        }
+    }
+
+    // Interviews
+    public async Task ScheduleInterviewAsync(Interview interview)
+    {
+        interview.CreatedDate = DateTime.Now;
+        interview.Result = InterviewResult.EnAttente;
+        await _unitOfWork.Interviews.AddAsync(interview);
+        await _unitOfWork.SaveChangesAsync();
+
+        // Mettre à jour le statut du candidat
+        await UpdateCandidateStatusAsync(interview.CandidateId, CandidateStatus.Entretien);
+    }
+
+    public async Task<IEnumerable<Interview>> GetInterviewsByCandidateAsync(int candidateId)
+    {
+        return await _unitOfWork.Interviews.GetByCandidateAsync(candidateId);
+    }
+
+    public async Task UpdateInterviewResultAsync(int interviewId, InterviewResult result, string notes)
+    {
+        var interview = await _unitOfWork.Interviews.GetByIdAsync(interviewId);
+        if (interview != null)
+        {
+            interview.Result = result;
+            interview.Notes = notes;
+            _unitOfWork.Interviews.Update(interview);
+            await _unitOfWork.SaveChangesAsync();
+        }
+    }
+
+    // Conversion Candidat -> Employé
+    public async Task<Employee> ConvertCandidateToEmployeeAsync(int candidateId, Employee employee)
+    {
+        var candidate = await GetCandidateByIdAsync(candidateId);
+        if (candidate == null)
+            throw new Exception("Candidat introuvable");
+
+        // Créer l'employé
+        employee.FirstName = candidate.FirstName;
+        employee.LastName = candidate.LastName;
+        employee.Email = candidate.Email;
+        employee.Phone = candidate.Phone;
+
+        await _employeeService.CreateEmployeeAsync(employee);
+
+        // Mettre à jour le statut du candidat
+        await UpdateCandidateStatusAsync(candidateId, CandidateStatus.Accepté);
+
+        return employee;
+    }
+}

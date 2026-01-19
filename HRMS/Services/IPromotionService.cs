@@ -4,8 +4,8 @@ namespace HRMS.Service;
 
 public interface IPromotionService
 {
-    IEnumerable<Promotion> GetAllPromotions();
-    IEnumerable<Promotion> GetEmployeePromotions(int employeeId);
-    void CreatePromotion(Promotion promotion);
-    void ProcessPromotion(int employeeId, int newPositionId, decimal newSalary, string justification);
+    Task<IEnumerable<Promotion>> GetAllPromotionsAsync();
+    Task<IEnumerable<Promotion>> GetEmployeePromotionsAsync(int employeeId);
+    Task CreatePromotionAsync(Promotion promotion);
+    Task ProcessPromotionAsync(int employeeId, int newPositionId, decimal newSalary, string justification);
 }

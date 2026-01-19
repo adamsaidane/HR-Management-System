@@ -28,10 +28,10 @@ public class PromotionFormViewModel
     public string Justification { get; set; }
 
     // Données actuelles
-    public string CurrentPosition { get; set; }
+    public string? CurrentPosition { get; set; }
     public decimal CurrentSalary { get; set; }
 
     // Listes
-    public IEnumerable<Employee> Employees { get; set; }
-    public IEnumerable<Position> Positions { get; set; }
+    public IEnumerable<Employee>? Employees { get; set; }
+    public IEnumerable<Position>? Positions { get; set; }
 }

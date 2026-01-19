@@ -5,10 +5,6 @@
       "PackagePath": "staticwebassets\\HRMS.bundle.scp.css"
     },
     {
-      "Id": "C:\\Workspace\\HRMS\\HRMS\\wwwroot\\Content\\CVs\\TD4-GL3.pdf",
-      "PackagePath": "staticwebassets\\Content\\CVs\\TD4-GL3.pdf"
-    },
-    {
       "Id": "C:\\Workspace\\HRMS\\HRMS\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },

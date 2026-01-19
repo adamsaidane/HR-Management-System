@@ -93,6 +93,9 @@ public class RecruitmentService : IRecruitmentService
         {
             return _context.Candidates
                 .Include(c => c.JobOffer)
+                .ThenInclude(j => j.Department)
+                .Include(c => c.JobOffer)
+                .ThenInclude(j => j.Position)
                 .Include(c => c.Interviews)
                 .FirstOrDefault(c => c.CandidateId == id);
         }

@@ -11,12 +11,12 @@ namespace HRMS.Controllers;
 public class PromotionsController : Controller
 {
     private readonly IPromotionService _promotionService;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IEmployeeService _employeeService;
 
-    public PromotionsController(IPromotionService promotionService, IUnitOfWork unitOfWork)
+    public PromotionsController(IPromotionService promotionService, IEmployeeService employeeService)
     {
         _promotionService = promotionService;
-        _unitOfWork = unitOfWork;
+        _employeeService = employeeService;
     }
 
     // GET: Promotions
@@ -32,8 +32,8 @@ public class PromotionsController : Controller
     {
         var viewModel = new PromotionFormViewModel
         {
-            Employees = (await _unitOfWork.Employees.FindAsync(e => e.Status == EmployeeStatus.Actif)).ToList(),
-            Positions = (await _unitOfWork.Positions.GetAllAsync()).ToList(),
+            Employees = (await _employeeService.GetEmployeesByStatusAsync(EmployeeStatus.Actif)).ToList(),
+            Positions = (await _employeeService.GetAllPositionsAsync()).ToList(),
             PromotionDate = DateTime.Today
         };
 
@@ -65,8 +65,8 @@ public class PromotionsController : Controller
             }
         }
 
-        model.Employees = (await _unitOfWork.Employees.FindAsync(e => e.Status == EmployeeStatus.Actif)).ToList();
-        model.Positions = (await _unitOfWork.Positions.GetAllAsync()).ToList();
+        model.Employees = (await _employeeService.GetEmployeesByStatusAsync(EmployeeStatus.Actif)).ToList();
+        model.Positions = (await _employeeService.GetAllPositionsAsync()).ToList();
         return View(model);
     }
 
@@ -74,7 +74,7 @@ public class PromotionsController : Controller
     [HttpGet("Promotions/EmployeePromotions/{employeeId}")]
     public async Task<IActionResult> EmployeePromotions(int employeeId)
     {
-        var employee = await _unitOfWork.Employees.GetByIdAsync(employeeId);
+        var employee = await _employeeService.GetEmployeeByIdAsync(employeeId);
         if (employee == null)
             return NotFound();
 

@@ -1,6 +1,7 @@
 ﻿using HRMS.Enums;
 using HRMS.Models;
 using HRMS.Repositories;
+using HRMS.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace HRMS.Service;
@@ -149,5 +150,87 @@ public class RecruitmentService : IRecruitmentService
         await UpdateCandidateStatusAsync(candidateId, CandidateStatus.Accepté);
 
         return employee;
+    }
+    public async Task<JobOfferFormViewModel> GetJobOfferFormViewModelAsync()
+    {
+        return new JobOfferFormViewModel
+        {
+            Departments = await _employeeService.GetAllDepartmentsAsync(),
+            Positions = await _employeeService.GetAllPositionsAsync()
+        };
+    }
+
+    public async Task<CandidateFormViewModel> GetCandidateFormViewModelAsync()
+    {
+        return new CandidateFormViewModel
+        {
+            JobOffers = (await GetActiveJobOffersAsync()).ToList()
+        };
+    }
+
+    public async Task<CandidateDetailsViewModel> GetCandidateDetailsViewModelAsync(int candidateId)
+    {
+        var candidate = await GetCandidateByIdAsync(candidateId);
+        if (candidate == null)
+            throw new Exception("Candidat introuvable");
+
+        return new CandidateDetailsViewModel
+        {
+            Candidate = candidate,
+            Interviews = (await GetInterviewsByCandidateAsync(candidateId)).ToList()
+        };
+    }
+
+    public async Task<Candidate> CreateCandidateWithCVAsync(CandidateFormViewModel model, string cvPath)
+    {
+        var candidate = new Candidate
+        {
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            Email = model.Email,
+            Phone = model.Phone,
+            Address = model.Address,
+            JobOfferId = model.JobOfferId.Value,
+            CVPath = cvPath
+        };
+
+        await CreateCandidateAsync(candidate);
+        return candidate;
+    }
+
+    public async Task<InterviewFormViewModel> GetInterviewFormViewModelAsync(int candidateId)
+    {
+        var candidate = await GetCandidateByIdAsync(candidateId);
+        if (candidate == null)
+            throw new Exception("Candidat introuvable");
+
+        return new InterviewFormViewModel
+        {
+            Candidate = candidate,
+            Interview = new Interview
+            {
+                CandidateId = candidateId,
+                InterviewDate = DateTime.Now.AddDays(7)
+            }
+        };
+    }
+
+    public async Task<EmployeeFormViewModel> GetConvertToEmployeeViewModelAsync(int candidateId)
+    {
+        var candidate = await GetCandidateByIdAsync(candidateId);
+        if (candidate == null)
+            throw new Exception("Candidat introuvable");
+
+        return new EmployeeFormViewModel
+        {
+            FirstName = candidate.FirstName,
+            LastName = candidate.LastName,
+            Email = candidate.Email,
+            Phone = candidate.Phone,
+            Address = candidate.Address,
+            HireDate = DateTime.Today,
+            Departments = await _employeeService.GetAllDepartmentsAsync(),
+            Positions = await _employeeService.GetAllPositionsAsync()
+        };
     }
 }

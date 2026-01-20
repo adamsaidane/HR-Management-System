@@ -1,5 +1,6 @@
 ﻿using HRMS.Enums;
 using HRMS.Models;
+using HRMS.ViewModels;
 
 namespace HRMS.Service;
 
@@ -21,4 +22,10 @@ public interface IRecruitmentService
     Task<IEnumerable<Interview>> GetInterviewsByCandidateAsync(int candidateId);
     Task UpdateInterviewResultAsync(int interviewId, InterviewResult result, string notes);
     Task<Employee> ConvertCandidateToEmployeeAsync(int candidateId, Employee employee);
+    Task<JobOfferFormViewModel> GetJobOfferFormViewModelAsync();
+    Task<CandidateFormViewModel> GetCandidateFormViewModelAsync();
+    Task<CandidateDetailsViewModel> GetCandidateDetailsViewModelAsync(int candidateId);
+    Task<Candidate> CreateCandidateWithCVAsync(CandidateFormViewModel model, string cvPath);
+    Task<InterviewFormViewModel> GetInterviewFormViewModelAsync(int candidateId);
+    Task<EmployeeFormViewModel> GetConvertToEmployeeViewModelAsync(int candidateId);
 }

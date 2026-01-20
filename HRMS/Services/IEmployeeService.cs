@@ -1,5 +1,6 @@
 ﻿using HRMS.Enums;
 using HRMS.Models;
+using HRMS.ViewModels;
 using Microsoft.AspNetCore.Http;
 
 namespace HRMS.Service;
@@ -23,4 +24,8 @@ public interface IEmployeeService
     Task<List<Position>> GetAllPositionsAsync();
     Task<string?> SaveEmployeePhotoAsync(IFormFile file);
     Task UploadEmployeeDocumentAsync(int employeeId, string documentType, IFormFile file);
+    Task<EmployeeDetailsViewModel> GetEmployeeDetailsViewModelAsync(int employeeId);
+    Task<EmployeeFormViewModel> GetEmployeeFormViewModelAsync(int? employeeId = null);
+    Task<Employee> CreateEmployeeFromViewModelAsync(EmployeeFormViewModel model);
+    Task UpdateEmployeeFromViewModelAsync(int id, EmployeeFormViewModel model);
 }

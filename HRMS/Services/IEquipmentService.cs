@@ -1,4 +1,6 @@
-﻿using HRMS.Models;
+﻿using HRMS.Enums;
+using HRMS.Models;
+using HRMS.ViewModels;
 
 namespace HRMS.Service;
 
@@ -17,4 +19,6 @@ public interface IEquipmentService
     Task<int> GetTotalEquipmentAsync();
     Task<int> GetAssignedEquipmentCountAsync();
     Task<int> GetAvailableEquipmentCountAsync();
+    Task<EquipmentIndexViewModel> GetEquipmentIndexViewModelAsync(string equipmentType, EquipmentStatus? status);
+    Task<EquipmentAssignmentViewModel> GetEquipmentAssignmentViewModelAsync();
 }

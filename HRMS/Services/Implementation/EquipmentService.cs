@@ -1,6 +1,7 @@
 ﻿using HRMS.Enums;
 using HRMS.Models;
 using HRMS.Repositories;
+using HRMS.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace HRMS.Service;
@@ -8,10 +9,12 @@ namespace HRMS.Service;
 public class EquipmentService : IEquipmentService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IEmployeeService _employeeService;
 
-    public EquipmentService(IUnitOfWork unitOfWork)
+    public EquipmentService(IUnitOfWork unitOfWork, IEmployeeService employeeService)
     {
         _unitOfWork = unitOfWork;
+        _employeeService = employeeService;
     }
 
     public async Task<IEnumerable<Equipment>> GetAllEquipmentAsync()
@@ -126,5 +129,31 @@ public class EquipmentService : IEquipmentService
     public async Task<int> GetAvailableEquipmentCountAsync()
     {
         return await _unitOfWork.Equipments.CountAsync(e => e.Status == EquipmentStatus.Disponible);
+    }
+    
+    public async Task<EquipmentIndexViewModel> GetEquipmentIndexViewModelAsync(string equipmentType, EquipmentStatus? status)
+    {
+        var equipment = await GetAllEquipmentAsync();
+
+        if (!string.IsNullOrEmpty(equipmentType))
+            equipment = equipment.Where(e => e.EquipmentType == equipmentType);
+
+        if (status.HasValue)
+            equipment = equipment.Where(e => e.Status == status);
+
+        return new EquipmentIndexViewModel
+        {
+            Equipment = equipment.ToList(),
+            EquipmentTypes = equipment.Select(e => e.EquipmentType).Distinct().ToList()
+        };
+    }
+
+    public async Task<EquipmentAssignmentViewModel> GetEquipmentAssignmentViewModelAsync()
+    {
+        return new EquipmentAssignmentViewModel
+        {
+            AvailableEquipment = (await GetAvailableEquipmentAsync()).ToList(),
+            Employees = (await _employeeService.GetEmployeesByStatusAsync(EmployeeStatus.Actif)).ToList()
+        };
     }
 }

@@ -1,4 +1,5 @@
 ﻿using HRMS.Models;
+using HRMS.ViewModels;
 
 namespace HRMS.Service;
 
@@ -18,4 +19,8 @@ public interface ISalaryService
     Task<decimal> GetTotalBenefitsValueAsync(int employeeId);
     Task<decimal> CalculateGrossSalaryAsync(int employeeId);
     Task<decimal> CalculateTotalCompensationAsync(int employeeId, int year);
+    Task<SalaryIndexViewModel> GetSalaryIndexViewModelAsync(string searchString, int? departmentId);
+    Task<EmployeeSalaryViewModel> GetEmployeeSalaryViewModelAsync(int employeeId);
+    Task<List<SalaryReportItem>> GetSalaryReportAsync();
+    Task<List<DepartmentSalaryReport>> GetDepartmentSalariesReportAsync();
 }

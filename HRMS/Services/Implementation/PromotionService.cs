@@ -1,5 +1,7 @@
-﻿using HRMS.Models;
+﻿using HRMS.Enums;
+using HRMS.Models;
 using HRMS.Repositories;
+using HRMS.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace HRMS.Service;
@@ -8,11 +10,13 @@ public class PromotionService : IPromotionService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ISalaryService _salaryService;
+    private readonly IEmployeeService _employeeService;
 
-    public PromotionService(IUnitOfWork unitOfWork, ISalaryService salaryService)
+    public PromotionService(IUnitOfWork unitOfWork, ISalaryService salaryService, IEmployeeService employeeService)
     {
         _unitOfWork = unitOfWork;
         _salaryService = salaryService;
+        _employeeService = employeeService;
     }
 
     public async Task<IEnumerable<Promotion>> GetAllPromotionsAsync()
@@ -63,5 +67,14 @@ public class PromotionService : IPromotionService
         await _salaryService.UpdateSalaryAsync(employeeId, newSalary, $"Promotion: {justification}");
 
         await _unitOfWork.SaveChangesAsync();
+    }
+    public async Task<PromotionFormViewModel> GetPromotionFormViewModelAsync()
+    {
+        return new PromotionFormViewModel
+        {
+            Employees = (await _employeeService.GetEmployeesByStatusAsync(EmployeeStatus.Actif)).ToList(),
+            Positions = await _employeeService.GetAllPositionsAsync(),
+            PromotionDate = DateTime.Today
+        };
     }
 }

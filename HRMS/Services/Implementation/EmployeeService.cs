@@ -1,6 +1,7 @@
 ﻿using HRMS.Enums;
 using HRMS.Models;
 using HRMS.Repositories;
+using HRMS.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 
@@ -187,5 +188,116 @@ public class EmployeeService : IEmployeeService
             FilePath = "/Content/Documents/" + fileName
         });
         await _unitOfWork.SaveChangesAsync();
+    }
+    public async Task<EmployeeDetailsViewModel> GetEmployeeDetailsViewModelAsync(int employeeId)
+    {
+        var employee = await GetEmployeeByIdAsync(employeeId);
+        if (employee == null)
+            throw new Exception("Employé introuvable");
+        var salary = await _unitOfWork.Salaries.GetCurrentSalaryAsync(employeeId);
+
+        return new EmployeeDetailsViewModel
+        {
+            Employee = employee,
+            CurrentSalary = salary?.BaseSalary ?? 0,
+            TotalBenefits = 0, // Calculé par SalaryService
+            GrossSalary = 0, // Calculé par SalaryService
+            SalaryHistory = (await _unitOfWork.Salaries.GetSalaryHistoryAsync(employeeId)).ToList(),
+            Bonuses = (await _unitOfWork.Bonuses.GetByEmployeeAsync(employeeId)).ToList(),
+            Benefits = (await _unitOfWork.EmployeeBenefits.GetEmployeeBenefitsAsync(employeeId)).ToList(),
+            Equipments = employee.EquipmentAssignments.ToList(),
+            Promotions = employee.Promotions.ToList(),
+            Documents = employee.Documents.ToList()
+        };
+    }
+
+    public async Task<EmployeeFormViewModel> GetEmployeeFormViewModelAsync(int? employeeId = null)
+    {
+        var viewModel = new EmployeeFormViewModel
+        {
+            Departments = await GetAllDepartmentsAsync(),
+            Positions = await GetAllPositionsAsync(),
+            HireDate = DateTime.Today
+        };
+
+        if (employeeId.HasValue)
+        {
+            var employee = await GetEmployeeByIdAsync(employeeId.Value);
+            if (employee != null)
+            {
+                viewModel.EmployeeId = employee.EmployeeId;
+                viewModel.FirstName = employee.FirstName;
+                viewModel.LastName = employee.LastName;
+                viewModel.DateOfBirth = employee.DateOfBirth;
+                viewModel.Address = employee.Address;
+                viewModel.Phone = employee.Phone;
+                viewModel.Email = employee.Email;
+                viewModel.DepartmentId = employee.DepartmentId;
+                viewModel.PositionId = employee.PositionId;
+                viewModel.HireDate = employee.HireDate;
+                viewModel.ContractType = employee.ContractType;
+            }
+        }
+
+        return viewModel;
+    }
+
+    public async Task<Employee> CreateEmployeeFromViewModelAsync(EmployeeFormViewModel model)
+    {
+        var employee = new Employee
+        {
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            DateOfBirth = model.DateOfBirth,
+            Address = model.Address,
+            Phone = model.Phone,
+            Email = model.Email,
+            DepartmentId = model.DepartmentId.Value,
+            PositionId = model.PositionId.Value,
+            HireDate = model.HireDate,
+            ContractType = model.ContractType,
+            Status = EmployeeStatus.Actif
+        };
+
+        if (model.Photo != null && model.Photo.Length > 0)
+        {
+            var savedPath = await SaveEmployeePhotoAsync(model.Photo);
+            if (!string.IsNullOrEmpty(savedPath))
+            {
+                employee.PhotoPath = savedPath;
+            }
+        }
+
+        await CreateEmployeeAsync(employee);
+        return employee;
+    }
+
+    public async Task UpdateEmployeeFromViewModelAsync(int id, EmployeeFormViewModel model)
+    {
+        var employee = await GetEmployeeByIdAsync(id);
+        if (employee == null)
+            throw new Exception("Employé introuvable");
+
+        employee.FirstName = model.FirstName;
+        employee.LastName = model.LastName;
+        employee.DateOfBirth = model.DateOfBirth;
+        employee.Address = model.Address;
+        employee.Phone = model.Phone;
+        employee.Email = model.Email;
+        employee.DepartmentId = model.DepartmentId!.Value;
+        employee.PositionId = model.PositionId!.Value;
+        employee.HireDate = model.HireDate;
+        employee.ContractType = model.ContractType;
+
+        if (model.Photo != null && model.Photo.Length > 0)
+        {
+            var savedPath = await SaveEmployeePhotoAsync(model.Photo);
+            if (!string.IsNullOrEmpty(savedPath))
+            {
+                employee.PhotoPath = savedPath;
+            }
+        }
+
+        await UpdateEmployeeAsync(employee);
     }
 }

@@ -1,5 +1,7 @@
-﻿using HRMS.Models;
+﻿using HRMS.Enums;
+using HRMS.Models;
 using HRMS.Repositories;
+using HRMS.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace HRMS.Service;
@@ -7,12 +9,13 @@ namespace HRMS.Service;
 public class SalaryService : ISalaryService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IEmployeeService _employeeService;
 
-    public SalaryService(IUnitOfWork unitOfWork)
+    public SalaryService(IUnitOfWork unitOfWork, IEmployeeService employeeService)
     {
         _unitOfWork = unitOfWork;
+        _employeeService = employeeService;
     }
-
     public async Task<decimal> GetCurrentSalaryAsync(int employeeId)
     {
         var currentSalary = await _unitOfWork.Salaries.GetCurrentSalaryAsync(employeeId);
@@ -125,5 +128,121 @@ public class SalaryService : ISalaryService
         var bonuses = await GetTotalBonusesAsync(employeeId, year);
         var benefits = await GetTotalBenefitsValueAsync(employeeId) * 12;
         return baseSalary + bonuses + benefits;
+    }
+    public async Task<SalaryIndexViewModel> GetSalaryIndexViewModelAsync(string searchString, int? departmentId)
+    {
+        var employees = await _employeeService.GetEmployeesByStatusAsync(EmployeeStatus.Actif);
+
+        // Filtre par recherche
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            employees = employees.Where(e =>
+                e.FirstName.Contains(searchString) ||
+                e.LastName.Contains(searchString) ||
+                e.Matricule.Contains(searchString));
+        }
+
+        // Filtre par département
+        if (departmentId.HasValue)
+        {
+            employees = employees.Where(e => e.DepartmentId == departmentId.Value);
+        }
+
+        employees = employees.OrderBy(e => e.LastName).ThenBy(e => e.FirstName);
+
+        // Statistiques globales
+        var allActiveEmployees = await _employeeService.GetActiveEmployeesAsync();
+        
+        decimal totalMasseSalariale = 0;
+        int employeesWithSalary = 0;
+
+        foreach (var emp in allActiveEmployees)
+        {
+            var currentSalary = await GetCurrentSalaryAsync(emp.EmployeeId);
+            if (currentSalary > 0)
+            {
+                totalMasseSalariale += currentSalary;
+                employeesWithSalary++;
+            }
+        }
+
+        return new SalaryIndexViewModel
+        {
+            Employees = employees.ToList(),
+            Departments = await _employeeService.GetAllDepartmentsAsync(),
+            SearchString = searchString,
+            DepartmentId = departmentId,
+            TotalMasseSalariale = totalMasseSalariale,
+            AverageSalary = employeesWithSalary > 0 ? totalMasseSalariale / employeesWithSalary : 0,
+            TotalEmployees = allActiveEmployees.Count()
+        };
+    }
+
+    public async Task<EmployeeSalaryViewModel> GetEmployeeSalaryViewModelAsync(int employeeId)
+    {
+        var employee = await _employeeService.GetEmployeeByIdAsync(employeeId);
+        if (employee == null)
+            throw new Exception("Employé introuvable");
+
+        return new EmployeeSalaryViewModel
+        {
+            Employee = employee,
+            CurrentSalary = await GetCurrentSalaryAsync(employeeId),
+            SalaryHistory = (await GetSalaryHistoryAsync(employeeId)).ToList(),
+            Bonuses = (await GetBonusesByEmployeeAsync(employeeId)).ToList(),
+            Benefits = (await GetEmployeeBenefitsAsync(employeeId)).ToList(),
+            AllBenefits = (await GetAllBenefitsAsync()).ToList(),
+            TotalBenefits = await GetTotalBenefitsValueAsync(employeeId),
+            GrossSalary = await CalculateGrossSalaryAsync(employeeId)
+        };
+    }
+
+    public async Task<List<SalaryReportItem>> GetSalaryReportAsync()
+    {
+        var employees = await _employeeService.GetActiveEmployeesAsync();
+
+        var report = new List<SalaryReportItem>();
+        foreach (var e in employees)
+        {
+            report.Add(new SalaryReportItem
+            {
+                Employee = e,
+                CurrentSalary = await GetCurrentSalaryAsync(e.EmployeeId),
+                TotalBenefits = await GetTotalBenefitsValueAsync(e.EmployeeId),
+                GrossSalary = await CalculateGrossSalaryAsync(e.EmployeeId)
+            });
+        }
+
+        return report;
+    }
+
+    public async Task<List<DepartmentSalaryReport>> GetDepartmentSalariesReportAsync()
+    {
+        var departments = await _employeeService.GetAllDepartmentsAsync();
+        var report = new List<DepartmentSalaryReport>();
+
+        foreach (var d in departments)
+        {
+            var deptEmployees = await _employeeService.GetEmployeesByDepartmentAsync(d.DepartmentId);
+            var activeEmployees = deptEmployees.Where(e => e.Status == EmployeeStatus.Actif);
+
+            var employeeCount = activeEmployees.Count();
+            decimal totalSalary = 0;
+
+            foreach (var emp in activeEmployees)
+            {
+                totalSalary += await GetCurrentSalaryAsync(emp.EmployeeId);
+            }
+
+            report.Add(new DepartmentSalaryReport
+            {
+                Department = d,
+                EmployeeCount = employeeCount,
+                TotalSalary = totalSalary,
+                AverageSalary = employeeCount > 0 ? totalSalary / employeeCount : 0
+            });
+        }
+
+        return report;
     }
 }

@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using HRMS.Enums;
+using HRMS.Service;
+using HRMS.ViewModels;
 
 public class AccountController : Controller
 {
-    private readonly HRMS.Service.IAccountService _accountService;
+    private readonly IAccountService _accountService;
 
-    public AccountController(HRMS.Service.IAccountService accountService)
+    public AccountController(IAccountService accountService)
     {
         _accountService = accountService;
     }
@@ -26,57 +28,49 @@ public class AccountController : Controller
     [AllowAnonymous]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Login(string username, string password, string? returnUrl = null)
+    public async Task<IActionResult> Login(LoginViewModel model)
     {
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+        if (!ModelState.IsValid)
         {
-            ModelState.AddModelError("", "Nom d'utilisateur et mot de passe requis");
-            return View();
+            return View(model);
         }
 
-        var user = await _accountService.AuthenticateAsync(username, password);
+        var result = await _accountService.LoginAsync(model);
 
-        if (user != null)
+        if (!result.Success)
         {
-
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.ToString()),
-                new Claim("EmployeeId", user.EmployeeId?.ToString() ?? "")
-            };
-
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var authProperties = new AuthenticationProperties
-            {
-                IsPersistent = true,
-                ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8)
-            };
-
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties);
-
-            HttpContext.Session.SetString("UserRole", user.Role.ToString());
-            HttpContext.Session.SetInt32("UserId", user.UserId);
-            if (user.EmployeeId.HasValue)
-            {
-                HttpContext.Session.SetInt32("EmployeeId", user.EmployeeId.Value);
-            }
-
-            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-
-            return RedirectToAction("Index", "Home");
+            ModelState.AddModelError("", result.ErrorMessage ?? "Erreur de connexion");
+            return View(model);
         }
 
-        ModelState.AddModelError("", "Nom d'utilisateur ou mot de passe incorrect");
-        return View();
+        // Création de l'identité et authentification
+        var claimsIdentity = new ClaimsIdentity(result.Claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var authProperties = new AuthenticationProperties
+        {
+            IsPersistent = true,
+            ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8)
+        };
+
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(claimsIdentity),
+            authProperties);
+
+        // Session
+        HttpContext.Session.SetString("UserRole", result.User!.Role.ToString());
+        HttpContext.Session.SetInt32("UserId", result.User.UserId);
+        if (result.User.EmployeeId.HasValue)
+        {
+            HttpContext.Session.SetInt32("EmployeeId", result.User.EmployeeId.Value);
+        }
+
+        // Redirection
+        if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+        {
+            return Redirect(model.ReturnUrl);
+        }
+
+        return RedirectToAction("Index", "Home");
     }
 
     // GET: Account/Logout
@@ -98,22 +92,30 @@ public class AccountController : Controller
     [Authorize(Roles = "AdminRH")]
     public async Task<IActionResult> Register()
     {
-        ViewBag.Employees = (await _accountService.GetEmployeesWithoutUserAsync()).ToList();
-        return View();
+        var viewModel = await _accountService.GetRegisterFormViewModelAsync();
+        return View(viewModel);
     }
 
-    // POST: Account/Register
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "AdminRH")]
-    public async Task<IActionResult> Register(string username, string password, string email, int? employeeId, UserRole role)
+    public async Task<IActionResult> Register(RegisterViewModel model)
     {
-        var result = await _accountService.RegisterAsync(username, password, email, employeeId, role);
+        if (!ModelState.IsValid)
+        {
+            var viewModel = await _accountService.GetRegisterFormViewModelAsync();
+            ViewBag.Model = model;
+            return View(viewModel);
+        }
+
+        var result = await _accountService.RegisterFromViewModelAsync(model);
+        
         if (!result.Success)
         {
             ModelState.AddModelError("", result.Error ?? "Erreur lors de la création de l'utilisateur");
-            ViewBag.Employees = (await _accountService.GetEmployeesWithoutUserAsync()).ToList();
-            return View();
+            var viewModel = await _accountService.GetRegisterFormViewModelAsync();
+            ViewBag.Model = model;
+            return View(viewModel);
         }
 
         TempData["Success"] = "Utilisateur créé avec succès!";
@@ -127,28 +129,26 @@ public class AccountController : Controller
         return View();
     }
 
-    // POST: ChangePassword
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize]
-    public async Task<IActionResult> ChangePassword(string currentPassword, string newPassword, string confirmPassword)
+    public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
     {
-        if (newPassword != confirmPassword)
+        if (!ModelState.IsValid)
         {
-            ModelState.AddModelError("", "Les nouveaux mots de passe ne correspondent pas");
-            return View();
+            return View(model);
         }
 
         var username = User.Identity?.Name ?? string.Empty;
-        var result = await _accountService.ChangePasswordAsync(username, currentPassword, newPassword);
-        if (result.Success)
+        var result = await _accountService.ChangePasswordFromViewModelAsync(username, model);
+        
+        if (!result.Success)
         {
-            TempData["Success"] = "Mot de passe modifié avec succès!";
-            return RedirectToAction("Index", "Home");
+            ModelState.AddModelError("", result.Error ?? "Erreur lors de la modification du mot de passe");
+            return View(model);
         }
 
-        ModelState.AddModelError("", result.Error ?? "Erreur lors de la modification du mot de passe");
-        return View();
+        TempData["Success"] = "Mot de passe modifié avec succès!";
+        return RedirectToAction("Index", "Home");
     }
-
 }

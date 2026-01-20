@@ -1,4 +1,5 @@
-﻿@{
+﻿@model HRMS.ViewModels.RegisterFormViewModel
+@{
     ViewData["Title"] = "Créer un Utilisateur";
 }
 
@@ -33,6 +34,11 @@
                             <input type="password" name="password" class="form-control" required minlength="6" />
                             <small class="text-muted">Minimum 6 caractères</small>
                         </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Confirmer le mot de passe</label>
+                            <input type="password" name="confirmPassword" class="form-control" required />
+                        </div>
 
                         <div class="col-md-6">
                             <label class="form-label">Rôle *</label>
@@ -44,11 +50,11 @@
                             </select>
                         </div>
 
-                        <div class="col-12">
+                        <div class="col-md-6">
                             <label class="form-label">Employé associé (optionnel)</label>
                             <select name="employeeId" class="form-select">
                                 <option value="">-- Aucun --</option>
-                                @foreach (var employee in ViewBag.Employees as List<HRMS.Models.Employee>)
+                                @foreach (var employee in Model.AvailableEmployees)
                                 {
                                     <option value="@employee.EmployeeId">@employee.FullName - @employee.Matricule</option>
                                 }

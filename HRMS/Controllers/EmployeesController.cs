@@ -13,9 +13,7 @@ public class EmployeesController : Controller
     private readonly IEmployeeService _employeeService;
     private readonly ISalaryService _salaryService;
 
-    public EmployeesController(
-        IEmployeeService employeeService,
-        ISalaryService salaryService)
+    public EmployeesController(IEmployeeService employeeService, ISalaryService salaryService)
     {
         _employeeService = employeeService;
         _salaryService = salaryService;
@@ -38,19 +36,10 @@ public class EmployeesController : Controller
         ViewBag.HireDateSortParam = sortOrder == "hiredate" ? "hiredate_desc" : "hiredate";
         ViewBag.StatusSortParam = sortOrder == "status" ? "status_desc" : "status";
 
-        if (searchString != null)
-        {
-            searchString = searchString;
-        }
-        else
-        {
-            searchString = currentFilter;
-        }
-
+        searchString ??= currentFilter;
         ViewBag.CurrentFilter = searchString;
 
         var employees = await _employeeService.GetEmployeesForIndexAsync(searchString, departmentId, status, sortOrder);
-
         ViewBag.Departments = await _employeeService.GetAllDepartmentsAsync();
         ViewBag.SearchString = searchString;
         ViewBag.DepartmentId = departmentId;
@@ -62,36 +51,26 @@ public class EmployeesController : Controller
     // GET: Employees/Details/5
     public async Task<IActionResult> Details(int id)
     {
-        var employee = await _employeeService.GetEmployeeByIdAsync(id);
-        if (employee == null)
-            return NotFound();
-
-        var viewModel = new EmployeeDetailsViewModel
+        try
         {
-            Employee = employee,
-            CurrentSalary = await _salaryService.GetCurrentSalaryAsync(id),
-            TotalBenefits = await _salaryService.GetTotalBenefitsValueAsync(id),
-            GrossSalary = await _salaryService.CalculateGrossSalaryAsync(id),
-            SalaryHistory = (await _salaryService.GetSalaryHistoryAsync(id)).ToList(),
-            Bonuses = (await _salaryService.GetBonusesByEmployeeAsync(id)).ToList(),
-            Benefits = (await _salaryService.GetEmployeeBenefitsAsync(id)).ToList(),
-            Equipments = employee.EquipmentAssignments.ToList(),
-            Promotions = employee.Promotions.ToList(),
-            Documents = employee.Documents.ToList()
-        };
-
-        return View(viewModel);
+            var viewModel = await _employeeService.GetEmployeeDetailsViewModelAsync(id);
+            
+            viewModel.TotalBenefits = await _salaryService.GetTotalBenefitsValueAsync(id);
+            viewModel.GrossSalary = await _salaryService.CalculateGrossSalaryAsync(id);
+            
+            return View(viewModel);
+        }
+        catch
+        {
+            return NotFound();
+        }
     }
 
     // GET: Employees/Create
     public async Task<IActionResult> Create()
     {
-        return View(new EmployeeFormViewModel
-        {
-            Departments = await _employeeService.GetAllDepartmentsAsync(),
-            Positions = await _employeeService.GetAllPositionsAsync(),
-            HireDate = DateTime.Today
-        });
+        var viewModel = await _employeeService.GetEmployeeFormViewModelAsync();
+        return View(viewModel);
     }
 
     // POST: Employees/Create
@@ -106,61 +85,33 @@ public class EmployeesController : Controller
             return View(model);
         }
 
-        var employee = new Employee
+        try
         {
-            FirstName = model.FirstName,
-            LastName = model.LastName,
-            DateOfBirth = model.DateOfBirth,
-            Address = model.Address,
-            Phone = model.Phone,
-            Email = model.Email,
-            DepartmentId = model.DepartmentId.Value,
-            PositionId = model.PositionId.Value,
-            HireDate = model.HireDate,
-            ContractType = model.ContractType,
-            Status = EmployeeStatus.Actif
-        };
-
-        if (model.Photo != null && model.Photo.Length > 0)
-        {
-            var savedPath = await _employeeService.SaveEmployeePhotoAsync(model.Photo);
-            if (!string.IsNullOrEmpty(savedPath))
-            {
-                employee.PhotoPath = savedPath;
-            }
+            var employee = await _employeeService.CreateEmployeeFromViewModelAsync(model);
+            TempData["Success"] = "Employé créé avec succès!";
+            return RedirectToAction(nameof(Details), new { id = employee.EmployeeId });
         }
-
-        await _employeeService.CreateEmployeeAsync(employee);
-
-        TempData["Success"] = "Employé créé avec succès!";
-        return RedirectToAction(nameof(Details), new { id = employee.EmployeeId });
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("", ex.Message);
+            model.Departments = await _employeeService.GetAllDepartmentsAsync();
+            model.Positions = await _employeeService.GetAllPositionsAsync();
+            return View(model);
+        }
     }
 
     // GET: Employees/Edit/5
     public async Task<IActionResult> Edit(int id)
     {
-        var employee = await _employeeService.GetEmployeeByIdAsync(id);
-        if (employee == null)
-            return NotFound();
-
-        var model = new EmployeeFormViewModel
+        try
         {
-            EmployeeId = employee.EmployeeId,
-            FirstName = employee.FirstName,
-            LastName = employee.LastName,
-            DateOfBirth = employee.DateOfBirth,
-            Address = employee.Address,
-            Phone = employee.Phone,
-            Email = employee.Email,
-            DepartmentId = employee.DepartmentId,
-            PositionId = employee.PositionId,
-            HireDate = employee.HireDate,
-            ContractType = employee.ContractType,
-            Departments = await _employeeService.GetAllDepartmentsAsync(),
-            Positions = await _employeeService.GetAllPositionsAsync()
-        };
-
-        return View(model);
+            var model = await _employeeService.GetEmployeeFormViewModelAsync(id);
+            return View(model);
+        }
+        catch
+        {
+            return NotFound();
+        }
     }
 
     // POST: Employees/Edit/5
@@ -175,33 +126,19 @@ public class EmployeesController : Controller
             return View(model);
         }
 
-        var employee = await _employeeService.GetEmployeeByIdAsync(id);
-        if (employee == null)
-            return NotFound();
-
-        employee.FirstName = model.FirstName;
-        employee.LastName = model.LastName;
-        employee.DateOfBirth = model.DateOfBirth;
-        employee.Address = model.Address;
-        employee.Phone = model.Phone;
-        employee.Email = model.Email;
-        employee.DepartmentId = model.DepartmentId!.Value;
-        employee.PositionId = model.PositionId!.Value;
-        employee.HireDate = model.HireDate;
-        employee.ContractType = model.ContractType;
-
-        if (model.Photo != null && model.Photo.Length > 0)
+        try
         {
-            var savedPath = await _employeeService.SaveEmployeePhotoAsync(model.Photo);
-            if (!string.IsNullOrEmpty(savedPath))
-            {
-                employee.PhotoPath = savedPath;
-            }
+            await _employeeService.UpdateEmployeeFromViewModelAsync(id, model);
+            TempData["Success"] = "Employé modifié avec succès!";
+            return RedirectToAction(nameof(Details), new { id });
         }
-
-        await _employeeService.UpdateEmployeeAsync(employee);
-        TempData["Success"] = "Employé modifié avec succès!";
-        return RedirectToAction(nameof(Details), new { id = employee.EmployeeId });
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("", ex.Message);
+            model.Departments = await _employeeService.GetAllDepartmentsAsync();
+            model.Positions = await _employeeService.GetAllPositionsAsync();
+            return View(model);
+        }
     }
 
     // POST: Employees/UploadDocument
@@ -212,8 +149,15 @@ public class EmployeesController : Controller
         if (file == null || file.Length == 0)
             return RedirectToAction(nameof(Details), new { id = employeeId });
 
-        await _employeeService.UploadEmployeeDocumentAsync(employeeId, documentType, file);
-        TempData["Success"] = "Document uploadé avec succès!";
+        try
+        {
+            await _employeeService.UploadEmployeeDocumentAsync(employeeId, documentType, file);
+            TempData["Success"] = "Document uploadé avec succès!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Erreur: " + ex.Message;
+        }
 
         return RedirectToAction(nameof(Details), new { id = employeeId });
     }

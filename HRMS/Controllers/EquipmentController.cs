@@ -23,16 +23,8 @@ public class EquipmentController : Controller
     // GET: Equipment
     public async Task<IActionResult> Index(string equipmentType, EquipmentStatus? status)
     {
-        var equipment = await _equipmentService.GetAllEquipmentAsync();
-
-        if (!string.IsNullOrEmpty(equipmentType))
-            equipment = equipment.Where(e => e.EquipmentType == equipmentType);
-
-        if (status.HasValue)
-            equipment = equipment.Where(e => e.Status == status);
-
-        ViewBag.EquipmentTypes = equipment.Select(e => e.EquipmentType).Distinct().ToList();
-        return View(equipment.ToList());
+        var viewModel = await _equipmentService.GetEquipmentIndexViewModelAsync(equipmentType, status);
+        return View(viewModel);
     }
 
     // GET: Equipment/Create
@@ -45,31 +37,27 @@ public class EquipmentController : Controller
     [Authorize(Roles = "AdminRH")]
     public async Task<IActionResult> Create(Equipment equipment)
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
+            return View(equipment);
+
+        try
         {
-            try
-            {
-                await _equipmentService.CreateEquipmentAsync(equipment);
-                TempData["Success"] = "Équipement créé avec succès!";
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Erreur: " + ex.Message);
-            }
+            await _equipmentService.CreateEquipmentAsync(equipment);
+            TempData["Success"] = "Équipement créé avec succès!";
+            return RedirectToAction(nameof(Index));
         }
-        return View(equipment);
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("", "Erreur: " + ex.Message);
+            return View(equipment);
+        }
     }
 
     // GET: Equipment/AssignEquipment
     [Authorize(Roles = "AdminRH")]
     public async Task<IActionResult> AssignEquipment()
     {
-        var viewModel = new EquipmentAssignmentViewModel
-        {
-            AvailableEquipment = (await _equipmentService.GetAvailableEquipmentAsync()).ToList(),
-            Employees = (await _employeeService.GetEmployeesByStatusAsync(EmployeeStatus.Actif)).ToList()
-        };
+        var viewModel = await _equipmentService.GetEquipmentAssignmentViewModelAsync();
         return View(viewModel);
     }
 
@@ -79,27 +67,28 @@ public class EquipmentController : Controller
     [Authorize(Roles = "AdminRH")]
     public async Task<IActionResult> AssignEquipment(EquipmentAssignmentViewModel model)
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            try
-            {
-                await _equipmentService.AssignEquipmentAsync(
-                    model.EquipmentId, 
-                    model.EmployeeId, 
-                    model.Condition, 
-                    model.Notes);
-                TempData["Success"] = "Équipement affecté avec succès!";
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Erreur: " + ex.Message);
-            }
+            model = await _equipmentService.GetEquipmentAssignmentViewModelAsync();
+            return View(model);
         }
 
-        model.AvailableEquipment = (await _equipmentService.GetAvailableEquipmentAsync()).ToList();
-        model.Employees = (await _employeeService.GetEmployeesByStatusAsync(EmployeeStatus.Actif)).ToList();
-        return View(model);
+        try
+        {
+            await _equipmentService.AssignEquipmentAsync(
+                model.EquipmentId,
+                model.EmployeeId,
+                model.Condition,
+                model.Notes);
+            TempData["Success"] = "Équipement affecté avec succès!";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("", "Erreur: " + ex.Message);
+            model = await _equipmentService.GetEquipmentAssignmentViewModelAsync();
+            return View(model);
+        }
     }
 
     // POST: Equipment/ReturnEquipment

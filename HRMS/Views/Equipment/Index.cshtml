@@ -1,4 +1,5 @@
-﻿@model IEnumerable<HRMS.Models.Equipment>
+﻿@using HRMS.Enums
+@model HRMS.ViewModels.EquipmentIndexViewModel
 @{
     ViewData["Title"] = "Gestion des Équipements";
 }
@@ -19,25 +20,25 @@
     <div class="col-md-3">
         <div class="stat-card">
             <h6>Total</h6>
-            <h3>@Model.Count()</h3>
+            <h3>@Model.Equipment.Count()</h3>
         </div>
     </div>
     <div class="col-md-3">
         <div class="stat-card">
             <h6>Disponibles</h6>
-            <h3 class="text-success">@Model.Count(e => e.Status == HRMS.Enums.EquipmentStatus.Disponible)</h3>
+            <h3 class="text-success">@Model.Equipment.Count(e => e.Status == HRMS.Enums.EquipmentStatus.Disponible)</h3>
         </div>
     </div>
     <div class="col-md-3">
         <div class="stat-card">
             <h6>Affectés</h6>
-            <h3 class="text-warning">@Model.Count(e => e.Status == HRMS.Enums.EquipmentStatus.Affecté)</h3>
+            <h3 class="text-warning">@Model.Equipment.Count(e => e.Status == EquipmentStatus.Affecté)</h3>
         </div>
     </div>
     <div class="col-md-3">
         <div class="stat-card">
             <h6>Maintenance</h6>
-            <h3 class="text-danger">@Model.Count(e => e.Status == HRMS.Enums.EquipmentStatus.EnMaintenance)</h3>
+            <h3 class="text-danger">@Model.Equipment.Count(e => e.Status == EquipmentStatus.EnMaintenance)</h3>
         </div>
     </div>
 </div>
@@ -58,26 +59,26 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var equipment in Model)
-                    {
-                        <tr>
-                            <td><i class="fas fa-@(equipment.EquipmentType == "Ordinateur" ? "laptop" : equipment.EquipmentType == "Téléphone" ? "mobile-alt" : "tag") me-2"></i>@equipment.EquipmentType</td>
-                            <td>@equipment.Brand</td>
-                            <td>@equipment.Model</td>
-                            <td>@equipment.SerialNumber</td>
-                            <td>@equipment.PurchaseDate?.ToString("dd/MM/yyyy")</td>
-                            <td>
-                                <span class="badge bg-@(equipment.Status == HRMS.Enums.EquipmentStatus.Disponible ? "success" : equipment.Status == HRMS.Enums.EquipmentStatus.Affecté ? "warning" : "danger")">
-                                    @equipment.Status
-                                </span>
-                            </td>
-                            <td>
-                                <a asp-action="Edit" asp-route-id="@equipment.EquipmentId" class="btn btn-sm btn-warning">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    }
+                @foreach (var equipment in Model.Equipment)
+                {
+                    <tr>
+                        <td><i class="fas fa-@(equipment.EquipmentType == "Ordinateur" ? "laptop" : equipment.EquipmentType == "Téléphone" ? "mobile-alt" : "tag") me-2"></i>@equipment.EquipmentType</td>
+                        <td>@equipment.Brand</td>
+                        <td>@equipment.Model</td>
+                        <td>@equipment.SerialNumber</td>
+                        <td>@equipment.PurchaseDate?.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            <span class="badge bg-@(equipment.Status == HRMS.Enums.EquipmentStatus.Disponible ? "success" : equipment.Status == HRMS.Enums.EquipmentStatus.Affecté ? "warning" : "danger")">
+                                @equipment.Status
+                            </span>
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@equipment.EquipmentId" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
                 </tbody>
             </table>
         </div>

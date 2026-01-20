@@ -25,7 +25,7 @@ public interface IRecruitmentService
     Task<JobOfferFormViewModel> GetJobOfferFormViewModelAsync();
     Task<CandidateFormViewModel> GetCandidateFormViewModelAsync();
     Task<CandidateDetailsViewModel> GetCandidateDetailsViewModelAsync(int candidateId);
-    Task<Candidate> CreateCandidateWithCVAsync(CandidateFormViewModel model, string cvPath);
+    Task<Candidate> CreateCandidateWithCVAsync(CandidateFormViewModel model);
     Task<InterviewFormViewModel> GetInterviewFormViewModelAsync(int candidateId);
     Task<EmployeeFormViewModel> GetConvertToEmployeeViewModelAsync(int candidateId);
 }

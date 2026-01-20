@@ -12,14 +12,14 @@ namespace HRMS.Controllers;
 public class RecruitmentController : Controller
 {
     private readonly IRecruitmentService _recruitmentService;
-    private readonly IWebHostEnvironment _environment;
+    private readonly IEmployeeService _employeeService;
 
     public RecruitmentController(
         IRecruitmentService recruitmentService,
-        IWebHostEnvironment environment)
+        IEmployeeService employeeService)
     {
         _recruitmentService = recruitmentService;
-        _environment = environment;
+        _employeeService = employeeService;
     }
 
     // ==================== Offres d'emploi ====================
@@ -110,22 +110,7 @@ public class RecruitmentController : Controller
             return View(model);
         }
 
-        string? cvPath = null;
-        if (model.CVFile != null && model.CVFile.Length > 0)
-        {
-            var folder = Path.Combine(_environment.WebRootPath, "Content/CVs");
-            Directory.CreateDirectory(folder);
-
-            var fileName = Path.GetFileName(model.CVFile.FileName);
-            var path = Path.Combine(folder, fileName);
-
-            using var stream = new FileStream(path, FileMode.Create);
-            await model.CVFile.CopyToAsync(stream);
-
-            cvPath = "/Content/CVs/" + fileName;
-        }
-
-        await _recruitmentService.CreateCandidateWithCVAsync(model, cvPath);
+        await _recruitmentService.CreateCandidateWithCVAsync(model);
         TempData["Success"] = "Candidature enregistrée avec succès!";
         return RedirectToAction(nameof(Candidates));
     }
@@ -201,23 +186,7 @@ public class RecruitmentController : Controller
             return View(viewModel);
         }
 
-        var employee = new Employee
-        {
-            FirstName = model.FirstName,
-            LastName = model.LastName,
-            DateOfBirth = model.DateOfBirth,
-            Address = model.Address,
-            Phone = model.Phone,
-            Email = model.Email,
-            DepartmentId = model.DepartmentId.Value,
-            PositionId = model.PositionId.Value,
-            HireDate = model.HireDate,
-            ContractType = model.ContractType,
-            Status = EmployeeStatus.Actif
-        };
-
-        await _recruitmentService.ConvertCandidateToEmployeeAsync(candidateId, employee);
-
+        var employee = await _employeeService.CreateEmployeeFromViewModelAsync(model);
         TempData["Success"] = "Candidat converti en employé avec succès!";
         return RedirectToAction("Details", "Employees", new { id = employee.EmployeeId });
     }

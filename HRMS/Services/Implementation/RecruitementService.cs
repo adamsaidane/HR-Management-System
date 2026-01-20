@@ -10,11 +10,13 @@ public class RecruitmentService : IRecruitmentService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IEmployeeService _employeeService;
+    private readonly IWebHostEnvironment _environment;
 
-    public RecruitmentService(IUnitOfWork unitOfWork, IEmployeeService employeeService)
+    public RecruitmentService(IUnitOfWork unitOfWork, IEmployeeService employeeService, IWebHostEnvironment environment)
     {
         _unitOfWork = unitOfWork;
         _employeeService = employeeService;
+        _environment = environment;
     }
 
     // JobOffers
@@ -138,7 +140,6 @@ public class RecruitmentService : IRecruitmentService
         if (candidate == null)
             throw new Exception("Candidat introuvable");
 
-        // Créer l'employé
         employee.FirstName = candidate.FirstName;
         employee.LastName = candidate.LastName;
         employee.Email = candidate.Email;
@@ -146,7 +147,6 @@ public class RecruitmentService : IRecruitmentService
 
         await _employeeService.CreateEmployeeAsync(employee);
 
-        // Mettre à jour le statut du candidat
         await UpdateCandidateStatusAsync(candidateId, CandidateStatus.Accepté);
 
         return employee;
@@ -181,7 +181,7 @@ public class RecruitmentService : IRecruitmentService
         };
     }
 
-    public async Task<Candidate> CreateCandidateWithCVAsync(CandidateFormViewModel model, string cvPath)
+    public async Task<Candidate> CreateCandidateWithCVAsync(CandidateFormViewModel model)
     {
         var candidate = new Candidate
         {
@@ -191,9 +191,25 @@ public class RecruitmentService : IRecruitmentService
             Phone = model.Phone,
             Address = model.Address,
             JobOfferId = model.JobOfferId.Value,
-            CVPath = cvPath
         };
 
+        string? cvPath = null;
+        if (model.CVFile != null && model.CVFile.Length > 0)
+        {
+            var folder = Path.Combine(_environment.WebRootPath, "Content/CVs");
+            Directory.CreateDirectory(folder);
+
+            var fileName = Path.GetFileName(model.CVFile.FileName);
+            var path = Path.Combine(folder, fileName);
+
+            using var stream = new FileStream(path, FileMode.Create);
+            await model.CVFile.CopyToAsync(stream);
+
+            cvPath = "/Content/CVs/" + fileName;
+        }
+
+        candidate.CVPath = cvPath;
+        
         await CreateCandidateAsync(candidate);
         return candidate;
     }

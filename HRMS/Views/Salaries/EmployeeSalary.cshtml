@@ -1,25 +1,14 @@
-﻿@* =========================================== *@
-@* Views/Salaries/EmployeeSalary.cshtml *@
-@* =========================================== *@
-
+﻿@model HRMS.ViewModels.EmployeeSalaryViewModel
 @{
     ViewData["Title"] = "Gestion Salaire";
-    var employee = ViewBag.Employee as HRMS.Models.Employee;
-    var currentSalary = ViewBag.CurrentSalary as decimal?;
-    var salaryHistory = ViewBag.SalaryHistory as IEnumerable<HRMS.Models.Salary>;
-    var bonuses = ViewBag.Bonuses as IEnumerable<HRMS.Models.Bonus>;
-    var benefits = ViewBag.Benefits as IEnumerable<HRMS.Models.EmployeeBenefit>;
-    var totalBenefits = ViewBag.TotalBenefits as decimal?;
-    var grossSalary = ViewBag.GrossSalary as decimal?;
-    var allBenefits = ViewBag.AllBenefits as IEnumerable<HRMS.Models.Benefit>;
 }
 
 <div class="page-header d-flex justify-content-between align-items-center mb-4">
     <div>
         <h1><i class="fas fa-money-bill-wave me-2"></i>Gestion du Salaire</h1>
-        <p class="text-muted mb-0">Employé: <strong>@employee.FullName</strong> (@employee.Matricule)</p>
+        <p class="text-muted mb-0">Employé: <strong>@Model.Employee.FullName</strong> (@Model.Employee.Matricule)</p>
     </div>
-    <a asp-controller="Employees" asp-action="Details" asp-route-id="@employee.EmployeeId" 
+    <a asp-controller="Employees" asp-action="Details" asp-route-id="@Model.Employee.EmployeeId" 
        class="btn btn-outline-secondary">
         <i class="fas fa-arrow-left me-2"></i>Retour au profil
     </a>
@@ -31,21 +20,21 @@
         <div class="stat-card">
             <i class="fas fa-money-bill icon text-primary"></i>
             <h6>Salaire de Base</h6>
-            <h3 class="text-primary">@((currentSalary ?? 0).ToString("N2")) DT</h3>
+            <h3 class="text-primary">@((Model.CurrentSalary ?? 0).ToString("N2")) DT</h3>
         </div>
     </div>
     <div class="col-md-4">
         <div class="stat-card">
             <i class="fas fa-gift icon text-success"></i>
             <h6>Total Avantages</h6>
-            <h3 class="text-success">@((totalBenefits ?? 0).ToString("N2")) DT</h3>
+            <h3 class="text-success">@((Model.TotalBenefits ?? 0).ToString("N2")) DT</h3>
         </div>
     </div>
     <div class="col-md-4">
         <div class="stat-card">
             <i class="fas fa-calculator icon text-warning"></i>
             <h6>Salaire Brut</h6>
-            <h3 class="text-warning">@((grossSalary ?? 0).ToString("N2")) DT</h3>
+            <h3 class="text-warning">@((Model.GrossSalary ?? 0).ToString("N2")) DT</h3>
         </div>
     </div>
 </div>
@@ -59,17 +48,17 @@
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#salaryHistory">
-            <i class="fas fa-history me-1"></i>Historique (@(salaryHistory?.Count() ?? 0))
+            <i class="fas fa-history me-1"></i>Historique (@(Model.SalaryHistory?.Count() ?? 0))
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#bonusesTab">
-            <i class="fas fa-gift me-1"></i>Primes (@(bonuses?.Count() ?? 0))
+            <i class="fas fa-gift me-1"></i>Primes (@(Model.Bonuses?.Count() ?? 0))
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#benefitsTab">
-            <i class="fas fa-star me-1"></i>Avantages (@(benefits?.Count() ?? 0))
+            <i class="fas fa-star me-1"></i>Avantages (@(Model.Benefits?.Count() ?? 0))
         </button>
     </li>
 </ul>
@@ -82,13 +71,13 @@
                 <h5 class="mb-3"><i class="fas fa-edit me-2"></i>Mettre à Jour le Salaire</h5>
                 <form method="post" asp-action="UpdateSalary">
                     @Html.AntiForgeryToken()
-                    <input type="hidden" name="employeeId" value="@employee.EmployeeId" />
+                    <input type="hidden" name="employeeId" value="@Model.Employee.EmployeeId" />
                     
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Salaire Actuel</label>
                             <div class="input-group input-group-lg">
-                                <input type="text" class="form-control" value="@((currentSalary ?? 0).ToString("N2"))" readonly />
+                                <input type="text" class="form-control" value="@((Model.CurrentSalary ?? 0).ToString("N2"))" readonly />
                                 <span class="input-group-text">DT</span>
                             </div>
                         </div>
@@ -98,7 +87,7 @@
                             <div class="input-group input-group-lg">
                                 <input type="number" name="newSalary" class="form-control" 
                                        step="0.01" min="0" required id="newSalaryInput" 
-                                       value="@(currentSalary ?? 0)" />
+                                       value="@(Model.CurrentSalary ?? 0)" />
                                 <span class="input-group-text">DT</span>
                             </div>
                         </div>
@@ -151,7 +140,7 @@
     <!-- Historique des Salaires -->
     <div class="tab-pane fade" id="salaryHistory">
         <h5 class="mb-3"><i class="fas fa-history me-2"></i>Historique des Salaires</h5>
-        @if (salaryHistory != null && salaryHistory.Any())
+        @if (@Model.SalaryHistory != null && @Model.SalaryHistory.Any())
         {
             <div class="table-responsive">
                 <table class="table table-hover">
@@ -167,7 +156,7 @@
                     <tbody>
                         @{
                             var previousSalary = 0m;
-                            foreach (var salary in salaryHistory.OrderByDescending(s => s.EffectiveDate))
+                            foreach (var salary in @Model.SalaryHistory.OrderByDescending(s => s.EffectiveDate))
                             {
                                 var difference = previousSalary > 0 ? salary.BaseSalary - previousSalary : 0;
                                 var percent = previousSalary > 0 ? (difference / previousSalary * 100) : 0;
@@ -226,7 +215,7 @@
             </button>
         </div>
 
-        @if (bonuses != null && bonuses.Any())
+        @if (@Model.Bonuses != null && @Model.Bonuses.Any())
         {
             <div class="table-responsive">
                 <table class="table table-hover">
@@ -239,7 +228,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var bonus in bonuses.OrderByDescending(b => b.Date))
+                        @foreach (var bonus in @Model.Bonuses.OrderByDescending(b => b.Date))
                         {
                             <tr>
                                 <td>@bonus.Date.ToString("dd/MM/yyyy")</td>
@@ -254,7 +243,7 @@
                             <td colspan="2"><strong>Total des Primes (@DateTime.Now.Year)</strong></td>
                             <td colspan="2">
                                 <strong class="text-success">
-                                    @bonuses.Where(b => b.Date.Year == DateTime.Now.Year).Sum(b => b.Amount).ToString("N2") DT
+                                    @Model.Bonuses.Where(b => b.Date.Year == DateTime.Now.Year).Sum(b => b.Amount).ToString("N2") DT
                                 </strong>
                             </td>
                         </tr>
@@ -280,7 +269,7 @@
             </button>
         </div>
 
-        @if (benefits != null && benefits.Any())
+        @if (Model.Benefits != null && Model.Benefits.Any())
         {
             <div class="table-responsive">
                 <table class="table table-hover">
@@ -294,7 +283,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var eb in benefits)
+                        @foreach (var eb in Model.Benefits)
                         {
                             <tr>
                                 <td><span class="badge bg-primary">@eb.Benefit.BenefitType</span></td>
@@ -318,7 +307,7 @@
                         <tr class="table-light">
                             <td colspan="2"><strong>Total Mensuel des Avantages Actifs</strong></td>
                             <td colspan="3">
-                                <strong class="text-success">@((totalBenefits ?? 0).ToString("N2")) DT</strong>
+                                <strong class="text-success">@((Model.TotalBenefits ?? 0).ToString("N2")) DT</strong>
                             </td>
                         </tr>
                     </tfoot>
@@ -341,7 +330,7 @@
         <div class="modal-content">
             <form method="post" asp-action="AddBonus">
                 @Html.AntiForgeryToken()
-                <input type="hidden" name="EmployeeId" value="@employee.EmployeeId" />
+                <input type="hidden" name="EmployeeId" value="@Model.Employee.EmployeeId" />
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fas fa-gift me-2"></i>Ajouter une Prime</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -389,7 +378,7 @@
         <div class="modal-content">
             <form method="post" asp-action="AssignBenefit">
                 @Html.AntiForgeryToken()
-                <input type="hidden" name="employeeId" value="@employee.EmployeeId" />
+                <input type="hidden" name="employeeId" value="@Model.Employee.EmployeeId" />
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fas fa-star me-2"></i>Assigner un Avantage</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -399,9 +388,9 @@
                         <label class="form-label">Avantage *</label>
                         <select name="benefitId" class="form-select" required>
                             <option value="">-- Sélectionner un avantage --</option>
-                            @if (allBenefits != null)
+                            @if (Model.AllBenefits != null)
                             {
-                                @foreach (var benefit in allBenefits)
+                                @foreach (var benefit in Model.AllBenefits)
                                 {
                                     <option value="@benefit.BenefitId">
                                         @benefit.BenefitType - @benefit.Value.ToString("N2") DT/mois
@@ -431,7 +420,7 @@
         // Calculer la différence de salaire en temps réel
         document.addEventListener('DOMContentLoaded', function() {
             const newSalaryInput = document.getElementById('newSalaryInput');
-            const currentSalary = @(currentSalary ?? 0);
+            const currentSalary = @(Model.CurrentSalary ?? 0);
             const comparisonDiv = document.getElementById('salaryComparison');
             const differenceSpan = document.getElementById('difference');
             const percentageSpan = document.getElementById('percentage');

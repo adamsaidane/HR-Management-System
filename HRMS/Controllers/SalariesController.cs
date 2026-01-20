@@ -11,80 +11,32 @@ namespace HRMS.Controllers;
 public class SalariesController : Controller
 {
     private readonly ISalaryService _salaryService;
-    private readonly IUnitOfWork _unitOfWork;
 
-    public SalariesController(ISalaryService salaryService, IUnitOfWork unitOfWork)
+    public SalariesController(ISalaryService salaryService)
     {
         _salaryService = salaryService;
-        _unitOfWork = unitOfWork;
     }
 
     // GET: Salaries/Index
     public async Task<IActionResult> Index(string searchString, int? departmentId)
     {
-        var employees = await _unitOfWork.Employees.FindAsync(e => e.Status == EmployeeStatus.Actif);
-
-        // Filtre par recherche
-        if (!string.IsNullOrEmpty(searchString))
-        {
-            employees = employees.Where(e =>
-                e.FirstName.Contains(searchString) ||
-                e.LastName.Contains(searchString) ||
-                e.Matricule.Contains(searchString));
-        }
-
-        // Filtre par département
-        if (departmentId.HasValue)
-        {
-            employees = employees.Where(e => e.DepartmentId == departmentId.Value);
-        }
-
-        employees = employees.OrderBy(e => e.LastName).ThenBy(e => e.FirstName);
-
-        // Statistiques globales
-        var allActiveEmployees = await _unitOfWork.Employees.GetActiveEmployeesAsync();
-        
-        decimal totalMasseSalariale = 0;
-        int employeesWithSalary = 0;
-
-        foreach (var emp in allActiveEmployees)
-        {
-            var currentSalary = await _salaryService.GetCurrentSalaryAsync(emp.EmployeeId);
-            if (currentSalary > 0)
-            {
-                totalMasseSalariale += currentSalary;
-                employeesWithSalary++;
-            }
-        }
-
-        ViewBag.Departments = (await _unitOfWork.Departments.GetAllAsync()).OrderBy(d => d.Name).ToList();
-        ViewBag.SearchString = searchString;
-        ViewBag.DepartmentId = departmentId;
-        ViewBag.TotalMasseSalariale = totalMasseSalariale;
-        ViewBag.AverageSalary = employeesWithSalary > 0 ? totalMasseSalariale / employeesWithSalary : 0;
-        ViewBag.TotalEmployees = allActiveEmployees.Count();
-
-        return View(employees.ToList());
+        var viewModel = await _salaryService.GetSalaryIndexViewModelAsync(searchString, departmentId);
+        return View(viewModel);
     }
 
     // GET: Salaries/EmployeeSalary/5
     [HttpGet("Salaries/EmployeeSalary/{employeeId}")]
     public async Task<IActionResult> EmployeeSalary(int employeeId)
     {
-        var employee = await _unitOfWork.Employees.GetByIdAsync(employeeId);
-        if (employee == null)
+        try
+        {
+            var viewModel = await _salaryService.GetEmployeeSalaryViewModelAsync(employeeId);
+            return View(viewModel);
+        }
+        catch
+        {
             return NotFound();
-
-        ViewBag.Employee = employee;
-        ViewBag.CurrentSalary = await _salaryService.GetCurrentSalaryAsync(employeeId);
-        ViewBag.SalaryHistory = await _salaryService.GetSalaryHistoryAsync(employeeId);
-        ViewBag.Bonuses = await _salaryService.GetBonusesByEmployeeAsync(employeeId);
-        ViewBag.Benefits = await _salaryService.GetEmployeeBenefitsAsync(employeeId);
-        ViewBag.TotalBenefits = await _salaryService.GetTotalBenefitsValueAsync(employeeId);
-        ViewBag.AllBenefits = await _salaryService.GetAllBenefitsAsync();
-        ViewBag.GrossSalary = await _salaryService.CalculateGrossSalaryAsync(employeeId);
-
-        return View();
+        }
     }
 
     // POST: Salaries/UpdateSalary
@@ -148,52 +100,15 @@ public class SalariesController : Controller
     [Authorize(Roles = "AdminRH")]
     public async Task<IActionResult> SalaryReport()
     {
-        var employees = await _unitOfWork.Employees.GetActiveEmployeesAsync();
-
-        var report = new List<object>();
-        foreach (var e in employees)
-        {
-            report.Add(new
-            {
-                Employee = e,
-                CurrentSalary = await _salaryService.GetCurrentSalaryAsync(e.EmployeeId),
-                TotalBenefits = await _salaryService.GetTotalBenefitsValueAsync(e.EmployeeId),
-                GrossSalary = await _salaryService.CalculateGrossSalaryAsync(e.EmployeeId)
-            });
-        }
-
+        var report = await _salaryService.GetSalaryReportAsync();
         return View(report);
     }
 
     // GET: Salaries/DepartmentSalaries
     [Authorize(Roles = "AdminRH,Manager")]
-    public async Task<IActionResult> DepartmentSalaries(int? departmentId)
+    public async Task<IActionResult> DepartmentSalaries()
     {
-        var departments = await _unitOfWork.Departments.GetAllAsync();
-        var salaryByDepartment = new List<object>();
-
-        foreach (var d in departments)
-        {
-            var deptEmployees = await _unitOfWork.Employees
-                .FindAsync(e => e.DepartmentId == d.DepartmentId && e.Status == EmployeeStatus.Actif);
-
-            var employeeCount = deptEmployees.Count();
-            decimal totalSalary = 0;
-
-            foreach (var emp in deptEmployees)
-            {
-                totalSalary += await _salaryService.GetCurrentSalaryAsync(emp.EmployeeId);
-            }
-
-            salaryByDepartment.Add(new
-            {
-                Department = d,
-                EmployeeCount = employeeCount,
-                TotalSalary = totalSalary,
-                AverageSalary = employeeCount > 0 ? totalSalary / employeeCount : 0
-            });
-        }
-
-        return View(salaryByDepartment);
+        var report = await _salaryService.GetDepartmentSalariesReportAsync();
+        return View(report);
     }
 }

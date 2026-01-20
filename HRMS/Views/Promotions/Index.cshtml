@@ -31,7 +31,7 @@
                     <tr>
                         <td>@promo.PromotionDate.ToString("dd/MM/yyyy")</td>
                         <td><strong>@promo.Employee.FullName</strong></td>
-                        <td>@promo.OldPosition.Title</td>
+                        <td><span class="badge bg-danger">@promo.OldPosition.Title</span></td>
                         <td><span class="badge bg-success">@promo.NewPosition.Title</span></td>
                         <td>@promo.OldSalary.ToString("N2") DT</td>
                         <td><strong>@promo.NewSalary.ToString("N2") DT</strong></td>

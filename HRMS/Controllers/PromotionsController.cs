@@ -30,13 +30,7 @@ public class PromotionsController : Controller
     [Authorize(Roles = "AdminRH")]
     public async Task<IActionResult> Create()
     {
-        var viewModel = new PromotionFormViewModel
-        {
-            Employees = (await _employeeService.GetEmployeesByStatusAsync(EmployeeStatus.Actif)).ToList(),
-            Positions = (await _employeeService.GetAllPositionsAsync()).ToList(),
-            PromotionDate = DateTime.Today
-        };
-
+        var viewModel = await _promotionService.GetPromotionFormViewModelAsync();
         return View(viewModel);
     }
 
@@ -46,28 +40,29 @@ public class PromotionsController : Controller
     [Authorize(Roles = "AdminRH")]
     public async Task<IActionResult> Create(PromotionFormViewModel model)
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            try
-            {
-                await _promotionService.ProcessPromotionAsync(
-                    model.EmployeeId,
-                    model.NewPositionId,
-                    model.NewSalary,
-                    model.Justification);
-
-                TempData["Success"] = "Promotion enregistrée avec succès!";
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Erreur: " + ex.Message);
-            }
+            model = await _promotionService.GetPromotionFormViewModelAsync();
+            return View(model);
         }
 
-        model.Employees = (await _employeeService.GetEmployeesByStatusAsync(EmployeeStatus.Actif)).ToList();
-        model.Positions = (await _employeeService.GetAllPositionsAsync()).ToList();
-        return View(model);
+        try
+        {
+            await _promotionService.ProcessPromotionAsync(
+                model.EmployeeId,
+                model.NewPositionId,
+                model.NewSalary,
+                model.Justification);
+
+            TempData["Success"] = "Promotion enregistrée avec succès!";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("", "Erreur: " + ex.Message);
+            model = await _promotionService.GetPromotionFormViewModelAsync();
+            return View(model);
+        }
     }
 
     // GET: Promotions/EmployeePromotions/5

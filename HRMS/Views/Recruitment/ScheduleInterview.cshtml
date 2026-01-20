@@ -1,7 +1,7 @@
-﻿@model HRMS.Models.Interview
+﻿@model HRMS.ViewModels.InterviewFormViewModel
 @{
     ViewData["Title"] = "Planifier un Entretien";
-    var candidate = ViewBag.Candidate as HRMS.Models.Candidate;
+    var candidate = Model.Candidate as HRMS.Models.Candidate;
 }
 
 <div class="page-header mb-4">
@@ -15,35 +15,35 @@
             <div class="card-body">
                 <form method="post" asp-action="ScheduleInterview">
                     @Html.AntiForgeryToken()
-                    <input type="hidden" asp-for="CandidateId" value="@candidate.CandidateId"/>
+                    <input type="hidden" asp-for="Interview.CandidateId" value="@candidate.CandidateId"/>
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label asp-for="InterviewDate" class="form-label"></label>
-                            <input asp-for="InterviewDate" class="form-control" type="datetime-local" />
-                            <span asp-validation-for="InterviewDate" class="text-danger"></span>
+                            <label asp-for="Interview.InterviewDate" class="form-label"></label>
+                            <input asp-for="Interview.InterviewDate" class="form-control" type="datetime-local" />
+                            <span asp-validation-for="Interview.InterviewDate" class="text-danger"></span>
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="Location" class="form-label"></label>
-                            <input asp-for="Location" class="form-control" 
+                            <label asp-for="Interview.Location" class="form-label"></label>
+                            <input asp-for="Interview.Location" class="form-control" 
                                    placeholder="Ex: Bureau RH - Salle de réunion A" />
-                            <span asp-validation-for="Location" class="text-danger"></span>
+                            <span asp-validation-for="Interview.Location" class="text-danger"></span>
                         </div>
 
                         <div class="col-12">
-                            <label asp-for="InterviewerName" class="form-label"></label>
-                            <input asp-for="InterviewerName" class="form-control" 
+                            <label asp-for="Interview.InterviewerName" class="form-label"></label>
+                            <input asp-for="Interview.InterviewerName" class="form-control" 
                                    placeholder="Ex: Fatma Trabelsi, DRH" />
-                            <span asp-validation-for="InterviewerName" class="text-danger"></span>
+                            <span asp-validation-for="Interview.InterviewerName" class="text-danger"></span>
                         </div>
 
                         <div class="col-12">
-                            <label asp-for="Notes" class="form-label"></label>
-                            <textarea asp-for="Notes" class="form-control" rows="5" 
+                            <label asp-for="Interview.Notes" class="form-label"></label>
+                            <textarea asp-for="Interview.Notes" class="form-control" rows="5" 
                                       placeholder="Points à aborder, préparation particulière, documents à demander..."></textarea>
-                            <span asp-validation-for="Notes" class="text-danger"></span>
+                            <span asp-validation-for="Interview.Notes" class="text-danger"></span>
                         </div>
 
                         <div class="col-12">

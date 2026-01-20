@@ -12,16 +12,13 @@ namespace HRMS.Controllers;
 public class RecruitmentController : Controller
 {
     private readonly IRecruitmentService _recruitmentService;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IWebHostEnvironment _environment;
 
     public RecruitmentController(
         IRecruitmentService recruitmentService,
-        IUnitOfWork unitOfWork,
         IWebHostEnvironment environment)
     {
         _recruitmentService = recruitmentService;
-        _unitOfWork = unitOfWork;
         _environment = environment;
     }
 
@@ -36,24 +33,27 @@ public class RecruitmentController : Controller
     [Authorize(Roles = "AdminRH")]
     public async Task<IActionResult> CreateJobOffer()
     {
-        ViewBag.Departments = await _unitOfWork.Departments.GetAllAsync();
-        ViewBag.Positions = await _unitOfWork.Positions.GetAllAsync();
-        return View();
+        var viewModel = await _recruitmentService.GetJobOfferFormViewModelAsync();
+        if (viewModel.JobOffer == null)
+            viewModel.JobOffer = new JobOffer();
+        return View(viewModel);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "AdminRH")]
-    public async Task<IActionResult> CreateJobOffer(JobOffer model)
+    public async Task<IActionResult> CreateJobOffer(JobOfferFormViewModel model)
     {
         if (!ModelState.IsValid)
         {
-            ViewBag.Departments = await _unitOfWork.Departments.GetAllAsync();
-            ViewBag.Positions = await _unitOfWork.Positions.GetAllAsync();
+            var formVM = await _recruitmentService.GetJobOfferFormViewModelAsync();
+            model.Departments = formVM.Departments;
+            model.Positions = formVM.Positions;
+
             return View(model);
         }
 
-        await _recruitmentService.CreateJobOfferAsync(model);
+        await _recruitmentService.CreateJobOfferAsync(model.JobOffer);
         TempData["Success"] = "Offre d'emploi créée avec succès!";
         return RedirectToAction(nameof(JobOffers));
     }
@@ -76,27 +76,28 @@ public class RecruitmentController : Controller
             ? await _recruitmentService.GetCandidatesByJobOfferAsync(jobOfferId.Value)
             : await _recruitmentService.GetAllCandidatesAsync();
 
-        ViewBag.JobOffers = await _unitOfWork.JobOffers.GetAllAsync();
+        ViewBag.JobOffers = await _recruitmentService.GetAllJobOffersAsync();
         ViewBag.SelectedJobOffer = jobOfferId;
         return View(candidates);
     }
 
     public async Task<IActionResult> CandidateDetails(int id)
     {
-        var candidate = await _recruitmentService.GetCandidateByIdAsync(id);
-        if (candidate == null)
+        try
+        {
+            var viewModel = await _recruitmentService.GetCandidateDetailsViewModelAsync(id);
+            return View(viewModel);
+        }
+        catch
+        {
             return NotFound();
-
-        ViewBag.Interviews = await _recruitmentService.GetInterviewsByCandidateAsync(id);
-        return View(candidate);
+        }
     }
 
     public async Task<IActionResult> CreateCandidate()
     {
-        return View(new CandidateFormViewModel
-        {
-            JobOffers = (await _recruitmentService.GetActiveJobOffersAsync()).ToList()
-        });
+        var viewModel = await _recruitmentService.GetCandidateFormViewModelAsync();
+        return View(viewModel);
     }
 
     [HttpPost]
@@ -109,16 +110,7 @@ public class RecruitmentController : Controller
             return View(model);
         }
 
-        var candidate = new Candidate
-        {
-            FirstName = model.FirstName,
-            LastName = model.LastName,
-            Email = model.Email,
-            Phone = model.Phone,
-            Address = model.Address,
-            JobOfferId = model.JobOfferId.Value
-        };
-
+        string? cvPath = null;
         if (model.CVFile != null && model.CVFile.Length > 0)
         {
             var folder = Path.Combine(_environment.WebRootPath, "Content/CVs");
@@ -130,10 +122,10 @@ public class RecruitmentController : Controller
             using var stream = new FileStream(path, FileMode.Create);
             await model.CVFile.CopyToAsync(stream);
 
-            candidate.CVPath = "/Content/CVs/" + fileName;
+            cvPath = "/Content/CVs/" + fileName;
         }
 
-        await _recruitmentService.CreateCandidateAsync(candidate);
+        await _recruitmentService.CreateCandidateWithCVAsync(model, cvPath);
         TempData["Success"] = "Candidature enregistrée avec succès!";
         return RedirectToAction(nameof(Candidates));
     }
@@ -153,17 +145,15 @@ public class RecruitmentController : Controller
     [Authorize(Roles = "AdminRH,Manager")]
     public async Task<IActionResult> ScheduleInterview(int candidateId)
     {
-        var candidate = await _recruitmentService.GetCandidateByIdAsync(candidateId);
-        if (candidate == null)
-            return NotFound();
-
-        ViewBag.Candidate = candidate;
-
-        return View(new Interview
+        try
         {
-            CandidateId = candidateId,
-            InterviewDate = DateTime.Now.AddDays(7)
-        });
+            var viewModel = await _recruitmentService.GetInterviewFormViewModelAsync(candidateId);
+            return View(viewModel);
+        }
+        catch
+        {
+            return NotFound();
+        }
     }
 
     [HttpPost]
@@ -173,8 +163,8 @@ public class RecruitmentController : Controller
     {
         if (!ModelState.IsValid)
         {
-            ViewBag.Candidate = await _recruitmentService.GetCandidateByIdAsync(interview.CandidateId);
-            return View(interview);
+            var viewModel = await _recruitmentService.GetInterviewFormViewModelAsync(interview.CandidateId);
+            return View(viewModel);
         }
 
         await _recruitmentService.ScheduleInterviewAsync(interview);
@@ -187,23 +177,17 @@ public class RecruitmentController : Controller
     [Authorize(Roles = "AdminRH")]
     public async Task<IActionResult> ConvertToEmployee(int candidateId)
     {
-        var candidate = await _recruitmentService.GetCandidateByIdAsync(candidateId);
-        if (candidate == null)
-            return NotFound();
-
-        ViewBag.Candidate = candidate;
-
-        return View(new EmployeeFormViewModel
+        try
         {
-            FirstName = candidate.FirstName,
-            LastName = candidate.LastName,
-            Email = candidate.Email,
-            Phone = candidate.Phone,
-            Address = candidate.Address,
-            HireDate = DateTime.Today,
-            Departments = (await _unitOfWork.Departments.GetAllAsync()).ToList(),
-            Positions = (await _unitOfWork.Positions.GetAllAsync()).ToList()
-        });
+            var viewModel = await _recruitmentService.GetConvertToEmployeeViewModelAsync(candidateId);
+            var candidate = await _recruitmentService.GetCandidateByIdAsync(candidateId);
+            ViewBag.Candidate = candidate;
+            return View(viewModel);
+        }
+        catch
+        {
+            return NotFound();
+        }
     }
 
     [HttpPost]
@@ -213,10 +197,8 @@ public class RecruitmentController : Controller
     {
         if (!ModelState.IsValid)
         {
-            model.Departments = (await _unitOfWork.Departments.GetAllAsync()).ToList();
-            model.Positions = (await _unitOfWork.Positions.GetAllAsync()).ToList();
-            ViewBag.Candidate = await _recruitmentService.GetCandidateByIdAsync(candidateId);
-            return View(model);
+            var viewModel = await _recruitmentService.GetConvertToEmployeeViewModelAsync(candidateId);
+            return View(viewModel);
         }
 
         var employee = new Employee

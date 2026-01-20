@@ -1,4 +1,4 @@
-﻿@model HRMS.Models.JobOffer
+﻿@model HRMS.ViewModels.JobOfferFormViewModel
 @{
     ViewData["Title"] = "Nouvelle Offre d'Emploi";
 }
@@ -17,57 +17,57 @@
 
                     <div class="row g-3">
                         <div class="col-12">
-                            <label asp-for="Title" class="form-label"></label>
-                            <input asp-for="Title" class="form-control" 
+                            <label asp-for="JobOffer.Title" class="form-label"></label>
+                            <input asp-for="JobOffer.Title" class="form-control" 
                                    placeholder="Ex: Développeur Full Stack Senior" />
-                            <span asp-validation-for="Title" class="text-danger"></span>
+                            <span asp-validation-for="JobOffer.Title" class="text-danger"></span>
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="DepartmentId" class="form-label"></label>
-                            <select asp-for="DepartmentId" class="form-select">
+                            <label asp-for="JobOffer.DepartmentId" class="form-label"></label>
+                            <select asp-for="JobOffer.DepartmentId" class="form-select">
                                 <option value="">-- Sélectionner un département --</option>
-                                @foreach (var dept in ViewBag.Departments as List<HRMS.Models.Department>)
+                                @foreach (var dept in Model.Departments as List<HRMS.Models.Department>)
                                 {
                                     <option value="@dept.DepartmentId">@dept.Name</option>
                                 }
                             </select>
-                            <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                            <span asp-validation-for="JobOffer.DepartmentId" class="text-danger"></span>
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="PositionId" class="form-label"></label>
-                            <select asp-for="PositionId" class="form-select">
+                            <label asp-for="JobOffer.PositionId" class="form-label"></label>
+                            <select asp-for="JobOffer.PositionId" class="form-select">
                                 <option value="">-- Sélectionner un poste --</option>
-                                @foreach (var pos in ViewBag.Positions as List<HRMS.Models.Position>)
+                                @foreach (var pos in Model.Positions as List<HRMS.Models.Position>)
                                 {
                                     <option value="@pos.PositionId">
                                         @pos.Title (Salaire: @pos.BaseSalary.ToString("N0") DT)
                                     </option>
                                 }
                             </select>
-                            <span asp-validation-for="PositionId" class="text-danger"></span>
+                            <span asp-validation-for="JobOffer.PositionId" class="text-danger"></span>
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="PostDate" class="form-label"></label>
-                            <input asp-for="PostDate" class="form-control" type="date" />
-                            <span asp-validation-for="PostDate" class="text-danger"></span>
+                            <label asp-for="JobOffer.PostDate" class="form-label"></label>
+                            <input asp-for="JobOffer.PostDate" class="form-control" type="date" />
+                            <span asp-validation-for="JobOffer.PostDate" class="text-danger"></span>
                             <small class="text-muted">Date de publication de l'offre</small>
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="ExpiryDate" class="form-label"></label>
-                            <input asp-for="ExpiryDate" class="form-control" type="date" />
-                            <span asp-validation-for="ExpiryDate" class="text-danger"></span>
+                            <label asp-for="JobOffer.ExpiryDate" class="form-label"></label>
+                            <input asp-for="JobOffer.ExpiryDate" class="form-control" type="date" />
+                            <span asp-validation-for="JobOffer.ExpiryDate" class="text-danger"></span>
                             <small class="text-muted">Date limite de candidature (optionnel)</small>
                         </div>
 
                         <div class="col-12">
-                            <label asp-for="Description" class="form-label"></label>
-                            <textarea asp-for="Description" class="form-control" rows="10" 
+                            <label asp-for="JobOffer.Description" class="form-label"></label>
+                            <textarea asp-for="JobOffer.Description" class="form-control" rows="10" 
                                       placeholder="Décrivez le poste, les responsabilités, les compétences requises, les avantages..."></textarea>
-                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <span asp-validation-for="JobOffer.Description" class="text-danger"></span>
                         </div>
 
                         <div class="col-12">
@@ -86,13 +86,13 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="Status" class="form-label"></label>
-                            <select asp-for="Status" class="form-select">
+                            <label asp-for="JobOffer.Status" class="form-label"></label>
+                            <select asp-for="JobOffer.Status" class="form-select">
                                 <option value="0" selected>Ouverte</option>
                                 <option value="1">Fermée</option>
                                 <option value="2">Pourvue</option>
                             </select>
-                            <span asp-validation-for="Status" class="text-danger"></span>
+                            <span asp-validation-for="JobOffer.Status" class="text-danger"></span>
                         </div>
                     </div>
 

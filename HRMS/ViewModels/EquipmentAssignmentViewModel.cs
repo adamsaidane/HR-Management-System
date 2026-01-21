@@ -21,8 +21,8 @@ public class EquipmentAssignmentViewModel
     [DataType(DataType.MultilineText)]
     public string Notes { get; set; }
 
-    public IEnumerable<Equipment> AvailableEquipment { get; set; }
-    public IEnumerable<Employee> Employees { get; set; }
+    public IEnumerable<Equipment>? AvailableEquipment { get; set; }
+    public IEnumerable<Employee>? Employees { get; set; }
     public List<string> Conditions { get; set; } = new List<string> 
     { 
         "Neuf", "Bon", "Acceptable", "Endommagé" 

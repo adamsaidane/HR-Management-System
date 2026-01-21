@@ -1,18 +1,21 @@
 ﻿@model HRMS.Models.Equipment
 @{
-    ViewData["Title"] = "Nouvel Équipement";
+    ViewData["Title"] = "Modifier l'Équipement";
 }
 
 <div class="page-header mb-4">
-    <h1><i class="fas fa-laptop me-2"></i>Ajouter un Équipement</h1>
+    <h1><i class="fas fa-edit me-2"></i>Modifier l'Équipement</h1>
 </div>
 
 <div class="row justify-content-center">
     <div class="col-md-8">
         <div class="card shadow-sm">
             <div class="card-body">
-                <form method="post" asp-action="Create">
+                <form method="post" asp-action="Edit">
                     @Html.AntiForgeryToken()
+
+                    <input type="hidden" asp-for="EquipmentId" />
+
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
                     <div class="row g-3">
@@ -56,7 +59,7 @@
                             <input asp-for="PurchaseDate" class="form-control" type="date" />
                             <span asp-validation-for="PurchaseDate" class="text-danger"></span>
                         </div>
-
+                        
                         <div class="col-md-6">
                             <label asp-for="Status" class="form-label"></label>
                             <select asp-for="Status" class="form-select">
@@ -70,8 +73,8 @@
                     </div>
 
                     <div class="d-flex gap-2 mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="fas fa-save me-2"></i>Enregistrer
+                        <button type="submit" class="btn btn-warning btn-lg">
+                            <i class="fas fa-save me-2"></i>Mettre à jour
                         </button>
                         <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
                             <i class="fas fa-times me-2"></i>Annuler

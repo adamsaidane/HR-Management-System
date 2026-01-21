@@ -52,6 +52,39 @@ public class EquipmentController : Controller
             return View(equipment);
         }
     }
+    
+    // GET: Equipment/Edit/5
+    [Authorize(Roles = "AdminRH")]
+    public async Task<IActionResult> Edit(int id)
+    {
+        var equipment = await _equipmentService.GetEquipmentByIdAsync(id);
+        if (equipment == null)
+            return NotFound();
+
+        return View(equipment);
+    }
+    
+    // POST: Equipment/Edit/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "AdminRH")]
+    public async Task<IActionResult> Edit(int id, Equipment equipment)
+    {
+        if (!ModelState.IsValid)
+            return View(equipment);
+
+        try
+        {
+            await _equipmentService.UpdateEquipmentAsync(equipment);
+            TempData["Success"] = "Équipement modifié avec succès!";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("", "Erreur: " + ex.Message);
+            return View(equipment);
+        }
+    }
 
     // GET: Equipment/AssignEquipment
     [Authorize(Roles = "AdminRH")]

@@ -14,6 +14,11 @@ public class CandidateFormViewModel
 
     [Display(Name = "Nom")]
     public string LastName { get; set; }
+    
+    [Required(ErrorMessage = "La date de naissance est requise")]
+    [Display(Name = "Date de naissance")]
+    [DataType(DataType.Date)]
+    public DateTime DateOfBirth { get; set; } = DateTime.Today;
 
     [EmailAddress]
     [Display(Name = "Email")]

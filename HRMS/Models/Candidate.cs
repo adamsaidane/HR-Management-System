@@ -18,6 +18,12 @@ public class Candidate
     [StringLength(50)]
     [Display(Name = "Nom")]
     public string LastName { get; set; }
+    
+    [Required(ErrorMessage = "La date de naissance est requise")]
+    [Display(Name = "Date de naissance")]
+    [DataType(DataType.Date)]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+    public DateTime DateOfBirth { get; set; }
 
     [Required(ErrorMessage = "L'email est requis")]
     [StringLength(100)]
@@ -56,6 +62,19 @@ public class Candidate
 
     [NotMapped]
     public string FullName => $"{FirstName} {LastName}";
+    
+    [NotMapped]
+    [Display(Name = "Âge")]
+    public int Age
+    {
+        get
+        {
+            var today = DateTime.Today;
+            var age = today.Year - DateOfBirth.Year;
+            if (DateOfBirth.Date > today.AddYears(-age)) age--;
+            return age;
+        }
+    }
 
     public Candidate()
     {

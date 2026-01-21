@@ -42,6 +42,10 @@
             </div>
             <div class="list-group list-group-flush">
                 <div class="list-group-item">
+                    <small class="text-muted d-block">Date de naissance</small>
+                    <strong>@Model.Candidate.DateOfBirth.ToString("dd/MM/yyyy") (@Model.Candidate.Age ans)</strong>
+                </div>
+                <div class="list-group-item">
                     <small class="text-muted d-block">Email</small>
                     <a href="mailto:@candidate.Email">@candidate.Email</a>
                 </div>

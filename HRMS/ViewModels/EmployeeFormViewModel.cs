@@ -19,7 +19,7 @@ public class EmployeeFormViewModel
     [Required(ErrorMessage = "La date de naissance est requise")]
     [Display(Name = "Date de naissance")]
     [DataType(DataType.Date)]
-    public DateTime DateOfBirth { get; set; }
+    public DateTime DateOfBirth { get; set; } = DateTime.Today;
 
     [Display(Name = "Adresse")]
     public string Address { get; set; }

@@ -599,47 +599,48 @@ SET IDENTITY_INSERT JobOffers OFF;
 
 -- Candidates
 SET IDENTITY_INSERT Candidates ON;
-INSERT INTO Candidates (CandidateId, FirstName, LastName, Email, Phone, Address, CVPath, JobOfferId, Status, ApplicationDate)
+INSERT INTO Candidates (CandidateId, FirstName, LastName,DateOfBirth, Email, Phone, Address, CVPath, JobOfferId, Status, ApplicationDate)
 VALUES
     -- Candidats pour Développeur Full Stack (offre 1)
-    (1, 'Amine', 'Fourati', 'amine.fourati@email.com', '98765432', '15 Rue de la Paix, Tunis', '/cvs/amine_fourati.pdf', 1, 0, '2025-11-05'),
-    (2, 'Yasmine', 'Ayari', 'yasmine.ayari@email.com', '97654321', '28 Avenue Habib Bourguiba, La Marsa', '/cvs/yasmine_ayari.pdf', 1, 1, '2025-11-08'),
-    (3, 'Khalil', 'Mbarek', 'khalil.mbarek@email.com', '96543210', '42 Rue Ibn Khaldoun, Sousse', '/cvs/khalil_mbarek.pdf', 1, 2, '2025-11-12'),
-    (4, 'Nour', 'Sakli', 'nour.sakli@email.com', '95432109', '17 Avenue de France, Tunis', '/cvs/nour_sakli.pdf', 1, 3, '2025-11-15'),
+    (1, 'Amine', 'Fourati', '1996-03-12', 'amine.fourati@email.com', '98765432', '15 Rue de la Paix, Tunis', '/cvs/amine_fourati.pdf', 1, 0, '2025-11-05'),
+    (2, 'Yasmine', 'Ayari', '1997-07-25', 'yasmine.ayari@email.com', '97654321', '28 Avenue Habib Bourguiba, La Marsa', '/cvs/yasmine_ayari.pdf', 1, 1, '2025-11-08'),
+    (3, 'Khalil', 'Mbarek', '1995-01-18', 'khalil.mbarek@email.com', '96543210', '42 Rue Ibn Khaldoun, Sousse', '/cvs/khalil_mbarek.pdf', 1, 2, '2025-11-12'),
+    (4, 'Nour', 'Sakli', '1998-09-03', 'nour.sakli@email.com', '95432109', '17 Avenue de France, Tunis', '/cvs/nour_sakli.pdf', 1, 3, '2025-11-15'),
+
     -- Candidats pour DevOps (offre 2)
-    (5, 'Faker', 'Jedidi', 'faker.jedidi@email.com', '94321098', '33 Rue de Marseille, Sfax', '/cvs/faker_jedidi.pdf', 2, 0, '2025-11-18'),
-    (6, 'Sabrine', 'Chouchane', 'sabrine.chouchane@email.com', '93210987', '56 Avenue Mohamed V, Tunis', '/cvs/sabrine_chouchane.pdf', 2, 1, '2025-11-20'),
-    (7, 'Rami', 'Ouerhani', 'rami.ouerhani@email.com', '92109876', '21 Rue de Rome, Bizerte', '/cvs/rami_ouerhani.pdf', 2, 0, '2025-11-22'),
+    (5, 'Faker', 'Jedidi', '1994-11-20', 'faker.jedidi@email.com', '94321098', '33 Rue de Marseille, Sfax', '/cvs/faker_jedidi.pdf', 2, 0, '2025-11-18'),
+    (6, 'Sabrine', 'Chouchane', '1996-05-14', 'sabrine.chouchane@email.com', '93210987', '56 Avenue Mohamed V, Tunis', '/cvs/sabrine_chouchane.pdf', 2, 1, '2025-11-20'),
+    (7, 'Rami', 'Ouerhani', '1993-08-09', 'rami.ouerhani@email.com', '92109876', '21 Rue de Rome, Bizerte', '/cvs/rami_ouerhani.pdf', 2, 0, '2025-11-22'),
 
     -- Candidats pour Chargé RH (offre 3)
-    (8, 'Amina', 'Ltaief', 'amina.ltaief@email.com', '91098765', '44 Avenue de Carthage, Tunis', '/cvs/amina_ltaief.pdf', 3, 0, '2025-12-02'),
-    (9, 'Seif', 'Jlassi', 'seif.jlassi@email.com', '90987654', '19 Rue Charles de Gaulle, Monastir', '/cvs/seif_jlassi.pdf', 3, 1, '2025-12-04'),
-    (10, 'Emna', 'Mahjoub', 'emna.mahjoub@email.com', '89876543', '37 Avenue Habib Thameur, Tunis', '/cvs/emna_mahjoub.pdf', 3, 0, '2025-12-06'),
+    (8, 'Amina', 'Ltaief', '1997-02-27', 'amina.ltaief@email.com', '91098765', '44 Avenue de Carthage, Tunis', '/cvs/amina_ltaief.pdf', 3, 0, '2025-12-02'),
+    (9, 'Seif', 'Jlassi', '1995-06-30', 'seif.jlassi@email.com', '90987654', '19 Rue Charles de Gaulle, Monastir', '/cvs/seif_jlassi.pdf', 3, 1, '2025-12-04'),
+    (10, 'Emna', 'Mahjoub', '1998-10-11', 'emna.mahjoub@email.com', '89876543', '37 Avenue Habib Thameur, Tunis', '/cvs/emna_mahjoub.pdf', 3, 0, '2025-12-06'),
 
     -- Candidats pour Contrôleur Gestion (offre 4)
-    (11, 'Aymen', 'Agrebi', 'aymen.agrebi@email.com', '88765432', '52 Rue de la République, Tunis', '/cvs/aymen_agrebi.pdf', 4, 0, '2025-11-25'),
-    (12, 'Meriem', 'Kchaou', 'meriem.kchaou@email.com', '87654321', '14 Avenue de la Liberté, Sousse', '/cvs/meriem_kchaou.pdf', 4, 2, '2025-11-27'),
-    (13, 'Walid', 'Driss', 'walid.driss@email.com', '86543210', '29 Rue Ibn Sina, Tunis', '/cvs/walid_driss.pdf', 4, 0, '2025-11-30'),
+    (11, 'Aymen', 'Agrebi', '1992-12-05', 'aymen.agrebi@email.com', '88765432', '52 Rue de la République, Tunis', '/cvs/aymen_agrebi.pdf', 4, 0, '2025-11-25'),
+    (12, 'Meriem', 'Kchaou', '1994-04-16', 'meriem.kchaou@email.com', '87654321', '14 Avenue de la Liberté, Sousse', '/cvs/meriem_kchaou.pdf', 4, 2, '2025-11-27'),
+    (13, 'Walid', 'Driss', '1991-09-22', 'walid.driss@email.com', '86543210', '29 Rue Ibn Sina, Tunis', '/cvs/walid_driss.pdf', 4, 0, '2025-11-30'),
 
     -- Candidats pour Marketing Digital (offre 5)
-    (14, 'Safa', 'Barhoumi', 'safa.barhoumi@email.com', '85432109', '63 Avenue de Paris, La Marsa', '/cvs/safa_barhoumi.pdf', 5, 0, '2025-12-07'),
-    (15, 'Tarek', 'Chaari', 'tarek.chaari@email.com', '84321098', '18 Rue de la Kasbah, Tunis', '/cvs/tarek_chaari.pdf', 5, 1, '2025-12-09'),
-    (16, 'Dorra', 'Mhenni', 'dorra.mhenni@email.com', '83210987', '41 Avenue Bourguiba, Sfax', '/cvs/dorra_mhenni.pdf', 5, 0, '2025-12-11'),
+    (14, 'Safa', 'Barhoumi', '1999-01-08', 'safa.barhoumi@email.com', '85432109', '63 Avenue de Paris, La Marsa', '/cvs/safa_barhoumi.pdf', 5, 0, '2025-12-07'),
+    (15, 'Tarek', 'Chaari', '1993-03-19', 'tarek.chaari@email.com', '84321098', '18 Rue de la Kasbah, Tunis', '/cvs/tarek_chaari.pdf', 5, 1, '2025-12-09'),
+    (16, 'Dorra', 'Mhenni', '1997-07-02', 'dorra.mhenni@email.com', '83210987', '41 Avenue Bourguiba, Sfax', '/cvs/dorra_mhenni.pdf', 5, 0, '2025-12-11'),
 
     -- Candidats pour Commercial BtoB (offre 6)
-    (17, 'Montassar', 'Hachicha', 'montassar.hachicha@email.com', '82109876', '25 Rue Charles Nicolle, Tunis', '/cvs/montassar_hachicha.pdf', 6, 0, '2025-11-13'),
-    (18, 'Hanene', 'Cheikhrouhou', 'hanene.cheikhrouhou@email.com', '81098765', '58 Avenue Mohamed V, Bizerte', '/cvs/hanene_cheikhrouhou.pdf', 6, 2, '2025-11-16'),
-    (19, 'Kamel', 'Belkhiria', 'kamel.belkhiria@email.com', '80987654', '32 Rue de Marseille, Tunis', '/cvs/kamel_belkhiria.pdf', 6, 1, '2025-11-19'),
-    (20, 'Wided', 'Omrane', 'wided.omrane@email.com', '79876543', '47 Avenue de France, Monastir', '/cvs/wided_omrane.pdf', 6, 0, '2025-11-21'),
+    (17, 'Montassar', 'Hachicha', '1990-05-26', 'montassar.hachicha@email.com', '82109876', '25 Rue Charles Nicolle, Tunis', '/cvs/montassar_hachicha.pdf', 6, 0, '2025-11-13'),
+    (18, 'Hanene', 'Cheikhrouhou', '1994-08-17', 'hanene.cheikhrouhou@email.com', '81098765', '58 Avenue Mohamed V, Bizerte', '/cvs/hanene_cheikhrouhou.pdf', 6, 2, '2025-11-16'),
+    (19, 'Kamel', 'Belkhiria', '1989-11-01', 'kamel.belkhiria@email.com', '80987654', '32 Rue de Marseille, Tunis', '/cvs/kamel_belkhiria.pdf', 6, 1, '2025-11-19'),
+    (20, 'Wided', 'Omrane', '1996-06-13', 'wided.omrane@email.com', '79876543', '47 Avenue de France, Monastir', '/cvs/wided_omrane.pdf', 6, 0, '2025-11-21'),
 
-    -- Anciens candidats (offres fermées - recrutés)
-    (21, 'Youssef', 'Khelifi', 'youssef.khelifi@email.com', '78765432', '56 Rue de Marseille, Sfax', '/cvs/youssef_khelifi_old.pdf', 7, 3, '2021-11-10'),
-    (22, 'Marwa', 'Rekik', 'marwa.rekik@email.com', '77654321', '34 Rue Ibn Sina, Tunis', '/cvs/marwa_rekik_old.pdf', 8, 4, '2024-04-15'),
-    (23, 'Imen', 'Mathlouthi', 'imen.mathlouthi@email.com', '76543210', '23 Avenue de Carthage, Sousse', '/cvs/imen_mathlouthi_old.pdf', 11, 3, '2022-10-20'),
-    (24, 'Nabil', 'Ghariani', 'nabil.ghariani@email.com', '75432109', '34 Rue de Rome, Tunis', '/cvs/nabil_ghariani_old.pdf', 12, 3, '2024-06-18'),
+    -- Anciens candidats
+    (21, 'Youssef', 'Khelifi', '1988-02-10', 'youssef.khelifi@email.com', '78765432', '56 Rue de Marseille, Sfax', '/cvs/youssef_khelifi_old.pdf', 7, 3, '2021-11-10'),
+    (22, 'Marwa', 'Rekik', '1990-09-28', 'marwa.rekik@email.com', '77654321', '34 Rue Ibn Sina, Tunis', '/cvs/marwa_rekik_old.pdf', 8, 4, '2024-04-15'),
+    (23, 'Imen', 'Mathlouthi', '1992-12-14', 'imen.mathlouthi@email.com', '76543210', '23 Avenue de Carthage, Sousse', '/cvs/imen_mathlouthi_old.pdf', 11, 3, '2022-10-20'),
+    (24, 'Nabil', 'Ghariani', '1987-07-07', 'nabil.ghariani@email.com', '75432109', '34 Rue de Rome, Tunis', '/cvs/nabil_ghariani_old.pdf', 12, 3, '2024-06-18'),
 
     -- Candidat refusé
-    (25, 'Sofiene', 'Marzouki', 'sofiene.marzouki@email.com', '74321098', '62 Avenue Bourguiba, Tunis', '/cvs/sofiene_marzouki.pdf', 1, 3, '2025-11-10');
+    (25, 'Sofiene', 'Marzouki', '1995-04-04', 'sofiene.marzouki@email.com', '74321098', '62 Avenue Bourguiba, Tunis', '/cvs/sofiene_marzouki.pdf', 1, 3, '2025-11-10');
 SET IDENTITY_INSERT Candidates OFF;
 
 -- Interviews

@@ -1,4 +1,5 @@
-﻿@model HRMS.ViewModels.EmployeeFormViewModel
+﻿@using HRMS.Enums
+@model HRMS.ViewModels.EmployeeFormViewModel
 @{
     ViewData["Title"] = "Convertir en Employé";
     var candidate = ViewBag.Candidate as HRMS.Models.Candidate;
@@ -37,11 +38,14 @@
                     <input asp-for="LastName" class="form-control" value="@candidate.LastName" />
                     <span asp-validation-for="LastName" class="text-danger"></span>
                 </div>
-
+                
                 <div class="col-md-6">
-                    <label asp-for="DateOfBirth" class="form-label"></label>
-                    <input asp-for="DateOfBirth" class="form-control" type="date" />
-                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                    <label asp-for="Gender" class="form-label"></label>
+                    <select asp-for="Gender" class="form-select"
+                            asp-items="Html.GetEnumSelectList<Gender>()">
+                        <option value="">-- Sélectionner le sexe --</option>
+                    </select>
+                    <span asp-validation-for="Gender" class="text-danger"></span>
                 </div>
                 
                 <div class="col-md-6">
@@ -67,7 +71,7 @@
                     <input type="file" asp-for="Photo" class="form-control" accept="image/*" data-val="false" />
                 </div>
 
-                <div class="col-12">
+                <div class="col-md-6">
                     <label asp-for="Address" class="form-label"></label>
                     <textarea asp-for="Address" class="form-control" rows="2"></textarea>
                     <span asp-validation-for="Address" class="text-danger"></span>

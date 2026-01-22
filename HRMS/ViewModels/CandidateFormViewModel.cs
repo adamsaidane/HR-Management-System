@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using HRMS.Enums;
 using HRMS.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
@@ -14,6 +15,10 @@ public class CandidateFormViewModel
 
     [Display(Name = "Nom")]
     public string LastName { get; set; }
+    
+    [Required(ErrorMessage = "Le genre est requis")]
+    [Display(Name = "Genre")]
+    public Gender Gender { get; set; }
     
     [Required(ErrorMessage = "La date de naissance est requise")]
     [Display(Name = "Date de naissance")]

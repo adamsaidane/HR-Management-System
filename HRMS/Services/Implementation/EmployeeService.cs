@@ -228,6 +228,7 @@ public class EmployeeService : IEmployeeService
                 viewModel.EmployeeId = employee.EmployeeId;
                 viewModel.FirstName = employee.FirstName;
                 viewModel.LastName = employee.LastName;
+                viewModel.Gender = employee.Gender;
                 viewModel.DateOfBirth = employee.DateOfBirth;
                 viewModel.Address = employee.Address;
                 viewModel.Phone = employee.Phone;
@@ -248,6 +249,7 @@ public class EmployeeService : IEmployeeService
         {
             FirstName = model.FirstName,
             LastName = model.LastName,
+            Gender = model.Gender,
             DateOfBirth = model.DateOfBirth,
             Address = model.Address,
             Phone = model.Phone,
@@ -280,6 +282,7 @@ public class EmployeeService : IEmployeeService
 
         employee.FirstName = model.FirstName;
         employee.LastName = model.LastName;
+        employee.Gender = model.Gender;
         employee.DateOfBirth = model.DateOfBirth;
         employee.Address = model.Address;
         employee.Phone = model.Phone;

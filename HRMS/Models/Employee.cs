@@ -23,6 +23,10 @@ public class Employee
         [StringLength(50)]
         [Display(Name = "Nom")]
         public string LastName { get; set; }
+        
+        [Required(ErrorMessage = "Le genre est requis")]
+        [Display(Name = "Genre")]
+        public Gender Gender { get; set; }
 
         [Required(ErrorMessage = "La date de naissance est requise")]
         [Display(Name = "Date de naissance")]

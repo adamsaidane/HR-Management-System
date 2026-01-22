@@ -24,6 +24,10 @@ public class Candidate
     [DataType(DataType.Date)]
     [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
     public DateTime DateOfBirth { get; set; }
+    
+    [Required(ErrorMessage = "Le genre est requis")]
+    [Display(Name = "Genre")]
+    public Gender Gender { get; set; }
 
     [Required(ErrorMessage = "L'email est requis")]
     [StringLength(100)]

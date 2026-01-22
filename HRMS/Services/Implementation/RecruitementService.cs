@@ -142,6 +142,7 @@ public class RecruitmentService : IRecruitmentService
 
         employee.FirstName = candidate.FirstName;
         employee.LastName = candidate.LastName;
+        employee.Gender =  candidate.Gender;
         employee.Email = candidate.Email;
         employee.Phone = candidate.Phone;
 
@@ -187,6 +188,7 @@ public class RecruitmentService : IRecruitmentService
         {
             FirstName = model.FirstName,
             LastName = model.LastName,
+            Gender = model.Gender,
             DateOfBirth = model.DateOfBirth,
             Email = model.Email,
             Phone = model.Phone,
@@ -242,6 +244,7 @@ public class RecruitmentService : IRecruitmentService
         {
             FirstName = candidate.FirstName,
             LastName = candidate.LastName,
+            Gender = candidate.Gender,
             DateOfBirth = candidate.DateOfBirth,
             Email = candidate.Email,
             Phone = candidate.Phone,

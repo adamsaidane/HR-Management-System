@@ -54,37 +54,37 @@ SET IDENTITY_INSERT Departments OFF;
     
 -- Positions
 SET IDENTITY_INSERT Positions ON;
-INSERT INTO Positions (PositionId, Title, Description, BaseSalary, CreatedDate, ModifiedDate)
+INSERT INTO Positions (PositionId, DepartmentId, Title, Description, BaseSalary, CreatedDate, ModifiedDate)
 VALUES
     -- IT
-    (1, 'Développeur Junior', 'Développeur .NET débutant', 2500, GETDATE(), GETDATE()),
-    (2, 'Développeur Senior', 'Développeur .NET expérimenté', 4500, GETDATE(), GETDATE()),
-    (3, 'Architecte Logiciel', 'Architecture et conception', 6500, GETDATE(), GETDATE()),
-    (4, 'Chef de Projet IT', 'Gestion de projets informatiques', 5500, GETDATE(), GETDATE()),
-    (5, 'DevOps Engineer', 'Infrastructure et déploiement', 5000, GETDATE(), GETDATE()),
+    (1, 1, 'Développeur Junior', 'Développeur .NET débutant', 2500, GETDATE(), GETDATE()),
+    (2, 1, 'Développeur Senior', 'Développeur .NET expérimenté', 4500, GETDATE(), GETDATE()),
+    (3, 1, 'Architecte Logiciel', 'Architecture et conception', 6500, GETDATE(), GETDATE()),
+    (4, 1, 'Chef de Projet IT', 'Gestion de projets informatiques', 5500, GETDATE(), GETDATE()),
+    (5, 1, 'DevOps Engineer', 'Infrastructure et déploiement', 5000, GETDATE(), GETDATE()),
 
     -- RH & Admin
-    (6, 'Responsable RH', 'Direction des ressources humaines', 5000, GETDATE(), GETDATE()),
-    (7, 'Chargé de Recrutement', 'Recrutement et intégration', 3200, GETDATE(), GETDATE()),
-    (8, 'Assistant RH', 'Support administratif RH', 2200, GETDATE(), GETDATE()),
+    (6, 2, 'Responsable RH', 'Direction des ressources humaines', 5000, GETDATE(), GETDATE()),
+    (7, 2, 'Chargé de Recrutement', 'Recrutement et intégration', 3200, GETDATE(), GETDATE()),
+    (8, 2, 'Assistant RH', 'Support administratif RH', 2200, GETDATE(), GETDATE()),
 
     -- Finance
-    (9, 'Directeur Financier', 'Direction financière', 7000, GETDATE(), GETDATE()),
-    (10, 'Comptable Senior', 'Comptabilité générale', 4000, GETDATE(), GETDATE()),
-    (11, 'Contrôleur de Gestion', 'Analyse et contrôle', 4500, GETDATE(), GETDATE()),
+    (9, 3, 'Directeur Financier', 'Direction financière', 7000, GETDATE(), GETDATE()),
+    (10, 3, 'Comptable Senior', 'Comptabilité générale', 4000, GETDATE(), GETDATE()),
+    (11, 3, 'Contrôleur de Gestion', 'Analyse et contrôle', 4500, GETDATE(), GETDATE()),
 
     -- Marketing & Commercial
-    (12, 'Responsable Marketing', 'Direction marketing', 5500, GETDATE(), GETDATE()),
-    (13, 'Digital Marketing Specialist', 'Marketing digital', 3800, GETDATE(), GETDATE()),
-    (14, 'Commercial Senior', 'Vente et négociation', 3500, GETDATE(), GETDATE()),
-    (15, 'Responsable Commercial', 'Direction commerciale', 6000, GETDATE(), GETDATE()),
+    (12, 4, 'Responsable Marketing', 'Direction marketing', 5500, GETDATE(), GETDATE()),
+    (13, 4, 'Digital Marketing Specialist', 'Marketing digital', 3800, GETDATE(), GETDATE()),
+    (14, 5, 'Commercial Senior', 'Vente et négociation', 3500, GETDATE(), GETDATE()),
+    (15, 5, 'Responsable Commercial', 'Direction commerciale', 6000, GETDATE(), GETDATE()),
 
     -- Autres
-    (16, 'Responsable Production', 'Gestion de production', 5200, GETDATE(), GETDATE()),
-    (17, 'Responsable Logistique', 'Supply chain management', 4800, GETDATE(), GETDATE()),
-    (18, 'Ingénieur Qualité', 'Assurance qualité', 4200, GETDATE(), GETDATE()),
-    (19, 'Chercheur R&D', 'Recherche et innovation', 5500, GETDATE(), GETDATE()),
-    (20, 'Support Technique', 'Assistance technique', 2800, GETDATE(), GETDATE());
+    (16, 6, 'Responsable Production', 'Gestion de production', 5200, GETDATE(), GETDATE()),
+    (17, 7, 'Responsable Logistique', 'Supply chain management', 4800, GETDATE(), GETDATE()),
+    (18, 8, 'Ingénieur Qualité', 'Assurance qualité', 4200, GETDATE(), GETDATE()),
+    (19, 9, 'Chercheur R&D', 'Recherche et innovation', 5500, GETDATE(), GETDATE()),
+    (20, 10, 'Support Technique', 'Assistance technique', 2800, GETDATE(), GETDATE());
 SET IDENTITY_INSERT Positions OFF;
 
 -- Employees

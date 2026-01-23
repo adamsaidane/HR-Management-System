@@ -42,6 +42,13 @@ public class HRMSDbContext : DbContext
             .WithOne(e => e.Department)
             .HasForeignKey(e => e.DepartmentId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        // Position
+        modelBuilder.Entity<Position>()
+            .HasOne(p => p.Department)
+            .WithMany(d => d.Positions)
+            .HasForeignKey(p => p.DepartmentId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         // Employee
         modelBuilder.Entity<Employee>()

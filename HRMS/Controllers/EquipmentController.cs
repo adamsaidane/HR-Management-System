@@ -21,9 +21,11 @@ public class EquipmentController : Controller
     }
 
     // GET: Equipment
-    public async Task<IActionResult> Index(string equipmentType, EquipmentStatus? status)
+    public async Task<IActionResult> Index(string equipmentType, EquipmentStatus? status,
+        int? pageNumber = 1)
     {
-        var viewModel = await _equipmentService.GetEquipmentIndexViewModelAsync(equipmentType, status);
+        var viewModel = await _equipmentService.GetEquipmentPaginatedIndexViewModelAsync(equipmentType, status, 
+            pageNumber ?? 1, 10);
         return View(viewModel);
     }
 

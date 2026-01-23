@@ -182,21 +182,21 @@ VALUES
     (1, 'admin', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 'admin@hrms.tn', 11, 0, 1, GETDATE(), GETDATE()),
 
     -- Managers
-    (3, 'mohamed.benali', 'd74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1', 'mohamed.benali@hrms.tn', 1, 1, 1, GETDATE(), GETDATE()),
-    (4, 'tarek.chaabane', 'd74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1', 'tarek.chaabane@hrms.tn', 16, 1, 1, GETDATE(), GETDATE()),
-    (5, 'nizar.hamza', 'd74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1', 'nizar.hamza@hrms.tn', 22, 1, 1, GETDATE(), GETDATE()),
-    (6, 'zied.tlili', 'd74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1', 'zied.tlili@hrms.tn', 28, 1, 1, GETDATE(), GETDATE()),
+    (3, 'manager.it', '866485796cfa8d7c0cf7111640205b83076433547577511d81f8030ae99ecea5', 'mohamed.benali@hrms.tn', 1, 1, 1, GETDATE(), GETDATE()),
+    (4, 'tarek.chaabane', '866485796cfa8d7c0cf7111640205b83076433547577511d81f8030ae99ecea5', 'tarek.chaabane@hrms.tn', 16, 1, 1, GETDATE(), GETDATE()),
+    (5, 'nizar.hamza', '866485796cfa8d7c0cf7111640205b83076433547577511d81f8030ae99ecea5', 'nizar.hamza@hrms.tn', 22, 1, 1, GETDATE(), GETDATE()),
+    (6, 'zied.tlili', '866485796cfa8d7c0cf7111640205b83076433547577511d81f8030ae99ecea5', 'zied.tlili@hrms.tn', 28, 1, 1, GETDATE(), GETDATE()),
 
     -- Employees
-    (7, 'amira.trabelsi', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'amira.trabelsi@hrms.tn', 2, 2, 1, GETDATE(), GETDATE()),
-    (8, 'karim.jebali', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'karim.jebali@hrms.tn', 3, 2, 1, GETDATE(), GETDATE()),
-    (9, 'samia.boussetta', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'samia.boussetta@hrms.tn', 17, 2, 1, GETDATE(), GETDATE()),
-    (10, 'asma.chahed', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'asma.chahed@hrms.tn', 23, 2, 1, GETDATE(), GETDATE()),
-    (11, 'hajer.mkacher', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'hajer.mkacher@hrms.tn', 29, 2, 1, GETDATE(), GETDATE()),
-    (12, 'hichem.najar', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'hichem.najar@hrms.tn', 12, 2, 1, GETDATE(), GETDATE()),
-    (13, 'moez.belaid', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'moez.belaid@hrms.tn', 41, 2, 1, GETDATE(), GETDATE()),
-    (14, 'khaled.bouslama', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'khaled.bouslama@hrms.tn', 45, 2, 1, GETDATE(), GETDATE()),
-    (15, 'riadh.hammami', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'riadh.hammami@hrms.tn', 43, 2, 1, GETDATE(), GETDATE());
+    (7, 'employee1', '5b2f8e27e2e5b4081c03ce70b288c87bd1263140cbd1bd9ae078123509b7caff', 'amira.trabelsi@hrms.tn', 2, 2, 1, GETDATE(), GETDATE()),
+    (8, 'karim.jebali', '5b2f8e27e2e5b4081c03ce70b288c87bd1263140cbd1bd9ae078123509b7caff', 'karim.jebali@hrms.tn', 3, 2, 1, GETDATE(), GETDATE()),
+    (9, 'samia.boussetta', '5b2f8e27e2e5b4081c03ce70b288c87bd1263140cbd1bd9ae078123509b7caff', 'samia.boussetta@hrms.tn', 17, 2, 1, GETDATE(), GETDATE()),
+    (10, 'asma.chahed', '5b2f8e27e2e5b4081c03ce70b288c87bd1263140cbd1bd9ae078123509b7caff', 'asma.chahed@hrms.tn', 23, 2, 1, GETDATE(), GETDATE()),
+    (11, 'hajer.mkacher', '5b2f8e27e2e5b4081c03ce70b288c87bd1263140cbd1bd9ae078123509b7caff', 'hajer.mkacher@hrms.tn', 29, 2, 1, GETDATE(), GETDATE()),
+    (12, 'hichem.najar', '5b2f8e27e2e5b4081c03ce70b288c87bd1263140cbd1bd9ae078123509b7caff', 'hichem.najar@hrms.tn', 12, 2, 1, GETDATE(), GETDATE()),
+    (13, 'moez.belaid', '5b2f8e27e2e5b4081c03ce70b288c87bd1263140cbd1bd9ae078123509b7caff', 'moez.belaid@hrms.tn', 41, 2, 1, GETDATE(), GETDATE()),
+    (14, 'khaled.bouslama', '5b2f8e27e2e5b4081c03ce70b288c87bd1263140cbd1bd9ae078123509b7caff', 'khaled.bouslama@hrms.tn', 45, 2, 1, GETDATE(), GETDATE()),
+    (15, 'riadh.hammami', '5b2f8e27e2e5b4081c03ce70b288c87bd1263140cbd1bd9ae078123509b7caff', 'riadh.hammami@hrms.tn', 43, 2, 1, GETDATE(), GETDATE());
 SET IDENTITY_INSERT Users OFF;
 
 -- Benefits

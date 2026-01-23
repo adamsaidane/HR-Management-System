@@ -24,9 +24,20 @@ public class RecruitmentController : Controller
 
     // ==================== Offres d'emploi ====================
 
-    public async Task<IActionResult> JobOffers()
+    public async Task<IActionResult> JobOffers(
+        JobOfferStatus? status,
+        string searchString,
+        int? pageNumber)
     {
-        var jobOffers = await _recruitmentService.GetAllJobOffersAsync();
+        var jobOffers = await _recruitmentService.GetJobOffersPaginatedAsync(
+            status,
+            searchString,
+            pageNumber ?? 1,
+            6);
+
+        ViewBag.SelectedStatus = status;
+        ViewBag.SearchString = searchString;
+
         return View(jobOffers);
     }
 
@@ -69,15 +80,25 @@ public class RecruitmentController : Controller
     }
 
     // ==================== Candidats ====================
-
-    public async Task<IActionResult> Candidates(int? jobOfferId)
+    
+    public async Task<IActionResult> Candidates(
+        int? jobOfferId,
+        CandidateStatus? status,
+        string searchString,
+        int? pageNumber)
     {
-        var candidates = jobOfferId.HasValue
-            ? await _recruitmentService.GetCandidatesByJobOfferAsync(jobOfferId.Value)
-            : await _recruitmentService.GetAllCandidatesAsync();
+        var candidates = await _recruitmentService.GetCandidatesPaginatedAsync(
+            jobOfferId,
+            status,
+            searchString,
+            pageNumber ?? 1,
+            15);
 
         ViewBag.JobOffers = await _recruitmentService.GetAllJobOffersAsync();
         ViewBag.SelectedJobOffer = jobOfferId;
+        ViewBag.SelectedStatus = status;
+        ViewBag.SearchString = searchString;
+
         return View(candidates);
     }
 

@@ -23,6 +23,12 @@ public class PromotionService : IPromotionService
     {
         return await _unitOfWork.Promotions.GetAllWithDetailsAsync();
     }
+    
+    public async Task<PaginatedList<Promotion>> GetAllPromotionsPaginatedAsync(int pageIndex = 1, int pageSize = 10)
+    {
+        var promotions = await _unitOfWork.Promotions.GetAllWithDetailsAsync();
+        return PaginatedList<Promotion>.Create(promotions, pageIndex, pageSize);
+    }
 
     public async Task<IEnumerable<Promotion>> GetEmployeePromotionsAsync(int employeeId)
     {

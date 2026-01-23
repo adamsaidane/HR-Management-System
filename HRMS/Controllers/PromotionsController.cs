@@ -20,9 +20,9 @@ public class PromotionsController : Controller
     }
 
     // GET: Promotions
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int? pageNumber = 1)
     {
-        var promotions = await _promotionService.GetAllPromotionsAsync();
+        var promotions = await _promotionService.GetAllPromotionsPaginatedAsync(pageNumber ?? 1,10);
         return View(promotions);
     }
 

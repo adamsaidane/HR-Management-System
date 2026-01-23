@@ -28,4 +28,16 @@ public interface IRecruitmentService
     Task<Candidate> CreateCandidateWithCVAsync(CandidateFormViewModel model);
     Task<InterviewFormViewModel> GetInterviewFormViewModelAsync(int candidateId);
     Task<EmployeeFormViewModel> GetConvertToEmployeeViewModelAsync(int candidateId);
+    Task<PaginatedList<Candidate>> GetCandidatesPaginatedAsync(
+        int? jobOfferId,
+        CandidateStatus? status,
+        string searchString,
+        int pageIndex = 1,
+        int pageSize = 15);
+        
+    Task<PaginatedList<JobOffer>> GetJobOffersPaginatedAsync(
+        JobOfferStatus? status,
+        string searchString,
+        int pageIndex = 1,
+        int pageSize = 15);
 }

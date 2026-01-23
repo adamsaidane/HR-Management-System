@@ -148,6 +148,24 @@ public class EquipmentService : IEquipmentService
         };
     }
 
+    public async Task<EquipmentPaginatedIndexViewModel> GetEquipmentPaginatedIndexViewModelAsync(string equipmentType, EquipmentStatus? status, int pageIndex = 1,
+        int pageSize = 10)
+    {
+        var equipment = await GetAllEquipmentAsync();
+
+        if (!string.IsNullOrEmpty(equipmentType))
+            equipment = equipment.Where(e => e.EquipmentType == equipmentType);
+
+        if (status.HasValue)
+            equipment = equipment.Where(e => e.Status == status);
+
+        return new EquipmentPaginatedIndexViewModel()
+        {
+            Equipment = PaginatedList<Equipment>.Create(equipment, pageIndex, pageSize),
+            EquipmentTypes = equipment.Select(e => e.EquipmentType).Distinct().ToList()
+        };
+    }
+
     public async Task<EquipmentAssignmentViewModel> GetEquipmentAssignmentViewModelAsync()
     {
         return new EquipmentAssignmentViewModel

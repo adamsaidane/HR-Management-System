@@ -29,6 +29,31 @@ public class RecruitmentService : IRecruitmentService
     {
         return await _unitOfWork.JobOffers.GetActiveJobOffersAsync();
     }
+    
+    public async Task<PaginatedList<JobOffer>> GetJobOffersPaginatedAsync(
+        JobOfferStatus? status,
+        string searchString,
+        int pageIndex = 1,
+        int pageSize = 6)
+    {
+        var jobOffers = await _unitOfWork.JobOffers.GetAllWithDetailsAsync();
+
+        if (status.HasValue)
+        {
+            jobOffers = jobOffers.Where(j => j.Status == status.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(searchString))
+        {
+            jobOffers = jobOffers.Where(j =>
+                j.Title.Contains(searchString) ||
+                j.Description.Contains(searchString));
+        }
+
+        jobOffers = jobOffers.OrderByDescending(j => j.PostDate);
+
+        return PaginatedList<JobOffer>.Create(jobOffers, pageIndex, pageSize);
+    }
 
     public async Task<JobOffer?> GetJobOfferByIdAsync(int id)
     {
@@ -253,5 +278,37 @@ public class RecruitmentService : IRecruitmentService
             Departments = await _employeeService.GetAllDepartmentsAsync(),
             Positions = await _employeeService.GetAllPositionsAsync()
         };
+    }
+    
+    public async Task<PaginatedList<Candidate>> GetCandidatesPaginatedAsync(
+        int? jobOfferId,
+        CandidateStatus? status,
+        string searchString,
+        int pageIndex = 1,
+        int pageSize = 15)
+    {
+        var candidates = await _unitOfWork.Candidates.GetAllWithDetailsAsync();
+
+        if (jobOfferId.HasValue)
+        {
+            candidates = candidates.Where(c => c.JobOfferId == jobOfferId.Value);
+        }
+
+        if (status.HasValue)
+        {
+            candidates = candidates.Where(c => c.Status == status.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(searchString))
+        {
+            candidates = candidates.Where(c =>
+                c.FirstName.Contains(searchString) ||
+                c.LastName.Contains(searchString) ||
+                c.Email.Contains(searchString));
+        }
+
+        candidates = candidates.OrderByDescending(c => c.ApplicationDate);
+
+        return PaginatedList<Candidate>.Create(candidates, pageIndex, pageSize);
     }
 }

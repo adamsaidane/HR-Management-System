@@ -34,7 +34,7 @@ public class Department
     // Navigation properties
     [ForeignKey("ManagerId")]
     public virtual Employee Manager { get; set; }
-
+    public virtual ICollection<Position> Positions { get; set; }
     public virtual ICollection<Employee> Employees { get; set; }
     public virtual ICollection<JobOffer> JobOffers { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HRMS.Models;
 
@@ -26,7 +27,10 @@ public class Position
 
     [Display(Name = "Date de modification")]
     public DateTime ModifiedDate { get; set; }
-
+    
+    public int? DepartmentId { get; set; }
+    [ForeignKey(nameof(DepartmentId))]
+    public virtual Department Department { get; set; }
     // Navigation properties
     public virtual ICollection<Employee> Employees { get; set; }
     public virtual ICollection<JobOffer> JobOffers { get; set; }

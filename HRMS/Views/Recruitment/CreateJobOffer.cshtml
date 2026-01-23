@@ -25,7 +25,7 @@
 
                         <div class="col-md-6">
                             <label asp-for="JobOffer.DepartmentId" class="form-label"></label>
-                            <select asp-for="JobOffer.DepartmentId" class="form-select">
+                            <select asp-for="JobOffer.DepartmentId" id="departmentSelect" class="form-select">
                                 <option value="">-- Sélectionner un département --</option>
                                 @foreach (var dept in Model.Departments as List<HRMS.Models.Department>)
                                 {
@@ -37,11 +37,11 @@
 
                         <div class="col-md-6">
                             <label asp-for="JobOffer.PositionId" class="form-label"></label>
-                            <select asp-for="JobOffer.PositionId" class="form-select">
+                            <select asp-for="JobOffer.PositionId" id="positionSelect" class="form-select">
                                 <option value="">-- Sélectionner un poste --</option>
                                 @foreach (var pos in Model.Positions as List<HRMS.Models.Position>)
                                 {
-                                    <option value="@pos.PositionId">
+                                    <option value="@pos.PositionId" data-department="@pos.DepartmentId">
                                         @pos.Title (Salaire: @pos.BaseSalary.ToString("N0") DT)
                                     </option>
                                 }
@@ -118,6 +118,40 @@
             const postDateInput = document.querySelector('input[name="PostDate"]');
             if (!postDateInput.value) {
                 postDateInput.value = new Date().toISOString().split('T')[0];
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const departmentSelect = document.getElementById('departmentSelect');
+            const positionSelect = document.getElementById('positionSelect');
+
+            const allOptions = Array.from(positionSelect.querySelectorAll('option[data-department]'));
+
+            departmentSelect.addEventListener('change', function() {
+                const deptId = this.value;
+
+                positionSelect.innerHTML = '<option value="">-- Sélectionner un poste --</option>';
+
+                if (!deptId) return;
+
+                const filtered = allOptions.filter(opt => opt.dataset.department === deptId);
+
+                if (filtered.length === 0) {
+                    const option = document.createElement('option');
+                    option.value = '';
+                    option.text = '-- Aucun poste disponible --';
+                    positionSelect.appendChild(option);
+                    positionSelect.disabled = true;
+                } else {
+                    positionSelect.disabled = false;
+                    filtered.forEach(opt => positionSelect.appendChild(opt));
+                    positionSelect.selectedIndex = 1;
+                }
+            });
+
+            if (departmentSelect.value) {
+                departmentSelect.dispatchEvent(new Event('change'));
             }
         });
     </script>

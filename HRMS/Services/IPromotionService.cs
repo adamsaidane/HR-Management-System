@@ -10,4 +10,5 @@ public interface IPromotionService
     Task CreatePromotionAsync(Promotion promotion);
     Task ProcessPromotionAsync(int employeeId, int newPositionId, decimal newSalary, string justification);
     Task<PromotionFormViewModel> GetPromotionFormViewModelAsync();
+    Task<PaginatedList<Promotion>> GetAllPromotionsPaginatedAsync(int pageIndex = 1, int pageSize = 10);
 }

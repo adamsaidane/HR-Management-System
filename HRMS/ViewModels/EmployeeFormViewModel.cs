@@ -30,6 +30,8 @@ public class EmployeeFormViewModel
     public string Address { get; set; }
 
     [Display(Name = "Téléphone")]
+    [RegularExpression(@"^\+?[0-9 ]+$", 
+        ErrorMessage = "Seule les nombres sont autorisés")]
     public string Phone { get; set; }
 
     [Required(ErrorMessage = "L'email est requis")]

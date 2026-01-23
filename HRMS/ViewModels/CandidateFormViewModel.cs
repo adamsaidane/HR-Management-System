@@ -30,6 +30,8 @@ public class CandidateFormViewModel
     public string Email { get; set; }
 
     [Display(Name = "Téléphone")]
+    [RegularExpression(@"^\+?[0-9 ]+$", 
+        ErrorMessage = "Seule les nombres sont autorisés")]
     public string Phone { get; set; }
 
     [StringLength(200)]

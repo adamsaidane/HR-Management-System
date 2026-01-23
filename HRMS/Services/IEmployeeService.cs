@@ -28,4 +28,11 @@ public interface IEmployeeService
     Task<EmployeeFormViewModel> GetEmployeeFormViewModelAsync(int? employeeId = null);
     Task<Employee> CreateEmployeeFromViewModelAsync(EmployeeFormViewModel model);
     Task UpdateEmployeeFromViewModelAsync(int id, EmployeeFormViewModel model);
+    Task<PaginatedList<Employee>> GetEmployeesForIndexAsync(
+        string searchString, 
+        int? departmentId, 
+        EmployeeStatus? status, 
+        string sortOrder,
+        int pageIndex = 1,
+        int pageSize = 10);
 }

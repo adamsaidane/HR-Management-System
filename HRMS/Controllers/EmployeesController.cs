@@ -25,7 +25,8 @@ public class EmployeesController : Controller
         int? departmentId,
         EmployeeStatus? status,
         string sortOrder,
-        string currentFilter)
+        string currentFilter,
+        int? pageNumber)
     {
         ViewBag.CurrentSort = sortOrder;
         ViewBag.MatriculeSortParam = string.IsNullOrEmpty(sortOrder) ? "matricule_desc" : "";
@@ -36,14 +37,30 @@ public class EmployeesController : Controller
         ViewBag.HireDateSortParam = sortOrder == "hiredate" ? "hiredate_desc" : "hiredate";
         ViewBag.StatusSortParam = sortOrder == "status" ? "status_desc" : "status";
 
-        searchString ??= currentFilter;
+        if (searchString != null)
+        {
+            pageNumber = 1;
+        }
+        else
+        {
+            searchString = currentFilter;
+        }
+
         ViewBag.CurrentFilter = searchString;
 
-        var employees = await _employeeService.GetEmployeesForIndexAsync(searchString, departmentId, status, sortOrder);
-        ViewBag.Departments = await _employeeService.GetAllDepartmentsAsync();
         ViewBag.SearchString = searchString;
         ViewBag.DepartmentId = departmentId;
         ViewBag.Status = status;
+
+        var employees = await _employeeService.GetEmployeesForIndexAsync(
+            searchString, 
+            departmentId, 
+            status, 
+            sortOrder,
+            pageNumber ?? 1,
+            10);
+
+        ViewBag.Departments = await _employeeService.GetAllDepartmentsAsync();
 
         return View(employees);
     }

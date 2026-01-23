@@ -1,4 +1,4 @@
-﻿@model IEnumerable<HRMS.Models.Employee>
+﻿@model HRMS.ViewModels.PaginatedList<HRMS.Models.Employee>
 @{
     ViewData["Title"] = "Gestion des Employés";
 }
@@ -285,6 +285,7 @@
                 <p class="mb-0">Aucun employé ne correspond aux critères sélectionnés.</p>
             </div>
         }
+        <partial name="_Pagination" model="Model" />
     </div>
 </div>
 

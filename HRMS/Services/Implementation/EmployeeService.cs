@@ -303,4 +303,57 @@ public class EmployeeService : IEmployeeService
 
         await UpdateEmployeeAsync(employee);
     }
+    
+    public async Task<PaginatedList<Employee>> GetEmployeesForIndexAsync(
+        string searchString, 
+        int? departmentId, 
+        EmployeeStatus? status, 
+        string sortOrder,
+        int pageIndex = 1,
+        int pageSize = 10)
+    {
+        var employees = await _unitOfWork.Employees.GetQueryableWithIncludes();
+
+        // Filtrage
+        if (!string.IsNullOrWhiteSpace(searchString))
+        {
+            employees = employees.Where(e =>
+                e.FirstName.Contains(searchString) ||
+                e.LastName.Contains(searchString) ||
+                e.Matricule.Contains(searchString) ||
+                e.Email.Contains(searchString));
+        }
+
+        if (departmentId.HasValue)
+        {
+            employees = employees.Where(e => e.DepartmentId == departmentId);
+        }
+
+        if (status.HasValue)
+        {
+            employees = employees.Where(e => e.Status == status);
+        }
+
+        // Tri
+        employees = sortOrder switch
+        {
+            "matricule_desc" => employees.OrderByDescending(e => e.Matricule),
+            "name" => employees.OrderBy(e => e.LastName).ThenBy(e => e.FirstName),
+            "name_desc" => employees.OrderByDescending(e => e.LastName).ThenByDescending(e => e.FirstName),
+            "email" => employees.OrderBy(e => e.Email),
+            "email_desc" => employees.OrderByDescending(e => e.Email),
+            "department" => employees.OrderBy(e => e.Department.Name),
+            "department_desc" => employees.OrderByDescending(e => e.Department.Name),
+            "position" => employees.OrderBy(e => e.Position.Title),
+            "position_desc" => employees.OrderByDescending(e => e.Position.Title),
+            "hiredate" => employees.OrderBy(e => e.HireDate),
+            "hiredate_desc" => employees.OrderByDescending(e => e.HireDate),
+            "status" => employees.OrderBy(e => e.Status),
+            "status_desc" => employees.OrderByDescending(e => e.Status),
+            _ => employees.OrderBy(e => e.Matricule)
+        };
+
+        // Pagination
+        return await PaginatedList<Employee>.CreateAsync(employees, pageIndex, pageSize);
+    }
 }

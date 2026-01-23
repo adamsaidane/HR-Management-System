@@ -304,7 +304,7 @@ public class EmployeeService : IEmployeeService
         await UpdateEmployeeAsync(employee);
     }
     
-    public async Task<PaginatedList<Employee>> GetEmployeesForIndexAsync(
+    public async Task<PaginatedList<Employee>> GetEmployeesPaginatedForIndexAsync(
         string searchString, 
         int? departmentId, 
         EmployeeStatus? status, 

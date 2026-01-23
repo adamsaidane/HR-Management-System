@@ -28,7 +28,7 @@ public interface IEmployeeService
     Task<EmployeeFormViewModel> GetEmployeeFormViewModelAsync(int? employeeId = null);
     Task<Employee> CreateEmployeeFromViewModelAsync(EmployeeFormViewModel model);
     Task UpdateEmployeeFromViewModelAsync(int id, EmployeeFormViewModel model);
-    Task<PaginatedList<Employee>> GetEmployeesForIndexAsync(
+    Task<PaginatedList<Employee>> GetEmployeesPaginatedForIndexAsync(
         string searchString, 
         int? departmentId, 
         EmployeeStatus? status, 

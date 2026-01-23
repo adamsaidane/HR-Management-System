@@ -23,4 +23,9 @@ public interface ISalaryService
     Task<EmployeeSalaryViewModel> GetEmployeeSalaryViewModelAsync(int employeeId);
     Task<List<SalaryReportItem>> GetSalaryReportAsync();
     Task<List<DepartmentSalaryReport>> GetDepartmentSalariesReportAsync();
+    Task<SalaryIndexPaginatedViewModel> GetSalaryIndexViewModelPaginatedAsync(
+        string searchString, 
+        int? departmentId,
+        int pageIndex = 1,
+        int pageSize = 15);
 }

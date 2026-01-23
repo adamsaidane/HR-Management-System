@@ -46,7 +46,7 @@ public class EmployeesController : Controller
         ViewBag.DepartmentId = departmentId;
         ViewBag.Status = status;
 
-        var employees = await _employeeService.GetEmployeesForIndexAsync(
+        var employees = await _employeeService.GetEmployeesPaginatedForIndexAsync(
             searchString, 
             departmentId, 
             status, 

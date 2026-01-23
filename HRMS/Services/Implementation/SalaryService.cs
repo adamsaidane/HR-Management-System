@@ -245,4 +245,62 @@ public class SalaryService : ISalaryService
 
         return report;
     }
+    
+    public async Task<SalaryIndexPaginatedViewModel> GetSalaryIndexViewModelPaginatedAsync(
+        string searchString, 
+        int? departmentId,
+        int pageIndex = 1,
+        int pageSize = 15)
+    {
+        var employees = await _unitOfWork.Employees.GetQueryableWithIncludes();
+        
+        employees = employees.Where(e => e.Status == EmployeeStatus.Actif);
+
+        // Filtre par recherche
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            employees = employees.Where(e =>
+                e.FirstName.Contains(searchString) ||
+                e.LastName.Contains(searchString) ||
+                e.Matricule.Contains(searchString));
+        }
+
+        // Filtre par département
+        if (departmentId.HasValue)
+        {
+            employees = employees.Where(e => e.DepartmentId == departmentId.Value);
+        }
+
+        employees = employees.OrderBy(e => e.LastName).ThenBy(e => e.FirstName);
+
+        // Statistiques globales
+        var allActiveEmployees = await _employeeService.GetActiveEmployeesAsync();
+        
+        decimal totalMasseSalariale = 0;
+        int employeesWithSalary = 0;
+
+        foreach (var emp in allActiveEmployees)
+        {
+            var currentSalary = await GetCurrentSalaryAsync(emp.EmployeeId);
+            if (currentSalary > 0)
+            {
+                totalMasseSalariale += currentSalary;
+                employeesWithSalary++;
+            }
+        }
+
+        var paginatedEmployees =
+            await PaginatedList<Employee>.CreateAsync(employees, pageIndex, pageSize);
+
+        return new SalaryIndexPaginatedViewModel()
+        {
+            Employees = paginatedEmployees,
+            Departments = await _employeeService.GetAllDepartmentsAsync(),
+            SearchString = searchString,
+            DepartmentId = departmentId,
+            TotalMasseSalariale = totalMasseSalariale,
+            AverageSalary = employeesWithSalary > 0 ? totalMasseSalariale / employeesWithSalary : 0,
+            TotalEmployees = allActiveEmployees.Count()
+        };
+    }
 }

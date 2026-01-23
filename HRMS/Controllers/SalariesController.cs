@@ -18,9 +18,11 @@ public class SalariesController : Controller
     }
 
     // GET: Salaries/Index
-    public async Task<IActionResult> Index(string searchString, int? departmentId)
+    public async Task<IActionResult> Index(string searchString, int? departmentId, int? pageNumber)
     {
-        var viewModel = await _salaryService.GetSalaryIndexViewModelAsync(searchString, departmentId);
+        var viewModel = await _salaryService.GetSalaryIndexViewModelPaginatedAsync(searchString, departmentId,
+            pageNumber ?? 1,
+            15);
         return View(viewModel);
     }
 

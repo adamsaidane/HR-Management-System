@@ -37,17 +37,11 @@ public class EmployeesController : Controller
         ViewBag.HireDateSortParam = sortOrder == "hiredate" ? "hiredate_desc" : "hiredate";
         ViewBag.StatusSortParam = sortOrder == "status" ? "status_desc" : "status";
 
-        if (searchString != null)
-        {
-            pageNumber = 1;
-        }
-        else
-        {
-            searchString = currentFilter;
-        }
+        
+        searchString ??= currentFilter;
+
 
         ViewBag.CurrentFilter = searchString;
-
         ViewBag.SearchString = searchString;
         ViewBag.DepartmentId = departmentId;
         ViewBag.Status = status;

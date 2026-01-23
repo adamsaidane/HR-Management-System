@@ -1,35 +1,135 @@
 ﻿@model HRMS.ViewModels.IPaginatedList
 
+@{
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+
+    // asp-all-route-data exige IDictionary<string, string>
+    var routeValues = new Dictionary<string, string>();
+
+    foreach (var query in Context.Request.Query)
+    {
+        if (query.Key != "pageNumber")
+        {
+            routeValues[query.Key] = query.Value.ToString();
+        }
+    }
+}
 @if (Model.TotalPages > 1)
 {
-    <nav>
-        <ul class="pagination">
-            @if (Model.HasPreviousPage)
+    <nav aria-label="Pagination">
+        <ul class="pagination justify-content-center">
+
+            <!-- Première page -->
+            <li class="page-item @(Model.PageIndex == 1 ? "disabled" : "")">
+                <a class="page-link"
+                   asp-action="@action"
+                   asp-controller="@controller"
+                   asp-all-route-data="routeValues"
+                   asp-route-pageNumber="1">
+                    <i class="fas fa-angle-double-left"></i>
+                </a>
+            </li>
+
+            <!-- Précédent -->
+            <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                <a class="page-link"
+                   asp-action="@action"
+                   asp-controller="@controller"
+                   asp-all-route-data="routeValues"
+                   asp-route-pageNumber="@(Model.PageIndex - 1)">
+                    <i class="fas fa-angle-left"></i>
+                </a>
+            </li>
+
+            @{
+                int startPage = Math.Max(1, Model.PageIndex - 2);
+                int endPage = Math.Min(Model.TotalPages, Model.PageIndex + 2);
+            }
+
+            <!-- Page 1 -->
+            @if (startPage > 1)
             {
                 <li class="page-item">
                     <a class="page-link"
-                       asp-route-pageNumber="@(Model.PageIndex - 1)">
-                        Précédent
-                    </a>
+                       asp-action="@action"
+                       asp-controller="@controller"
+                       asp-all-route-data="routeValues"
+                       asp-route-pageNumber="1">1</a>
                 </li>
+
+                @if (startPage > 2)
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">…</span>
+                    </li>
+                }
             }
 
-            @for (int i = 1; i <= Model.TotalPages; i++)
+            <!-- Pages autour de la page courante -->
+            @for (int i = startPage; i <= endPage; i++)
             {
                 <li class="page-item @(i == Model.PageIndex ? "active" : "")">
-                    <a class="page-link" asp-route-pageNumber="@i">@i</a>
-                </li>
-            }
-
-            @if (Model.HasNextPage)
-            {
-                <li class="page-item">
                     <a class="page-link"
-                       asp-route-pageNumber="@(Model.PageIndex + 1)">
-                        Suivant
+                       asp-action="@action"
+                       asp-controller="@controller"
+                       asp-all-route-data="routeValues"
+                       asp-route-pageNumber="@i">
+                        @i
                     </a>
                 </li>
             }
+
+            <!-- Dernière page -->
+            @if (endPage < Model.TotalPages)
+            {
+                @if (endPage < Model.TotalPages - 1)
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">…</span>
+                    </li>
+                }
+
+                <li class="page-item">
+                    <a class="page-link"
+                       asp-action="@action"
+                       asp-controller="@controller"
+                       asp-all-route-data="routeValues"
+                       asp-route-pageNumber="@Model.TotalPages">
+                        @Model.TotalPages
+                    </a>
+                </li>
+            }
+
+            <!-- Suivant -->
+            <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
+                <a class="page-link"
+                   asp-action="@action"
+                   asp-controller="@controller"
+                   asp-all-route-data="routeValues"
+                   asp-route-pageNumber="@(Model.PageIndex + 1)">
+                    <i class="fas fa-angle-right"></i>
+                </a>
+            </li>
+
+            <!-- Dernière page -->
+            <li class="page-item @(Model.PageIndex == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link"
+                   asp-action="@action"
+                   asp-controller="@controller"
+                   asp-all-route-data="routeValues"
+                   asp-route-pageNumber="@Model.TotalPages">
+                    <i class="fas fa-angle-double-right"></i>
+                </a>
+            </li>
         </ul>
+        <div class="text-center text-muted mt-2">
+            <small>
+                Page @Model.PageIndex sur @Model.TotalPages 
+                (@Model.TotalCount résultat@(Model.TotalCount > 1 ? "s" : ""))
+                - Affichage de @((Model.PageIndex - 1) * Model.PageSize + 1) 
+                à @(Math.Min(Model.PageIndex * Model.PageSize, Model.TotalCount))
+            </small>
+        </div>
     </nav>
 }

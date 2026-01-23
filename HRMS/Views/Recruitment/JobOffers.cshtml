@@ -1,4 +1,4 @@
-﻿@model IEnumerable<HRMS.Models.JobOffer>
+﻿@model HRMS.ViewModels.PaginatedList<HRMS.Models.JobOffer>
 @{
     ViewData["Title"] = "Offres d'Emploi";
 }
@@ -46,4 +46,5 @@
             </div>
         </div>
     }
+    <partial name="_Pagination" model="Model" />
 </div>

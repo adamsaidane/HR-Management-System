@@ -54,7 +54,7 @@ public class EmployeeFormViewModel
 
     [Required(ErrorMessage = "Le type de contrat est requis")]
     [Display(Name = "Type de contrat")]
-    public string ContractType { get; set; }
+    public ContractType ContractType { get; set; }
 
     [Display(Name = "Photo")]
     [ValidateNever]
@@ -67,6 +67,6 @@ public class EmployeeFormViewModel
     [ValidateNever]
     public List<string> ContractTypes { get; set; } = new List<string> 
     { 
-        "CDI", "CDD", "Stage", "Freelance", "Intérim" 
+        "CDI", "CDD", "Stage", "Freelance" 
     };
 }

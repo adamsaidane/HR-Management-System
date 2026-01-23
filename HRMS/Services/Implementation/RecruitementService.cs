@@ -273,6 +273,7 @@ public class RecruitmentService : IRecruitmentService
             DateOfBirth = candidate.DateOfBirth,
             Email = candidate.Email,
             Phone = candidate.Phone,
+            ContractType = candidate.JobOffer.ContractType,
             Address = candidate.Address,
             HireDate = DateTime.Today,
             Departments = await _employeeService.GetAllDepartmentsAsync(),

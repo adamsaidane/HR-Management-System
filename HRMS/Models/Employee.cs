@@ -66,7 +66,7 @@ public class Employee
         [Required(ErrorMessage = "Le type de contrat est requis")]
         [StringLength(50)]
         [Display(Name = "Type de contrat")]
-        public string ContractType { get; set; }
+        public ContractType ContractType { get; set; }
 
         [Required]
         [Display(Name = "Statut")]

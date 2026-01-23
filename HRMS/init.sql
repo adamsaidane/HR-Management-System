@@ -92,68 +92,68 @@ SET IDENTITY_INSERT Employees ON;
 INSERT INTO Employees (EmployeeId, Matricule, FirstName, LastName, Gender, DateOfBirth, Address, Phone, Email, DepartmentId, PositionId, HireDate, ContractType, Status, PhotoPath, CreatedDate, ModifiedDate)
 VALUES
     -- IT Department (10 employés)
-    (1, '2020001', 'Mohamed', 'Ben Ali', 1,'1985-03-15', '12 Rue de la Liberté, Tunis', '20123456', 'mohamed.benali@hrms.tn', 1, 4, '2020-01-15', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (2, '2020002', 'Amira', 'Trabelsi',2, '1990-07-22', '45 Avenue Bourguiba, Tunis', '20244567', 'amira.trabelsi@hrms.tn', 1, 3, '2020-03-01', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (3, '2021003', 'Karim', 'Jebali', 1,'1992-11-08', '78 Rue Ibn Khaldoun, Sousse', '21345678', 'karim.jebali@hrms.tn', 1, 2, '2021-06-10', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (4, '2021004', 'Sarra', 'Hamdi', 2,'1995-02-14', '23 Avenue de France, Tunis', '21456789', 'sarra.hamdi@hrms.tn', 1, 2, '2021-08-20', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (5, '2022005', 'Youssef', 'Khelifi', 1,'1996-05-30', '56 Rue de Marseille, Sfax', '22567890', 'youssef.khelifi@hrms.tn', 1, 1, '2022-01-10', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (6, '2022006', 'Nadia', 'Gharbi', 2,'1993-09-18', '89 Avenue Habib Thameur, Tunis', '22678901', 'nadia.gharbi@hrms.tn', 1, 1, '2022-04-05', 'CDD', 0, NULL, GETDATE(), GETDATE()),
-    (7, '2024007', 'Mehdi', 'Sassi', 1,'1994-12-25', '34 Rue Charles de Gaulle, Bizerte', '23789012', 'mehdi.sassi@hrms.tn', 1, 1, '2024-02-15', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (8, '2024008', 'Lina', 'Bouaziz', 2,'1997-04-07', '67 Avenue de Carthage, Tunis', '23890123', 'lina.bouaziz@hrms.tn', 1, 5, '2024-05-20', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (9, '2025009', 'Ahmed', 'Mejri', 1,'1998-08-12', '12 Rue de Rome, Monastir', '24901234', 'ahmed.mejri@hrms.tn', 1, 1, '2025-01-08', 'CDD', 0, NULL, GETDATE(), GETDATE()),
-    (10, '2025010', 'Rim', 'Souissi', 2,'1999-01-20', '45 Avenue Mohamed V, Tunis', '24012345', 'rim.souissi@hrms.tn', 1, 1, '2025-03-12', 'CDI', 0, NULL, GETDATE(), GETDATE()),
+    (1, '2020001', 'Mohamed', 'Ben Ali', 1,'1985-03-15', '12 Rue de la Liberté, Tunis', '20123456', 'mohamed.benali@hrms.tn', 1, 4, '2020-01-15', 0, 0, NULL, GETDATE(), GETDATE()),
+    (2, '2020002', 'Amira', 'Trabelsi',2, '1990-07-22', '45 Avenue Bourguiba, Tunis', '20244567', 'amira.trabelsi@hrms.tn', 1, 3, '2020-03-01', 0, 0, NULL, GETDATE(), GETDATE()),
+    (3, '2021003', 'Karim', 'Jebali', 1,'1992-11-08', '78 Rue Ibn Khaldoun, Sousse', '21345678', 'karim.jebali@hrms.tn', 1, 2, '2021-06-10', 0, 0, NULL, GETDATE(), GETDATE()),
+    (4, '2021004', 'Sarra', 'Hamdi', 2,'1995-02-14', '23 Avenue de France, Tunis', '21456789', 'sarra.hamdi@hrms.tn', 1, 2, '2021-08-20', 0, 0, NULL, GETDATE(), GETDATE()),
+    (5, '2022005', 'Youssef', 'Khelifi', 1,'1996-05-30', '56 Rue de Marseille, Sfax', '22567890', 'youssef.khelifi@hrms.tn', 1, 1, '2022-01-10', 0, 0, NULL, GETDATE(), GETDATE()),
+    (6, '2022006', 'Nadia', 'Gharbi', 2,'1993-09-18', '89 Avenue Habib Thameur, Tunis', '22678901', 'nadia.gharbi@hrms.tn', 1, 1, '2022-04-05', 1, 0, NULL, GETDATE(), GETDATE()),
+    (7, '2024007', 'Mehdi', 'Sassi', 1,'1994-12-25', '34 Rue Charles de Gaulle, Bizerte', '23789012', 'mehdi.sassi@hrms.tn', 1, 1, '2024-02-15', 0, 0, NULL, GETDATE(), GETDATE()),
+    (8, '2024008', 'Lina', 'Bouaziz', 2,'1997-04-07', '67 Avenue de Carthage, Tunis', '23890123', 'lina.bouaziz@hrms.tn', 1, 5, '2024-05-20', 0, 0, NULL, GETDATE(), GETDATE()),
+    (9, '2025009', 'Ahmed', 'Mejri', 1,'1998-08-12', '12 Rue de Rome, Monastir', '24901234', 'ahmed.mejri@hrms.tn', 1, 1, '2025-01-08', 1, 0, NULL, GETDATE(), GETDATE()),
+    (10, '2025010', 'Rim', 'Souissi', 2,'1999-01-20', '45 Avenue Mohamed V, Tunis', '24012345', 'rim.souissi@hrms.tn', 1, 1, '2025-03-12', 0, 0, NULL, GETDATE(), GETDATE()),
 
     -- RH Department (5 employés)
-    (11, '2019011', 'Salma', 'Abidi', 2,'1982-06-10', '78 Rue de la République, Tunis', '19123456', 'salma.abidi@hrms.tn', 2, 6, '2019-05-01', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (12, '2020012', 'Hichem', 'Najar',1, '1988-10-25', '23 Avenue Habib Bourguiba, Sousse', '20244567', 'hichem.najar@hrms.tn', 2, 7, '2020-07-15', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (13, '2021013', 'Inès', 'Belhaj', 2,'1991-03-18', '56 Rue de Paris, Tunis', '21345678', 'ines.belhaj@hrms.tn', 2, 7, '2021-09-10', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (14, '2022014', 'Fares', 'Khiari',1, '1993-07-05', '89 Avenue de la Liberté, Sfax', '22456789', 'fares.khiari@hrms.tn', 2, 8, '2022-03-20', 'CDD', 0, NULL, GETDATE(), GETDATE()),
-    (15, '2024015', 'Marwa', 'Rekik', 2,'1995-11-30', '34 Rue Ibn Sina, Tunis', '23567890', 'marwa.rekik@hrms.tn', 2, 8, '2024-06-01', 'CDI', 0, NULL, GETDATE(), GETDATE()),
+    (11, '2019011', 'Salma', 'Abidi', 2,'1982-06-10', '78 Rue de la République, Tunis', '19123456', 'salma.abidi@hrms.tn', 2, 6, '2019-05-01', 0, 0, NULL, GETDATE(), GETDATE()),
+    (12, '2020012', 'Hichem', 'Najar',1, '1988-10-25', '23 Avenue Habib Bourguiba, Sousse', '20244567', 'hichem.najar@hrms.tn', 2, 7, '2020-07-15', 0, 0, NULL, GETDATE(), GETDATE()),
+    (13, '2021013', 'Inès', 'Belhaj', 2,'1991-03-18', '56 Rue de Paris, Tunis', '21345678', 'ines.belhaj@hrms.tn', 2, 7, '2021-09-10', 0, 0, NULL, GETDATE(), GETDATE()),
+    (14, '2022014', 'Fares', 'Khiari',1, '1993-07-05', '89 Avenue de la Liberté, Sfax', '22456789', 'fares.khiari@hrms.tn', 2, 8, '2022-03-20', 1, 0, NULL, GETDATE(), GETDATE()),
+    (15, '2024015', 'Marwa', 'Rekik', 2,'1995-11-30', '34 Rue Ibn Sina, Tunis', '23567890', 'marwa.rekik@hrms.tn', 2, 8, '2024-06-01', 0, 0, NULL, GETDATE(), GETDATE()),
 
     -- Finance Department (6 employés)
-    (16, '2018016', 'Tarek', 'Chaabane',1, '1980-04-12', '67 Avenue de France, Tunis', '18123456', 'tarek.chaabane@hrms.tn', 3, 9, '2018-02-01', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (17, '2019017', 'Samia', 'Boussetta', 2,'1986-08-28', '12 Rue de Marseille, La Marsa', '19234567', 'samia.boussetta@hrms.tn', 3, 10, '2019-09-15', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (18, '2020018', 'Ramzi', 'Zouari', 1,'1989-12-03', '45 Avenue Habib Thameur, Tunis', '20345678', 'ramzi.zouari@hrms.tn', 3, 10, '2020-11-20', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (19, '2021019', 'Houda', 'Mansour', 2,'1992-02-16', '78 Rue Charles Nicolle, Sousse', '21456789', 'houda.mansour@hrms.tn', 3, 11, '2021-04-10', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (20, '2024020', 'Bilel', 'Gargouri', 1,'1994-06-22', '23 Avenue de Carthage, Tunis', '23567890', 'bilel.gargouri@hrms.tn', 3, 10, '2024-01-15', 'CDD', 0, NULL, GETDATE(), GETDATE()),
-    (21, '2025021', 'Wafa', 'Mrad', 2,'1996-10-08', '56 Rue de la Kasbah, Tunis', '24678901', 'wafa.mrad@hrms.tn', 3, 11, '2025-02-01', 'CDI', 0, NULL, GETDATE(), GETDATE()),
+    (16, '2018016', 'Tarek', 'Chaabane',1, '1980-04-12', '67 Avenue de France, Tunis', '18123456', 'tarek.chaabane@hrms.tn', 3, 9, '2018-02-01', 0, 0, NULL, GETDATE(), GETDATE()),
+    (17, '2019017', 'Samia', 'Boussetta', 2,'1986-08-28', '12 Rue de Marseille, La Marsa', '19234567', 'samia.boussetta@hrms.tn', 3, 10, '2019-09-15', 0, 0, NULL, GETDATE(), GETDATE()),
+    (18, '2020018', 'Ramzi', 'Zouari', 1,'1989-12-03', '45 Avenue Habib Thameur, Tunis', '20345678', 'ramzi.zouari@hrms.tn', 3, 10, '2020-11-20', 0, 0, NULL, GETDATE(), GETDATE()),
+    (19, '2021019', 'Houda', 'Mansour', 2,'1992-02-16', '78 Rue Charles Nicolle, Sousse', '21456789', 'houda.mansour@hrms.tn', 3, 11, '2021-04-10', 0, 0, NULL, GETDATE(), GETDATE()),
+    (20, '2024020', 'Bilel', 'Gargouri', 1,'1994-06-22', '23 Avenue de Carthage, Tunis', '23567890', 'bilel.gargouri@hrms.tn', 3, 10, '2024-01-15', 1, 0, NULL, GETDATE(), GETDATE()),
+    (21, '2025021', 'Wafa', 'Mrad', 2,'1996-10-08', '56 Rue de la Kasbah, Tunis', '24678901', 'wafa.mrad@hrms.tn', 3, 11, '2025-02-01', 0, 0, NULL, GETDATE(), GETDATE()),
 
     -- Marketing Department (6 employés)
-    (22, '2019022', 'Nizar', 'Hamza', 1,'1984-05-15', '89 Avenue Mohamed V, Tunis', '19345678', 'nizar.hamza@hrms.tn', 4, 12, '2019-03-10', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (23, '2020023', 'Asma', 'Chahed', 2,'1990-09-20', '34 Rue de Rome, Sfax', '20456789', 'asma.chahed@hrms.tn', 4, 13, '2020-05-25', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (24, '2021024', 'Slim', 'Oueslati', 1,'1993-01-12', '67 Avenue de la République, Tunis', '21567890', 'slim.oueslati@hrms.tn', 4, 13, '2021-07-18', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (25, '2022025', 'Leila', 'Dridi', 2,'1995-04-28', '12 Rue Ibn Khaldoun, Bizerte', '22678901', 'leila.dridi@hrms.tn', 4, 13, '2022-09-05', 'CDD', 0, NULL, GETDATE(), GETDATE()),
-    (26, '2024026', 'Oussama', 'Fatnassi', 1,'1997-08-14', '45 Avenue Habib Bourguiba, Tunis', '23789012', 'oussama.fatnassi@hrms.tn', 4, 13, '2024-11-20', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (27, '2025027', 'Sawsen', 'Arbi', 2,'1998-12-01', '78 Rue de la Liberté, Monastir', '24890123', 'sawsen.arbi@hrms.tn', 4, 13, '2025-01-15', 'CDI', 0, NULL, GETDATE(), GETDATE()),
+    (22, '2019022', 'Nizar', 'Hamza', 1,'1984-05-15', '89 Avenue Mohamed V, Tunis', '19345678', 'nizar.hamza@hrms.tn', 4, 12, '2019-03-10', 0, 0, NULL, GETDATE(), GETDATE()),
+    (23, '2020023', 'Asma', 'Chahed', 2,'1990-09-20', '34 Rue de Rome, Sfax', '20456789', 'asma.chahed@hrms.tn', 4, 13, '2020-05-25', 0, 0, NULL, GETDATE(), GETDATE()),
+    (24, '2021024', 'Slim', 'Oueslati', 1,'1993-01-12', '67 Avenue de la République, Tunis', '21567890', 'slim.oueslati@hrms.tn', 4, 13, '2021-07-18', 0, 0, NULL, GETDATE(), GETDATE()),
+    (25, '2022025', 'Leila', 'Dridi', 2,'1995-04-28', '12 Rue Ibn Khaldoun, Bizerte', '22678901', 'leila.dridi@hrms.tn', 4, 13, '2022-09-05', 1, 0, NULL, GETDATE(), GETDATE()),
+    (26, '2024026', 'Oussama', 'Fatnassi', 1,'1997-08-14', '45 Avenue Habib Bourguiba, Tunis', '23789012', 'oussama.fatnassi@hrms.tn', 4, 13, '2024-11-20', 0, 0, NULL, GETDATE(), GETDATE()),
+    (27, '2025027', 'Sawsen', 'Arbi', 2,'1998-12-01', '78 Rue de la Liberté, Monastir', '24890123', 'sawsen.arbi@hrms.tn', 4, 13, '2025-01-15', 0, 0, NULL, GETDATE(), GETDATE()),
 
     -- Commercial Department (8 employés)
-    (28, '2018028', 'Zied', 'Tlili',1, '1983-03-22', '23 Avenue de France, Tunis', '18456789', 'zied.tlili@hrms.tn', 5, 15, '2018-06-01', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (29, '2019029', 'Hajer', 'Mkacher', 2,'1987-07-18', '56 Rue de Marseille, Sousse', '19567890', 'hajer.mkacher@hrms.tn', 5, 14, '2019-10-15', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (30, '2020030', 'Chokri', 'Amri',1, '1990-11-05', '89 Avenue Habib Thameur, Tunis', '20678901', 'chokri.amri@hrms.tn', 5, 14, '2020-12-20', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (31, '2021031', 'Sonia', 'Yahia', 2,'1992-02-28', '34 Rue Charles de Gaulle, Sfax', '21789012', 'sonia.yahia@hrms.tn', 5, 14, '2021-05-10', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (32, '2022032', 'Maher', 'Kammoun',1, '1994-06-14', '67 Avenue de Carthage, Tunis', '22890123', 'maher.kammoun@hrms.tn', 5, 14, '2022-08-25', 'CDD', 0, NULL, GETDATE(), GETDATE()),
-    (33, '2024033', 'Nesrine', 'Jendoubi', 2,'1996-10-30', '12 Rue de Rome, Bizerte', '23901234', 'nesrine.jendoubi@hrms.tn', 5, 14, '2024-03-15', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (34, '2025034', 'Faouzi', 'Dhouib', 1,'1997-01-25', '45 Avenue Mohamed V, Tunis', '24012345', 'faouzi.dhouib@hrms.tn', 5, 14, '2025-06-01', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (35, '2025035', 'Radhia', 'Chaari', 2,'1998-05-12', '78 Rue de la République, Monastir', '24123456', 'radhia.chaari@hrms.tn', 5, 14, '2025-09-10', 'CDI', 0, NULL, GETDATE(), GETDATE()),
+    (28, '2018028', 'Zied', 'Tlili',1, '1983-03-22', '23 Avenue de France, Tunis', '18456789', 'zied.tlili@hrms.tn', 5, 15, '2018-06-01', 0, 0, NULL, GETDATE(), GETDATE()),
+    (29, '2019029', 'Hajer', 'Mkacher', 2,'1987-07-18', '56 Rue de Marseille, Sousse', '19567890', 'hajer.mkacher@hrms.tn', 5, 14, '2019-10-15', 0, 0, NULL, GETDATE(), GETDATE()),
+    (30, '2020030', 'Chokri', 'Amri',1, '1990-11-05', '89 Avenue Habib Thameur, Tunis', '20678901', 'chokri.amri@hrms.tn', 5, 14, '2020-12-20', 0, 0, NULL, GETDATE(), GETDATE()),
+    (31, '2021031', 'Sonia', 'Yahia', 2,'1992-02-28', '34 Rue Charles de Gaulle, Sfax', '21789012', 'sonia.yahia@hrms.tn', 5, 14, '2021-05-10', 0, 0, NULL, GETDATE(), GETDATE()),
+    (32, '2022032', 'Maher', 'Kammoun',1, '1994-06-14', '67 Avenue de Carthage, Tunis', '22890123', 'maher.kammoun@hrms.tn', 5, 14, '2022-08-25', 1, 0, NULL, GETDATE(), GETDATE()),
+    (33, '2024033', 'Nesrine', 'Jendoubi', 2,'1996-10-30', '12 Rue de Rome, Bizerte', '23901234', 'nesrine.jendoubi@hrms.tn', 5, 14, '2024-03-15', 0, 0, NULL, GETDATE(), GETDATE()),
+    (34, '2025034', 'Faouzi', 'Dhouib', 1,'1997-01-25', '45 Avenue Mohamed V, Tunis', '24012345', 'faouzi.dhouib@hrms.tn', 5, 14, '2025-06-01', 0, 0, NULL, GETDATE(), GETDATE()),
+    (35, '2025035', 'Radhia', 'Chaari', 2,'1998-05-12', '78 Rue de la République, Monastir', '24123456', 'radhia.chaari@hrms.tn', 5, 14, '2025-09-10', 0, 0, NULL, GETDATE(), GETDATE()),
 
     -- Production Department (5 employés)
-    (36, '2019036', 'Kamel', 'Ferchichi', 1,'1985-09-08', '23 Avenue Habib Bourguiba, Tunis', '19678901', 'kamel.ferchichi@hrms.tn', 6, 16, '2019-04-01', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (37, '2020037', 'Monia', 'Kharrat', 2,'1988-12-15', '56 Rue de Paris, Sousse', '20789012', 'monia.kharrat@hrms.tn', 6, 16, '2020-08-20', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (38, '2021038', 'Hassen', 'Sghaier',1, '1991-04-22', '89 Avenue de la Liberté, Sfax', '21890123', 'hassen.sghaier@hrms.tn', 6, 16, '2021-11-10', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (39, '2024039', 'Jalila', 'Bouzid', 2,'1993-08-07', '34 Rue Ibn Sina, Tunis', '23012345', 'jalila.bouzid@hrms.tn', 6, 16, '2024-02-28', 'CDD', 1, NULL, GETDATE(), GETDATE()),
-    (40, '2025040', 'Ridha', 'Aloui', 1,'1995-11-19', '67 Avenue de France, Bizerte', '24234567', 'ridha.aloui@hrms.tn', 6, 16, '2025-05-15', 'CDI', 0, NULL, GETDATE(), GETDATE()),
+    (36, '2019036', 'Kamel', 'Ferchichi', 1,'1985-09-08', '23 Avenue Habib Bourguiba, Tunis', '19678901', 'kamel.ferchichi@hrms.tn', 6, 16, '2019-04-01', 0, 0, NULL, GETDATE(), GETDATE()),
+    (37, '2020037', 'Monia', 'Kharrat', 2,'1988-12-15', '56 Rue de Paris, Sousse', '20789012', 'monia.kharrat@hrms.tn', 6, 16, '2020-08-20', 0, 0, NULL, GETDATE(), GETDATE()),
+    (38, '2021038', 'Hassen', 'Sghaier',1, '1991-04-22', '89 Avenue de la Liberté, Sfax', '21890123', 'hassen.sghaier@hrms.tn', 6, 16, '2021-11-10', 0, 0, NULL, GETDATE(), GETDATE()),
+    (39, '2024039', 'Jalila', 'Bouzid', 2,'1993-08-07', '34 Rue Ibn Sina, Tunis', '23012345', 'jalila.bouzid@hrms.tn', 6, 16, '2024-02-28', 1, 0, NULL, GETDATE(), GETDATE()),
+    (40, '2025040', 'Ridha', 'Aloui', 1,'1995-11-19', '67 Avenue de France, Bizerte', '24234567', 'ridha.aloui@hrms.tn', 6, 16, '2025-05-15', 0, 0, NULL, GETDATE(), GETDATE()),
 
     -- Autres départements (10 employés)
-    (41, '2020041', 'Moez', 'Belaid', 1,'1986-02-10', '12 Rue de Marseille, Tunis', '20890123', 'moez.belaid@hrms.tn', 7, 17, '2020-02-15', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (42, '2021042', 'Amel', 'Chebbi', 2,'1989-06-25', '45 Avenue Habib Thameur, La Marsa', '21901234', 'amel.chebbi@hrms.tn', 7, 17, '2021-10-05', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (43, '2019043', 'Riadh', 'Hammami', 1,'1984-10-12', '78 Rue Charles Nicolle, Tunis', '19789012', 'riadh.hammami@hrms.tn', 8, 18, '2019-07-20', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (44, '2022044', 'Imen', 'Mathlouthi', 2,'1992-03-28', '23 Avenue de Carthage, Sousse', '22123456', 'imen.mathlouthi@hrms.tn', 8, 18, '2022-12-10', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (45, '2018045', 'Khaled', 'Bouslama',1, '1981-07-15', '56 Rue de la Kasbah, Tunis', '18567890', 'khaled.bouslama@hrms.tn', 9, 19, '2018-09-01', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (46, '2021046', 'Sihem', 'Daoud', 2,'1990-11-22', '89 Avenue Mohamed V, Sfax', '21012345', 'sihem.daoud@hrms.tn', 9, 19, '2021-03-25', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (47, '2024047', 'Nabil', 'Ghariani',1, '1994-05-08', '34 Rue de Rome, Tunis', '23123456', 'nabil.ghariani@hrms.tn', 10, 20, '2024-08-15', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (48, '2025048', 'Olfa', 'Mezni', 2,'1996-09-14', '67 Avenue de la République, Bizerte', '24345678', 'olfa.mezni@hrms.tn', 10, 20, '2025-04-20', 'CDD', 0, NULL, GETDATE(), GETDATE()),
-    (49, '2025049', 'Wassim', 'Agrebi',1, '1997-01-30', '12 Rue Ibn Khaldoun, Monastir', '24456789', 'wassim.agrebi@hrms.tn', 10, 20, '2025-07-10', 'CDI', 0, NULL, GETDATE(), GETDATE()),
-    (50, '2025050', 'Ahlem', 'Triki', 2,'1998-04-18', '45 Avenue Habib Bourguiba, Tunis', '24567890', 'ahlem.triki@hrms.tn', 10, 20, '2025-10-05', 'CDI', 0, NULL, GETDATE(), GETDATE());
+    (41, '2020041', 'Moez', 'Belaid', 1,'1986-02-10', '12 Rue de Marseille, Tunis', '20890123', 'moez.belaid@hrms.tn', 7, 17, '2020-02-15', 0, 0, NULL, GETDATE(), GETDATE()),
+    (42, '2021042', 'Amel', 'Chebbi', 2,'1989-06-25', '45 Avenue Habib Thameur, La Marsa', '21901234', 'amel.chebbi@hrms.tn', 7, 17, '2021-10-05', 0, 0, NULL, GETDATE(), GETDATE()),
+    (43, '2019043', 'Riadh', 'Hammami', 1,'1984-10-12', '78 Rue Charles Nicolle, Tunis', '19789012', 'riadh.hammami@hrms.tn', 8, 18, '2019-07-20', 0, 0, NULL, GETDATE(), GETDATE()),
+    (44, '2022044', 'Imen', 'Mathlouthi', 2,'1992-03-28', '23 Avenue de Carthage, Sousse', '22123456', 'imen.mathlouthi@hrms.tn', 8, 18, '2022-12-10', 0, 0, NULL, GETDATE(), GETDATE()),
+    (45, '2018045', 'Khaled', 'Bouslama',1, '1981-07-15', '56 Rue de la Kasbah, Tunis', '18567890', 'khaled.bouslama@hrms.tn', 9, 19, '2018-09-01', 0, 0, NULL, GETDATE(), GETDATE()),
+    (46, '2021046', 'Sihem', 'Daoud', 2,'1990-11-22', '89 Avenue Mohamed V, Sfax', '21012345', 'sihem.daoud@hrms.tn', 9, 19, '2021-03-25', 0, 0, NULL, GETDATE(), GETDATE()),
+    (47, '2024047', 'Nabil', 'Ghariani',1, '1994-05-08', '34 Rue de Rome, Tunis', '23123456', 'nabil.ghariani@hrms.tn', 10, 20, '2024-08-15', 0, 0, NULL, GETDATE(), GETDATE()),
+    (48, '2025048', 'Olfa', 'Mezni', 2,'1996-09-14', '67 Avenue de la République, Bizerte', '24345678', 'olfa.mezni@hrms.tn', 10, 20, '2025-04-20', 0, 0, NULL, GETDATE(), GETDATE()),
+    (49, '2025049', 'Wassim', 'Agrebi',1, '1997-01-30', '12 Rue Ibn Khaldoun, Monastir', '24456789', 'wassim.agrebi@hrms.tn', 10, 20, '2025-07-10', 0, 0, NULL, GETDATE(), GETDATE()),
+    (50, '2025050', 'Ahlem', 'Triki', 2,'1998-04-18', '45 Avenue Habib Bourguiba, Tunis', '24567890', 'ahlem.triki@hrms.tn', 10, 20, '2025-10-05', 0, 0, NULL, GETDATE(), GETDATE());
 SET IDENTITY_INSERT Employees OFF;
 
 -- =====================================================
@@ -579,22 +579,22 @@ SET IDENTITY_INSERT Documents OFF;
 -- offres d'emploi
 
 SET IDENTITY_INSERT JobOffers ON;
-INSERT INTO JobOffers (JobOfferId, Title, Description, DepartmentId, PositionId, PostDate, ExpiryDate, Status, CreatedDate, ModifiedDate)
+INSERT INTO JobOffers (JobOfferId, Title, Description, ContractType, DepartmentId, PositionId, PostDate, ExpiryDate, Status, CreatedDate, ModifiedDate)
 VALUES
     -- Offres ouvertes
-    (1, 'Développeur Full Stack Senior', 'Recherche développeur expérimenté .NET/React pour projets innovants', 1, 2, '2025-11-01', '2025-01-31', 0, GETDATE(), GETDATE()),
-    (2, 'DevOps Engineer', 'Expert infrastructure cloud et CI/CD pour modernisation', 1, 5, '2025-11-15', '2025-02-15', 0, GETDATE(), GETDATE()),
-    (3, 'Chargé de Recrutement', 'Profil dynamique pour renforcer l''équipe RH', 2, 7, '2025-12-01', '2025-02-28', 0, GETDATE(), GETDATE()),
-    (4, 'Contrôleur de Gestion Junior', 'Jeune diplômé finance pour analyse et reporting', 3, 11, '2025-11-20', '2025-01-20', 0, GETDATE(), GETDATE()),
-    (5, 'Digital Marketing Specialist', 'Expert SEO/SEM pour stratégie digitale', 4, 13, '2025-12-05', '2025-02-05', 0, GETDATE(), GETDATE()),
-    (6, 'Commercial BtoB', 'Expérience vente solutions IT entreprises', 5, 14, '2025-11-10', '2025-01-10', 0, GETDATE(), GETDATE()),
+    (1, 'Développeur Full Stack Senior', 'Recherche développeur expérimenté .NET/React pour projets innovants',0 , 1, 2, '2025-11-01', '2025-01-31', 0, GETDATE(), GETDATE()),
+    (2, 'DevOps Engineer', 'Expert infrastructure cloud et CI/CD pour modernisation',0 , 1, 5, '2025-11-15', '2025-02-15', 0, GETDATE(), GETDATE()),
+    (3, 'Chargé de Recrutement', 'Profil dynamique pour renforcer l''équipe RH',0 , 2, 7, '2025-12-01', '2025-02-28', 0, GETDATE(), GETDATE()),
+    (4, 'Contrôleur de Gestion Junior', 'Jeune diplômé finance pour analyse et reporting',0 , 3, 11, '2025-11-20', '2025-01-20', 0, GETDATE(), GETDATE()),
+    (5, 'Digital Marketing Specialist', 'Expert SEO/SEM pour stratégie digitale',0 , 4, 13, '2025-12-05', '2025-02-05', 0, GETDATE(), GETDATE()),
+    (6, 'Commercial BtoB', 'Expérience vente solutions IT entreprises', 0 ,5, 14, '2025-11-10', '2025-01-10', 0, GETDATE(), GETDATE()),
     -- Offres fermées (recrutements terminés)
-    (7, 'Développeur Junior .NET', 'Poste pourvu - Youssef Khelifi recruté', 1, 1, '2021-11-01', '2021-12-31', 1, GETDATE(), GETDATE()),
-    (8, 'Assistant RH', 'Poste pourvu - Marwa Rekik recrutée', 2, 8, '2024-04-01', '2024-05-31', 1, GETDATE(), GETDATE()),
-    (9, 'Comptable Senior', 'Poste pourvu - Ramzi Zouari recruté', 3, 10, '2020-09-01', '2020-10-31', 1, GETDATE(), GETDATE()),
-    (10, 'Responsable Logistique', 'Poste pourvu - Amel Chebbi recrutée', 7, 17, '2021-08-01', '2021-09-30', 1, GETDATE(), GETDATE()),
-    (11, 'Ingénieur Qualité', 'Poste pourvu - Imen Mathlouthi recrutée', 8, 18, '2022-10-01', '2022-11-30', 1, GETDATE(), GETDATE()),
-    (12, 'Support Technique', 'Poste pourvu - Nabil Ghariani recruté', 10, 20, '2024-06-01', '2024-07-31', 1, GETDATE(), GETDATE());
+    (7, 'Développeur Junior .NET', 'Poste pourvu - Youssef Khelifi recruté',1, 1, 1, '2021-11-01', '2021-12-31', 1, GETDATE(), GETDATE()),
+    (8, 'Assistant RH', 'Poste pourvu - Marwa Rekik recrutée',1 , 2, 8, '2024-04-01', '2024-05-31', 1, GETDATE(), GETDATE()),
+    (9, 'Comptable Senior', 'Poste pourvu - Ramzi Zouari recruté',1 , 3, 10, '2020-09-01', '2020-10-31', 1, GETDATE(), GETDATE()),
+    (10, 'Responsable Logistique', 'Poste pourvu - Amel Chebbi recrutée',1 , 7, 17, '2021-08-01', '2021-09-30', 1, GETDATE(), GETDATE()),
+    (11, 'Ingénieur Qualité', 'Poste pourvu - Imen Mathlouthi recrutée',1 , 8, 18, '2022-10-01', '2022-11-30', 1, GETDATE(), GETDATE()),
+    (12, 'Support Technique', 'Poste pourvu - Nabil Ghariani recruté',1 , 10, 20, '2024-06-01', '2024-07-31', 1, GETDATE(), GETDATE());
 SET IDENTITY_INSERT JobOffers OFF;
 
 -- Candidates

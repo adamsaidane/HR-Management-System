@@ -48,12 +48,11 @@ public class DepartmentsController : Controller
 
     // GET: Departments/Create
     [Authorize(Roles = "AdminRH")]
-    public async Task<IActionResult> Create()
+    public IActionResult Create()
     {
-        var employees = await _employeeService.GetActiveEmployeesAsync();
         var viewModel = new DepartmentFormViewModel
         {
-            AvailableManagers = employees.ToList()
+            AvailableManagers = new List<Employee>()
         };
         return View(viewModel);
     }
@@ -66,8 +65,7 @@ public class DepartmentsController : Controller
     {
         if (!ModelState.IsValid)
         {
-            var employees = await _employeeService.GetActiveEmployeesAsync();
-            model.AvailableManagers = employees.ToList();
+            model.AvailableManagers = new List<Employee>();
             return View(model);
         }
 
@@ -78,7 +76,7 @@ public class DepartmentsController : Controller
                 Name = model.Name,
                 Code = model.Code,
                 Description = model.Description,
-                ManagerId = model.ManagerId
+                ManagerId = null
             };
 
             await _departmentService.CreateDepartmentAsync(department);
@@ -88,8 +86,7 @@ public class DepartmentsController : Controller
         catch (Exception ex)
         {
             ModelState.AddModelError("", "Erreur: " + ex.Message);
-            var employees = await _employeeService.GetActiveEmployeesAsync();
-            model.AvailableManagers = employees.ToList();
+            model.AvailableManagers = new List<Employee>();
             return View(model);
         }
     }
@@ -102,7 +99,7 @@ public class DepartmentsController : Controller
         if (department == null)
             return NotFound();
 
-        var employees = await _employeeService.GetActiveEmployeesAsync();
+        var employees = await _employeeService.GetEmployeesByDepartmentAsync(id);
         var viewModel = new DepartmentFormViewModel
         {
             DepartmentId = department.DepartmentId,
@@ -127,7 +124,7 @@ public class DepartmentsController : Controller
 
         if (!ModelState.IsValid)
         {
-            var employees = await _employeeService.GetActiveEmployeesAsync();
+            var employees = await _employeeService.GetEmployeesByDepartmentAsync(id);
             model.AvailableManagers = employees.ToList();
             return View(model);
         }
@@ -150,7 +147,7 @@ public class DepartmentsController : Controller
         catch (Exception ex)
         {
             ModelState.AddModelError("", "Erreur: " + ex.Message);
-            var employees = await _employeeService.GetActiveEmployeesAsync();
+            var employees = await _employeeService.GetEmployeesByDepartmentAsync(id);
             model.AvailableManagers = employees.ToList();
             return View(model);
         }

@@ -41,17 +41,9 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="ManagerId" class="form-label"></label>
-                <select asp-for="ManagerId" class="form-select">
-                    <option value="">-- Sélectionner un manager --</option>
-                    @foreach (var manager in Model.AvailableManagers)
-                    {
-                        <option value="@manager.EmployeeId">@manager.FullName (@manager.Position?.Title)</option>
-                    }
-                </select>
-                <span asp-validation-for="ManagerId" class="text-danger"></span>
-                <small class="text-muted">Optionnel - Vous pouvez assigner un manager plus tard</small>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Manager:</strong> Vous pourrez assigner un manager à ce département après sa création en utilisant l'option Modifier.
             </div>
 
             <hr />

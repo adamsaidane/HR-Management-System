@@ -99,18 +99,18 @@
                         @foreach (var dept in Model.Departments)
                         {
                             <tr>
-                                <td class="text-muted">@rowNumber</td>
-                                <td>
-                                    <span class="badge bg-secondary">@dept.Code</span>
+                                <td class="text-muted align-middle">@rowNumber</td>
+                                <td class="align-middle">
+                                    <span class="badge bg-secondary" >@dept.Code</span>
                                 </td>
-                                <td>
+                                <td class="align-middle">
                                     <strong>@dept.Name</strong>
                                     @if (!string.IsNullOrEmpty(dept.Description))
                                     {
                                         <br /><small class="text-muted">@(dept.Description.Length > 50 ? dept.Description.Substring(0, 50) + "..." : dept.Description)</small>
                                     }
                                 </td>
-                                <td>
+                                <td class="align-middle">
                                     @if (dept.ManagerName != "Non assigné")
                                     {
                                         <span class="text-success"><i class="fas fa-user-tie me-1"></i>@dept.ManagerName</span>
@@ -120,16 +120,16 @@
                                         <span class="text-muted"><i class="fas fa-user-slash me-1"></i>Non assigné</span>
                                     }
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center align-middle">
                                     <span class="badge bg-info">@dept.PositionCount</span>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center align-middle">
                                     <span class="badge bg-success">@dept.EmployeeCount</span>
                                 </td>
-                                <td>
+                                <td class="align-middle">
                                     <small>@dept.CreatedDate.ToString("dd/MM/yyyy")</small>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center align-middle">
                                     <div class="btn-group btn-group-sm">
                                         <a asp-action="Details" asp-route-id="@dept.DepartmentId"
                                            class="btn btn-primary" title="Voir détails">

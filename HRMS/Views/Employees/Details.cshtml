@@ -162,16 +162,24 @@
                     <table class="table table-sm">
                         <thead><tr><th>Date</th><th>Salaire</th><th>Justification</th></tr></thead>
                         <tbody>
-                            @foreach (var salary in Model.SalaryHistory)
-                            {
-                                <tr>
-                                    <td>@salary.EffectiveDate.ToString("dd/MM/yyyy")</td>
-                                    <td><strong>@salary.BaseSalary.ToString("N2") DT</strong></td>
-                                    <td>@salary.Justification</td>
-                                </tr>
-                            }
+                        @foreach (var salary in Model.SalaryHistory)
+                        {
+                            <tr>
+                                <td>@salary.EffectiveDate.ToString("dd/MM/yyyy")</td>
+                                <td><strong>@salary.BaseSalary.ToString("N2") DT</strong></td>
+                                <td>@salary.Justification</td>
+                            </tr>
+                        }
                         </tbody>
                     </table>
+                    <div class="text-end mt-2">
+                        <a asp-controller="Salaries"
+                           asp-action="EmployeeSalary"
+                           asp-route-id="@Model.Employee.EmployeeId"
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye me-1"></i>Voir détails
+                        </a>
+                    </div>
                 }
                 else
                 {
@@ -186,17 +194,25 @@
                     <table class="table table-sm">
                         <thead><tr><th>Date</th><th>Type</th><th>Montant</th><th>Description</th></tr></thead>
                         <tbody>
-                            @foreach (var bonus in Model.Bonuses)
-                            {
-                                <tr>
-                                    <td>@bonus.Date.ToString("dd/MM/yyyy")</td>
-                                    <td>@bonus.BonusType</td>
-                                    <td class="text-success"><strong>@bonus.Amount.ToString("N2") DT</strong></td>
-                                    <td>@bonus.Description</td>
-                                </tr>
-                            }
+                        @foreach (var bonus in Model.Bonuses)
+                        {
+                            <tr>
+                                <td>@bonus.Date.ToString("dd/MM/yyyy")</td>
+                                <td>@bonus.BonusType</td>
+                                <td class="text-success"><strong>@bonus.Amount.ToString("N2") DT</strong></td>
+                                <td>@bonus.Description</td>
+                            </tr>
+                        }
                         </tbody>
                     </table>
+                    <div class="text-end mt-2">
+                        <a asp-controller="Salaries"
+                           asp-action="EmployeeSalary"
+                           asp-route-id="@Model.Employee.EmployeeId"
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye me-1"></i>Voir détails
+                        </a>
+                    </div>
                 }
                 else
                 {
@@ -211,26 +227,34 @@
                     <table class="table table-sm">
                         <thead><tr><th>Équipement</th><th>Date</th><th>État</th><th>Statut</th></tr></thead>
                         <tbody>
-                            @foreach (var eq in Model.Equipments)
-                            {
-                                <tr>
-                                    <td>@eq.Equipment.EquipmentType - @eq.Equipment.Brand @eq.Equipment.Model</td>
-                                    <td>@eq.AssignmentDate.ToString("dd/MM/yyyy")</td>
-                                    <td>@eq.Condition</td>
-                                    <td>
-                                        @if (eq.ReturnDate.HasValue)
-                                        {
-                                            <span class="badge bg-secondary">Restitué</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-success">En cours</span>
-                                        }
-                                    </td>
-                                </tr>
-                            }
+                        @foreach (var eq in Model.Equipments)
+                        {
+                            <tr>
+                                <td>@eq.Equipment.EquipmentType - @eq.Equipment.Brand @eq.Equipment.Model</td>
+                                <td>@eq.AssignmentDate.ToString("dd/MM/yyyy")</td>
+                                <td>@eq.Condition</td>
+                                <td>
+                                    @if (eq.ReturnDate.HasValue)
+                                    {
+                                        <span class="badge bg-secondary">Restitué</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">En cours</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
                         </tbody>
                     </table>
+                    <div class="text-end mt-2">
+                        <a asp-controller="Equipment"
+                           asp-action="EmployeeEquipment"
+                           asp-route-id="@Model.Employee.EmployeeId"
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye me-1"></i>Voir détails
+                        </a>
+                    </div>
                 }
                 else
                 {
@@ -245,17 +269,25 @@
                     <table class="table table-sm">
                         <thead><tr><th>Date</th><th>Ancien</th><th>Nouveau</th><th>Augmentation</th></tr></thead>
                         <tbody>
-                            @foreach (var promo in Model.Promotions)
-                            {
-                                <tr>
-                                    <td>@promo.PromotionDate.ToString("dd/MM/yyyy")</td>
-                                    <td>@promo.OldPosition.Title</td>
-                                    <td><strong>@promo.NewPosition.Title</strong></td>
-                                    <td class="text-success">+@((promo.NewSalary - promo.OldSalary).ToString("N2")) DT</td>
-                                </tr>
-                            }
+                        @foreach (var promo in Model.Promotions)
+                        {
+                            <tr>
+                                <td>@promo.PromotionDate.ToString("dd/MM/yyyy")</td>
+                                <td>@promo.OldPosition.Title</td>
+                                <td><strong>@promo.NewPosition.Title</strong></td>
+                                <td class="text-success">+@((promo.NewSalary - promo.OldSalary).ToString("N2")) DT</td>
+                            </tr>
+                        }
                         </tbody>
                     </table>
+                    <div class="text-end mt-2">
+                        <a asp-controller="Promotions"
+                           asp-action="EmployeePromotions"
+                           asp-route-id="@Model.Employee.EmployeeId"
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye me-1"></i>Voir détails
+                        </a>
+                    </div>
                 }
                 else
                 {

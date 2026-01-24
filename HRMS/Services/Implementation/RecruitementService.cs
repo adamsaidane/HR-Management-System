@@ -32,6 +32,8 @@ public class RecruitmentService : IRecruitmentService
     
     public async Task<PaginatedList<JobOffer>> GetJobOffersPaginatedAsync(
         JobOfferStatus? status,
+        int? departmentId,
+        ContractType? contractType,
         string searchString,
         int pageIndex = 1,
         int pageSize = 6)
@@ -43,16 +45,31 @@ public class RecruitmentService : IRecruitmentService
             jobOffers = jobOffers.Where(j => j.Status == status.Value);
         }
 
+        if (departmentId.HasValue)
+        {
+            jobOffers = jobOffers.Where(j => j.DepartmentId == departmentId.Value);
+        }
+
+        if (contractType.HasValue)
+        {
+            jobOffers = jobOffers.Where(j => j.ContractType == contractType.Value);
+        }
+
         if (!string.IsNullOrWhiteSpace(searchString))
         {
             jobOffers = jobOffers.Where(j =>
-                j.Title.Contains(searchString) ||
-                j.Description.Contains(searchString));
+                j.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                j.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase));
         }
 
         jobOffers = jobOffers.OrderByDescending(j => j.PostDate);
 
         return PaginatedList<JobOffer>.Create(jobOffers, pageIndex, pageSize);
+    }
+    
+    public async Task<IEnumerable<Department>> GetAllDepartmentsAsync()
+    {
+        return await _unitOfWork.Departments.GetAllAsync();
     }
 
     public async Task<JobOffer?> GetJobOfferByIdAsync(int id)

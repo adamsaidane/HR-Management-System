@@ -37,9 +37,13 @@ public interface IRecruitmentService
         
     Task<PaginatedList<JobOffer>> GetJobOffersPaginatedAsync(
         JobOfferStatus? status,
+        int? departmentId,
+        ContractType? contractType,
         string searchString,
         int pageIndex = 1,
         int pageSize = 15);
+    
+    Task<IEnumerable<Department>> GetAllDepartmentsAsync();
     
     Task AddCvFromCandidateToEmployeeAsync(int candidateId, Employee employee);
 }

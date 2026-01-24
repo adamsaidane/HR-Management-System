@@ -26,16 +26,23 @@ public class RecruitmentController : Controller
 
     public async Task<IActionResult> JobOffers(
         JobOfferStatus? status,
+        int? departmentId,
+        ContractType? contractType,
         string searchString,
         int? pageNumber)
     {
         var jobOffers = await _recruitmentService.GetJobOffersPaginatedAsync(
             status,
+            departmentId,
+            contractType,
             searchString,
             pageNumber ?? 1,
             6);
 
+        ViewBag.Departments = await _recruitmentService.GetAllDepartmentsAsync();
         ViewBag.SelectedStatus = status;
+        ViewBag.SelectedDepartment = departmentId;
+        ViewBag.SelectedContractType = contractType;
         ViewBag.SearchString = searchString;
 
         return View(jobOffers);

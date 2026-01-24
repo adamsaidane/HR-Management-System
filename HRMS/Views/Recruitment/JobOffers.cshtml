@@ -1,6 +1,11 @@
 ﻿@model HRMS.ViewModels.PaginatedList<HRMS.Models.JobOffer>
 @{
     ViewData["Title"] = "Offres d'Emploi";
+    var departments = ViewBag.Departments as IEnumerable<HRMS.Models.Department>;
+    var selectedStatus = ViewBag.SelectedStatus as HRMS.Enums.JobOfferStatus?;
+    var selectedDepartment = ViewBag.SelectedDepartment as int?;
+    var selectedContractType = ViewBag.SelectedContractType as HRMS.Enums.ContractType?;
+    var searchString = ViewBag.SearchString as string;
 }
 
 <div class="page-header d-flex justify-content-between align-items-center mb-4">
@@ -9,6 +14,105 @@
         <i class="fas fa-plus me-2"></i>Nouvelle Offre
     </a>
 </div>
+
+<!-- Filtres et Recherche -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" asp-action="JobOffers">
+            <div class="row g-3 align-items-end">
+                <!-- Barre de recherche -->
+                <div class="col-md-4">
+                    <label class="form-label"><i class="fas fa-search me-1"></i>Rechercher</label>
+                    <input type="text" name="searchString" class="form-control" 
+                           placeholder="Titre ou description..." 
+                           value="@searchString" />
+                </div>
+                
+                <!-- Filtre par département -->
+                <div class="col-md-2">
+                    <label class="form-label"><i class="fas fa-building me-1"></i>Département</label>
+                    <select name="departmentId" class="form-select">
+                        <option value="">Tous les départements</option>
+                        @if (departments != null)
+                        {
+                            @foreach (var dept in departments)
+                            {
+                                <option value="@dept.DepartmentId" 
+                                        selected="@(selectedDepartment == dept.DepartmentId)">
+                                    @dept.Name
+                                </option>
+                            }
+                        }
+                    </select>
+                </div>
+                
+                <!-- Filtre par type de contrat -->
+                <div class="col-md-2">
+                    <label class="form-label"><i class="fas fa-file-contract me-1"></i>Type de contrat</label>
+                    <select name="contractType" class="form-select">
+                        <option value="">Tous les types</option>
+                        @foreach (var type in Enum.GetValues<HRMS.Enums.ContractType>())
+                        {
+                            <option value="@type" selected="@(selectedContractType == type)">@type</option>
+                        }
+                    </select>
+                </div>
+                
+                <!-- Filtre par statut -->
+                <div class="col-md-2">
+                    <label class="form-label"><i class="fas fa-flag me-1"></i>Statut</label>
+                    <select name="status" class="form-select">
+                        <option value="">Tous les statuts</option>
+                        @foreach (var status in Enum.GetValues<HRMS.Enums.JobOfferStatus>())
+                        {
+                            <option value="@status" selected="@(selectedStatus == status)">@status</option>
+                        }
+                    </select>
+                </div>
+                
+                <!-- Boutons -->
+                <div class="col-md-2">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-grow-1">
+                            <i class="fas fa-filter me-1"></i>Filtrer
+                        </button>
+                        <a asp-action="JobOffers" class="btn btn-outline-secondary" title="Réinitialiser">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Résumé des filtres actifs -->
+@if (!string.IsNullOrEmpty(searchString) || selectedDepartment.HasValue || selectedContractType.HasValue || selectedStatus.HasValue)
+{
+    <div class="alert alert-info d-flex align-items-center mb-4">
+        <i class="fas fa-info-circle me-2"></i>
+        <span>
+            <strong>@Model.TotalCount</strong> offre(s) trouvée(s)
+            @if (!string.IsNullOrEmpty(searchString))
+            {
+                <span class="badge bg-secondary ms-2">Recherche: @searchString</span>
+            }
+            @if (selectedDepartment.HasValue && departments != null)
+            {
+                var deptName = departments.FirstOrDefault(d => d.DepartmentId == selectedDepartment)?.Name;
+                <span class="badge bg-primary ms-2">@deptName</span>
+            }
+            @if (selectedContractType.HasValue)
+            {
+                <span class="badge bg-info ms-2">@selectedContractType</span>
+            }
+            @if (selectedStatus.HasValue)
+            {
+                <span class="badge bg-warning text-dark ms-2">@selectedStatus</span>
+            }
+        </span>
+    </div>
+}
 
 <div class="row">
     @foreach (var offer in Model)

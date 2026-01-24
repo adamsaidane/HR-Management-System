@@ -208,6 +208,7 @@ public class RecruitmentController : Controller
         }
 
         var employee = await _employeeService.CreateEmployeeFromViewModelAsync(model);
+        await _recruitmentService.AddCvFromCandidateToEmployeeAsync(candidateId, employee);
         TempData["Success"] = "Candidat converti en employé avec succès!";
         return RedirectToAction("Details", "Employees", new { id = employee.EmployeeId });
     }

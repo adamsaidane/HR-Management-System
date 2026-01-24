@@ -13,6 +13,10 @@ public class JobOffer
     [StringLength(100)]
     [Display(Name = "Titre de l'offre")]
     public string Title { get; set; }
+    
+    [Required(ErrorMessage = "Le type de contrat est requis")]
+    [Display(Name = "Type de contrat")]
+    public ContractType ContractType { get; set; }
 
     [Required(ErrorMessage = "La description est requise")]
     [Display(Name = "Description")]

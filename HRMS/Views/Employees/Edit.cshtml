@@ -105,11 +105,9 @@
 
                 <div class="col-md-6">
                     <label asp-for="ContractType" class="form-label"></label>
-                    <select asp-for="ContractType" class="form-select">
-                        @foreach (var type in Model.ContractTypes)
-                        {
-                            <option value="@type" selected="@(Model.ContractType == type)">@type</option>
-                        }
+                    <select asp-for="ContractType" class="form-select"
+                            asp-items="Html.GetEnumSelectList<ContractType>()">
+                        <option value="">-- Sélectionner le type du contrat --</option>
                     </select>
                     <span asp-validation-for="ContractType" class="text-danger"></span>
                 </div>

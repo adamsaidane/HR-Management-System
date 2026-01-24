@@ -40,4 +40,6 @@ public interface IRecruitmentService
         string searchString,
         int pageIndex = 1,
         int pageSize = 15);
+    
+    Task AddCvFromCandidateToEmployeeAsync(int candidateId, Employee employee);
 }

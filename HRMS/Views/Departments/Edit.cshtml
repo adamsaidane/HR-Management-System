@@ -1,0 +1,75 @@
+@model HRMS.ViewModels.DepartmentFormViewModel
+@{
+    ViewData["Title"] = "Modifier le Département";
+}
+
+<div class="page-header mb-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-1">
+            <li class="breadcrumb-item"><a asp-action="Index">Départements</a></li>
+            <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.DepartmentId">@Model.Name</a></li>
+            <li class="breadcrumb-item active">Modifier</li>
+        </ol>
+    </nav>
+    <h1><i class="fas fa-edit me-2"></i>Modifier le Département</h1>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="fas fa-building me-2"></i>Informations du département</h5>
+    </div>
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="DepartmentId" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Code" class="form-label"></label>
+                    <input asp-for="Code" class="form-control" />
+                    <span asp-validation-for="Code" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ManagerId" class="form-label"></label>
+                <select asp-for="ManagerId" class="form-select">
+                    <option value="">-- Sélectionner un manager --</option>
+                    @foreach (var manager in Model.AvailableManagers)
+                    {
+                        <option value="@manager.EmployeeId" selected="@(Model.ManagerId == manager.EmployeeId)">
+                            @manager.FullName (@manager.Position?.Title)
+                        </option>
+                    }
+                </select>
+                <span asp-validation-for="ManagerId" class="text-danger"></span>
+            </div>
+
+            <hr />
+
+            <div class="d-flex justify-content-between">
+                <a asp-action="Details" asp-route-id="@Model.DepartmentId" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Annuler
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i>Enregistrer les modifications
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

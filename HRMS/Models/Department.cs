@@ -40,6 +40,7 @@ public class Department
 
     public Department()
     {
+        Positions = new HashSet<Position>();
         Employees = new HashSet<Employee>();
         JobOffers = new HashSet<JobOffer>();
         CreatedDate = DateTime.Now;

@@ -44,6 +44,7 @@ builder.Services.AddScoped<IPromotionService, PromotionService>();
 builder.Services.AddScoped<IRecruitmentService, RecruitmentService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 
 // Configuration de l'authentification par cookies
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

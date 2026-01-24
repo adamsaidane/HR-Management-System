@@ -172,6 +172,47 @@ public class RecruitmentService : IRecruitmentService
             interview.Notes = notes;
             _unitOfWork.Interviews.Update(interview);
             await _unitOfWork.SaveChangesAsync();
+
+            // Apply automatic state changes based on interview result
+            await ApplyInterviewResultToCandidateAsync(interview.CandidateId, result);
+        }
+    }
+
+    /// <summary>
+    /// Updates candidate state based on interview result:
+    /// - If interview = "En attente" → Candidate = "Entretien"
+    /// - If interview = "Échoué" → Candidate = "Refusé"
+    /// - If interview = "Réussi" → Candidate = "Accepté"
+    /// - If interview = "AutreEntretienNécessaire" → Candidate = "Entretien" (stays in interview state)
+    /// </summary>
+    private async Task ApplyInterviewResultToCandidateAsync(int candidateId, InterviewResult result)
+    {
+        var candidate = await _unitOfWork.Candidates.GetByIdAsync(candidateId);
+        if (candidate == null) return;
+
+        if (result == InterviewResult.EnAttente)
+        {
+            candidate.Status = CandidateStatus.Entretien;
+            _unitOfWork.Candidates.Update(candidate);
+            await _unitOfWork.SaveChangesAsync();
+        }
+        else if (result == InterviewResult.Échoué)
+        {
+            candidate.Status = CandidateStatus.Refusé;
+            _unitOfWork.Candidates.Update(candidate);
+            await _unitOfWork.SaveChangesAsync();
+        }
+        else if (result == InterviewResult.Réussi)
+        {
+            candidate.Status = CandidateStatus.Accepté;
+            _unitOfWork.Candidates.Update(candidate);
+            await _unitOfWork.SaveChangesAsync();
+        }
+        else if (result == InterviewResult.AutreEntretienNécessaire)
+        {
+            candidate.Status = CandidateStatus.Entretien;
+            _unitOfWork.Candidates.Update(candidate);
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 

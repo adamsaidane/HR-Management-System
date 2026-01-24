@@ -86,20 +86,10 @@
                 <h5 class="mb-0"><i class="fas fa-cogs me-2"></i>Actions</h5>
             </div>
             <div class="card-body">
-                <form method="post" asp-action="UpdateCandidateStatus" class="mb-3">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="candidateId" value="@candidate.CandidateId" />
-                    <label class="form-label">Changer le statut</label>
-                    <select name="status" class="form-select mb-2">
-                        <option value="0" selected="@(candidate.Status == HRMS.Enums.CandidateStatus.CandidatureReçue)">Candidature Reçue</option>
-                        <option value="1" selected="@(candidate.Status == HRMS.Enums.CandidateStatus.Entretien)">Entretien</option>
-                        <option value="2" selected="@(candidate.Status == HRMS.Enums.CandidateStatus.Accepté)">Accepté</option>
-                        <option value="3" selected="@(candidate.Status == HRMS.Enums.CandidateStatus.Refusé)">Refusé</option>
-                    </select>
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-sync me-2"></i>Mettre à jour
-                    </button>
-                </form>
+                <p class="text-muted text-sm mb-3">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Le statut du candidat est mis à jour automatiquement selon les résultats des entretiens.
+                </p>
 
                 <a asp-action="ScheduleInterview" asp-route-candidateId="@candidate.CandidateId" 
                    class="btn btn-success w-100 mb-2">
@@ -179,18 +169,69 @@
                                             </div>
                                         }
                                     </div>
-                                    <div class="ms-3">
-                                        @if (interview.Result.HasValue)
-                                        {
-                                            <span class="badge bg-@(interview.Result == HRMS.Enums.InterviewResult.Réussi ? "success" : 
-                                                                    interview.Result == HRMS.Enums.InterviewResult.Échoué ? "danger" : "warning")">
-                                                @interview.Result
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-secondary">En attente</span>
-                                        }
+                                    <div class="ms-3 text-end" style="min-width: 200px;">
+                                        <!-- Interview Result Badge -->
+                                        <div class="mb-2">
+                                            @if (interview.Result.HasValue)
+                                            {
+                                                <span class="badge bg-@(interview.Result == HRMS.Enums.InterviewResult.Réussi ? "success" : 
+                                                                        interview.Result == HRMS.Enums.InterviewResult.Échoué ? "danger" : "warning") fs-6">
+                                                    @interview.Result
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary fs-6">En attente</span>
+                                            }
+                                        </div>
+                                        <!-- Update Result Button -->
+                                        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#updateResultModal@(interview.InterviewId)">
+                                            <i class="fas fa-edit me-1"></i>Modifier
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Modal for updating interview result -->
+                            <div class="modal fade" id="updateResultModal@(interview.InterviewId)" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Modifier le résultat de l'entretien</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form method="post" asp-action="UpdateInterviewResult">
+                                            @Html.AntiForgeryToken()
+                                            <div class="modal-body">
+                                                <input type="hidden" name="interviewId" value="@interview.InterviewId" />
+                                                <input type="hidden" name="candidateId" value="@candidate.CandidateId" />
+                                                
+                                                <div class="mb-3">
+                                                    <label class="form-label"><strong>Résultat de l'entretien</strong></label>
+                                                    <select name="result" class="form-select" required>
+                                                        <option value="0" selected="@(interview.Result == HRMS.Enums.InterviewResult.EnAttente)">En attente</option>
+                                                        <option value="1" selected="@(interview.Result == HRMS.Enums.InterviewResult.Réussi)">Réussi - Candidat Accepté</option>
+                                                        <option value="2" selected="@(interview.Result == HRMS.Enums.InterviewResult.Échoué)">Échoué - Candidat Refusé</option>
+                                                        <option value="3" selected="@(interview.Result == HRMS.Enums.InterviewResult.AutreEntretienNécessaire)">Autre Entretien Nécessaire</option>
+                                                    </select>
+                                                    <small class="text-muted d-block mt-2">
+                                                        <i class="fas fa-info-circle me-1"></i>
+                                                        Le statut du candidat sera mis à jour automatiquement selon le résultat de l'entretien.
+                                                    </small>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="notes@(interview.InterviewId)" class="form-label">Notes</label>
+                                                    <textarea name="notes" id="notes@(interview.InterviewId)" class="form-control" rows="3" placeholder="Ajouter des notes sur cet entretien...">@interview.Notes</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fas fa-save me-1"></i>Enregistrer
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>

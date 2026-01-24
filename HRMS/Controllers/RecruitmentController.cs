@@ -143,16 +143,6 @@ public class RecruitmentController : Controller
         return RedirectToAction(nameof(Candidates));
     }
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    [Authorize(Roles = "AdminRH,Manager")]
-    public async Task<IActionResult> UpdateCandidateStatus(int candidateId, CandidateStatus status)
-    {
-        await _recruitmentService.UpdateCandidateStatusAsync(candidateId, status);
-        TempData["Success"] = "Statut mis à jour!";
-        return RedirectToAction(nameof(CandidateDetails), new { id = candidateId });
-    }
-
     // ==================== Entretiens ====================
 
     [Authorize(Roles = "AdminRH,Manager")]
@@ -183,6 +173,25 @@ public class RecruitmentController : Controller
         await _recruitmentService.ScheduleInterviewAsync(interview);
         TempData["Success"] = "Entretien programmé avec succès!";
         return RedirectToAction(nameof(CandidateDetails), new { id = interview.CandidateId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "AdminRH,Manager")]
+    public async Task<IActionResult> UpdateInterviewResult(int interviewId, InterviewResult result, string notes, int candidateId)
+    {
+        await _recruitmentService.UpdateInterviewResultAsync(interviewId, result, notes);
+        
+        string resultLabel = result switch
+        {
+            InterviewResult.Réussi => "réussi",
+            InterviewResult.Échoué => "échoué",
+            InterviewResult.AutreEntretienNécessaire => "autre entretien nécessaire",
+            _ => "en attente"
+        };
+        
+        TempData["Success"] = $"Résultat de l'entretien défini à '{resultLabel}' avec succès!";
+        return RedirectToAction(nameof(CandidateDetails), new { id = candidateId });
     }
 
     // ==================== Conversion Candidat -> Employé ====================

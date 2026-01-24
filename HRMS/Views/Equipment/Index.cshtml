@@ -16,6 +16,42 @@
     </div>
 </div>
 
+<!-- Filtering Section -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" asp-action="Index" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Type d'équipement</label>
+                <select name="equipmentType" class="form-select">
+                    <option value="">-- Tous les types --</option>
+                    @foreach (var type in Model.EquipmentTypes)
+                    {
+                        <option value="@type" selected="@(ViewBag.SelectedType == type)">@type</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Statut</label>
+                <select name="status" class="form-select">
+                    <option value="">-- Tous les statuts --</option>
+                    <option value="0" selected="@(ViewBag.SelectedStatus == EquipmentStatus.Disponible)">Disponible</option>
+                    <option value="1" selected="@(ViewBag.SelectedStatus == EquipmentStatus.Affecté)">Affecté</option>
+                    <option value="2" selected="@(ViewBag.SelectedStatus == EquipmentStatus.EnMaintenance)">En Maintenance</option>
+                    <option value="3" selected="@(ViewBag.SelectedStatus == EquipmentStatus.Retiré)">Retiré</option>
+                </select>
+            </div>
+            <div class="col-md-4 d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-primary flex-grow-1">
+                    <i class="fas fa-search me-1"></i>Filtrer
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-redo me-1"></i>Réinitialiser
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="row mb-3">
     <div class="col-md-3">
         <div class="stat-card">
@@ -55,12 +91,14 @@
                     <th>N° Série</th>
                     <th>Date d'achat</th>
                     <th>Statut</th>
+                    <th>Assigné à</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach (var equipment in Model.Equipment)
                 {
+                    var assignment = equipment.EquipmentAssignments?.FirstOrDefault(ea => ea.ReturnDate == null);
                     <tr>
                         <td><i class="fas fa-@(equipment.EquipmentType == "Ordinateur" ? "laptop" : equipment.EquipmentType == "Téléphone" ? "mobile-alt" : "tag") me-2"></i>@equipment.EquipmentType</td>
                         <td>@equipment.Brand</td>
@@ -68,14 +106,37 @@
                         <td>@equipment.SerialNumber</td>
                         <td>@equipment.PurchaseDate?.ToString("dd/MM/yyyy")</td>
                         <td>
-                            <span class="badge bg-@(equipment.Status == HRMS.Enums.EquipmentStatus.Disponible ? "success" : equipment.Status == HRMS.Enums.EquipmentStatus.Affecté ? "warning" : "danger")">
+                            <span class="badge bg-@(equipment.Status == HRMS.Enums.EquipmentStatus.Disponible ? "success" : equipment.Status == HRMS.Enums.EquipmentStatus.Affecté ? "warning" : equipment.Status == HRMS.Enums.EquipmentStatus.EnMaintenance ? "danger" : "secondary")">
                                 @equipment.Status
                             </span>
+                        </td>
+                        <td>
+                            @if (assignment != null && assignment.Employee != null)
+                            {
+                                <span class="badge bg-info">
+                                    <i class="fas fa-user me-1"></i>@(assignment.Employee.FirstName + " " + assignment.Employee.LastName)
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">—</span>
+                            }
                         </td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@equipment.EquipmentId" class="btn btn-sm btn-warning">
                                 <i class="fas fa-edit"></i>
                             </a>
+                            @if (assignment != null && equipment.Status == EquipmentStatus.Affecté)
+                            {
+                                <form method="post" asp-action="ReturnEquipment" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="assignmentId" value="@assignment.AssignmentId" />
+                                    <input type="hidden" name="condition" value="@assignment.Condition" />
+                                    <button type="submit" class="btn btn-sm btn-danger" title="Retourner l'équipement">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </form>
+                            }
                         </td>
                     </tr>
                 }

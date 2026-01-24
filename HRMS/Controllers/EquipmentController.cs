@@ -26,6 +26,11 @@ public class EquipmentController : Controller
     {
         var viewModel = await _equipmentService.GetEquipmentPaginatedIndexViewModelAsync(equipmentType, status, 
             pageNumber ?? 1, 10);
+        
+        // Pass filter values to view
+        ViewBag.SelectedType = equipmentType;
+        ViewBag.SelectedStatus = status;
+        
         return View(viewModel);
     }
 
@@ -74,6 +79,17 @@ public class EquipmentController : Controller
     {
         if (!ModelState.IsValid)
             return View(equipment);
+
+        // Validate: If status is Affecté, must be assigned to employee
+        if (equipment.Status == EquipmentStatus.Affecté)
+        {
+            var assignment = await _equipmentService.GetEquipmentWithAssignmentAsync(id);
+            if (assignment != null && !assignment.EquipmentAssignments.Any(ea => ea.ReturnDate == null))
+            {
+                ModelState.AddModelError("Status", "L'équipement marqué comme 'Affecté' doit être assigné à un employé.");
+                return View(equipment);
+            }
+        }
 
         try
         {

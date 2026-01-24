@@ -26,6 +26,7 @@
                                 <option value="Ordinateur">Ordinateur</option>
                                 <option value="Ordinateur Portable">Ordinateur Portable</option>
                                 <option value="Téléphone">Téléphone</option>
+                                <option value="Écran">Écran</option>
                                 <option value="Tablette">Tablette</option>
                                 <option value="Badge">Badge</option>
                                 <option value="Tenue">Tenue professionnelle</option>
@@ -69,8 +70,32 @@
                                 <option value="3">Retiré</option>
                             </select>
                             <span asp-validation-for="Status" class="text-danger"></span>
+                            <small class="text-muted d-block mt-2">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Si vous définissez le statut à "Affecté", l'équipement doit être assigné à un employé.
+                            </small>
                         </div>
                     </div>
+
+                    <!-- Assignment Information -->
+                    @if (Model.EquipmentAssignments?.Any(ea => ea.ReturnDate == null) == true)
+                    {
+                        var assignment = Model.EquipmentAssignments.FirstOrDefault(ea => ea.ReturnDate == null);
+                        <div class="alert alert-info mt-4" role="alert">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-info-circle me-2"></i>Information d'affectation
+                            </h6>
+                            <p class="mb-2">
+                                <strong>Assigné à:</strong> @(assignment?.Employee?.FirstName + " " + assignment?.Employee?.LastName)
+                            </p>
+                            <p class="mb-2">
+                                <strong>Date d'affectation:</strong> @assignment?.AssignmentDate.ToString("dd/MM/yyyy")
+                            </p>
+                            <p class="mb-0">
+                                <strong>État:</strong> @assignment?.Condition
+                            </p>
+                        </div>
+                    }
 
                     <div class="d-flex gap-2 mt-4">
                         <button type="submit" class="btn btn-warning btn-lg">

@@ -287,8 +287,8 @@ VALUES
     (7, 'Ordinateur Portable', 'SN-LAP-007', 'Dell', 'Precision 5560', '2024-07-22', 1, GETDATE(), GETDATE()),
     (8, 'Ordinateur Portable', 'SN-LAP-008', 'HP', 'EliteBook 850', '2024-08-30', 1, GETDATE(), GETDATE()),
     (9, 'Ordinateur Portable', 'SN-LAP-009', 'Lenovo', 'ThinkPad T14', '2024-09-14', 1, GETDATE(), GETDATE()),
-    (10, 'Ordinateur Portable', 'SN-LAP-010', 'Dell', 'Latitude 5520', '2024-10-25', 0, GETDATE(), GETDATE()),
-    (11, 'Ordinateur Portable', 'SN-LAP-011', 'HP', 'ProBook 440', '2025-01-08', 0, GETDATE(), GETDATE()),
+    (10, 'Ordinateur Portable', 'SN-LAP-010', 'Dell', 'Latitude 5520', '2024-10-25', 1, GETDATE(), GETDATE()),
+    (11, 'Ordinateur Portable', 'SN-LAP-011', 'HP', 'ProBook 440', '2025-01-08', 1, GETDATE(), GETDATE()),
     (12, 'Ordinateur Portable', 'SN-LAP-012', 'Lenovo', 'IdeaPad 5', '2025-02-15', 0, GETDATE(), GETDATE()),
     (13, 'Ordinateur Portable', 'SN-LAP-013', 'Asus', 'VivoBook 15', '2025-03-20', 0, GETDATE(), GETDATE()),
     (14, 'Ordinateur Portable', 'SN-LAP-014', 'Dell', 'Inspiron 15', '2025-04-10', 0, GETDATE(), GETDATE()),
@@ -309,7 +309,7 @@ VALUES
     (25, 'Écran', 'SN-MON-002', 'LG', 'UltraWide 34"', '2024-03-25', 1, GETDATE(), GETDATE()),
     (26, 'Écran', 'SN-MON-003', 'Samsung', 'Curved 32"', '2024-05-10', 1, GETDATE(), GETDATE()),
     (27, 'Écran', 'SN-MON-004', 'BenQ', 'Professional 27"', '2024-07-15', 1, GETDATE(), GETDATE()),
-    (28, 'Écran', 'SN-MON-005', 'HP', 'E24 G4', '2024-09-20', 0, GETDATE(), GETDATE()),
+    (28, 'Écran', 'SN-MON-005', 'HP', 'E24 G4', '2024-09-20', 1, GETDATE(), GETDATE()),
     (29, 'Écran', 'SN-MON-006', 'Dell', 'P2422H 24"', '2025-01-30', 0, GETDATE(), GETDATE()),
     (30, 'Écran', 'SN-MON-007', 'LG', '27UK850-W 27"', '2025-03-05', 0, GETDATE(), GETDATE());
 SET IDENTITY_INSERT Equipments OFF;

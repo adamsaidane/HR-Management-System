@@ -19,7 +19,7 @@ public class EquipmentService : IEquipmentService
 
     public async Task<IEnumerable<Equipment>> GetAllEquipmentAsync()
     {
-        return await _unitOfWork.Equipments.GetAllAsync();
+        return await _unitOfWork.Equipments.GetAllWithAssignmentsAsync();
     }
 
     public async Task<IEnumerable<Equipment>> GetAvailableEquipmentAsync()
@@ -36,13 +36,63 @@ public class EquipmentService : IEquipmentService
     {
         equipment.CreatedDate = DateTime.Now;
         equipment.ModifiedDate = DateTime.Now;
+        equipment.Status = EquipmentStatus.Disponible;
         await _unitOfWork.Equipments.AddAsync(equipment);
         await _unitOfWork.SaveChangesAsync();
     }
 
     public async Task UpdateEquipmentAsync(Equipment equipment)
     {
-        equipment.ModifiedDate = DateTime.Now;
+        var existingEquipment = await _unitOfWork.Equipments.GetByIdWithHistoryAsync(equipment.EquipmentId);
+        if (existingEquipment == null)
+            throw new Exception("Équipement non trouvé");
+
+        var oldStatus = existingEquipment.Status;
+
+        // Update properties from the incoming equipment object
+        existingEquipment.EquipmentType = equipment.EquipmentType;
+        existingEquipment.Brand = equipment.Brand;
+        existingEquipment.Model = equipment.Model;
+        existingEquipment.SerialNumber = equipment.SerialNumber;
+        existingEquipment.PurchaseDate = equipment.PurchaseDate;
+        existingEquipment.Status = equipment.Status;
+        existingEquipment.ModifiedDate = DateTime.Now;
+
+        // Handle status changes if status was modified
+        if (oldStatus != equipment.Status)
+        {
+            await HandleEquipmentStatusChangeAsync(existingEquipment, oldStatus, equipment.Status);
+        }
+        else
+        {
+            // If status didn't change, still save the equipment
+            _unitOfWork.Equipments.Update(existingEquipment);
+            await _unitOfWork.SaveChangesAsync();
+        }
+    }
+
+    /// <summary>
+    /// Handles status changes:
+    /// - If changing from Affecté to Disponible, mark the assignment as returned
+    /// </summary>
+    private async Task HandleEquipmentStatusChangeAsync(Equipment equipment, EquipmentStatus oldStatus, EquipmentStatus newStatus)
+    {
+        if (oldStatus == EquipmentStatus.Affecté && newStatus == EquipmentStatus.Disponible)
+        {
+            // Mark current active assignment as returned
+            if (equipment.EquipmentAssignments != null)
+            {
+                var activeAssignment = equipment.EquipmentAssignments.FirstOrDefault(ea => ea.ReturnDate == null);
+                
+                if (activeAssignment != null)
+                {
+                    activeAssignment.ReturnDate = DateTime.Now;
+                    _unitOfWork.EquipmentAssignments.Update(activeAssignment);
+                }
+            }
+        }
+        
+        // Update equipment in all cases
         _unitOfWork.Equipments.Update(equipment);
         await _unitOfWork.SaveChangesAsync();
     }
@@ -152,6 +202,7 @@ public class EquipmentService : IEquipmentService
         int pageSize = 10)
     {
         var equipment = await GetAllEquipmentAsync();
+        var allEquipmentTypes = equipment.Select(e => e.EquipmentType).Distinct().ToList();
 
         if (!string.IsNullOrEmpty(equipmentType))
             equipment = equipment.Where(e => e.EquipmentType == equipmentType);
@@ -159,10 +210,13 @@ public class EquipmentService : IEquipmentService
         if (status.HasValue)
             equipment = equipment.Where(e => e.Status == status);
 
+        // Convert to list before pagination to ensure all data is loaded
+        var equipmentList = equipment.ToList();
+
         return new EquipmentPaginatedIndexViewModel()
         {
-            Equipment = PaginatedList<Equipment>.Create(equipment, pageIndex, pageSize),
-            EquipmentTypes = equipment.Select(e => e.EquipmentType).Distinct().ToList()
+            Equipment = PaginatedList<Equipment>.Create(equipmentList, pageIndex, pageSize),
+            EquipmentTypes = allEquipmentTypes
         };
     }
 
@@ -173,5 +227,11 @@ public class EquipmentService : IEquipmentService
             AvailableEquipment = (await GetAvailableEquipmentAsync()).ToList(),
             Employees = (await _employeeService.GetEmployeesByStatusAsync(EmployeeStatus.Actif)).ToList()
         };
+    }
+
+    public async Task<Equipment?> GetEquipmentWithAssignmentAsync(int equipmentId)
+    {
+        var equipment = await _unitOfWork.Equipments.GetByIdAsync(equipmentId);
+        return equipment;
     }
 }

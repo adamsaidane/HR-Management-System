@@ -8,4 +8,5 @@ public interface IEquipmentRepository : IRepository<Equipment>
     Task<IEnumerable<Equipment>> GetAvailableEquipmentAsync();
     Task<IEnumerable<Equipment>> GetByStatusAsync(EquipmentStatus status);
     Task<Equipment?> GetByIdWithHistoryAsync(int id);
+    Task<IEnumerable<Equipment>> GetAllWithAssignmentsAsync();
 }

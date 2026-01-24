@@ -23,4 +23,5 @@ public interface IEquipmentService
     Task<EquipmentAssignmentViewModel> GetEquipmentAssignmentViewModelAsync();
     Task<EquipmentPaginatedIndexViewModel> GetEquipmentPaginatedIndexViewModelAsync(string equipmentType, EquipmentStatus? status,
         int pageIndex = 1, int pageSize = 10);
+    Task<Equipment?> GetEquipmentWithAssignmentAsync(int equipmentId);
 }

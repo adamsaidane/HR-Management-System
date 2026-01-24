@@ -12,6 +12,8 @@ public class EquipmentRepository : Repository<Equipment>, IEquipmentRepository
     public async Task<IEnumerable<Equipment>> GetAvailableEquipmentAsync()
     {
         return await _dbSet
+            .Include(e => e.EquipmentAssignments)
+            .ThenInclude(ea => ea.Employee)
             .Where(e => e.Status == EquipmentStatus.Disponible)
             .OrderBy(e => e.EquipmentType)
             .ToListAsync();
@@ -20,6 +22,8 @@ public class EquipmentRepository : Repository<Equipment>, IEquipmentRepository
     public async Task<IEnumerable<Equipment>> GetByStatusAsync(EquipmentStatus status)
     {
         return await _dbSet
+            .Include(e => e.EquipmentAssignments)
+            .ThenInclude(ea => ea.Employee)
             .Where(e => e.Status == status)
             .OrderBy(e => e.EquipmentType)
             .ToListAsync();
@@ -31,5 +35,13 @@ public class EquipmentRepository : Repository<Equipment>, IEquipmentRepository
             .Include(e => e.EquipmentAssignments)
             .ThenInclude(ea => ea.Employee)
             .FirstOrDefaultAsync(e => e.EquipmentId == id);
+    }
+
+    public async Task<IEnumerable<Equipment>> GetAllWithAssignmentsAsync()
+    {
+        return await _dbSet
+            .Include(e => e.EquipmentAssignments)
+            .ThenInclude(ea => ea.Employee)
+            .ToListAsync();
     }
 }

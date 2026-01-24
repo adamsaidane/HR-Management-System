@@ -23,6 +23,7 @@
                                 <option value="Ordinateur">Ordinateur</option>
                                 <option value="Ordinateur Portable">Ordinateur Portable</option>
                                 <option value="Téléphone">Téléphone</option>
+                                <option value="Écran">Écran</option>
                                 <option value="Tablette">Tablette</option>
                                 <option value="Badge">Badge</option>
                                 <option value="Tenue">Tenue professionnelle</option>
@@ -57,16 +58,18 @@
                             <span asp-validation-for="PurchaseDate" class="text-danger"></span>
                         </div>
 
-                        <div class="col-md-6">
-                            <label asp-for="Status" class="form-label"></label>
-                            <select asp-for="Status" class="form-select">
-                                <option value="0">Disponible</option>
-                                <option value="1">Affecté</option>
-                                <option value="2">En Maintenance</option>
-                                <option value="3">Retiré</option>
-                            </select>
-                            <span asp-validation-for="Status" class="text-danger"></span>
-                        </div>
+                    </div>
+
+                    <div class="alert alert-light border border-info mt-4" role="alert">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-lightbulb me-2 text-info"></i>Flux d'affectation
+                        </h6>
+                        <ul class="mb-0 small">
+                            <li>L'équipement est automatiquement créé avec le statut "Disponible"</li>
+                            <li>Allez dans "Affecter" pour l'assigner à un employé</li>
+                            <li>Le statut passera automatiquement à "Affecté"</li>
+                            <li>Pour libérer l'équipement, cliquez sur "Retourner" dans la liste</li>
+                        </ul>
                     </div>
 
                     <div class="d-flex gap-2 mt-4">

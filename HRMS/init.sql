@@ -274,7 +274,7 @@ VALUES
 SET IDENTITY_INSERT EmployeeBenefits OFF;
 
 -- Equipments
-SET IDENTITY_INSERT Equipments ON;    
+SET IDENTITY_INSERT Equipments ON;
 INSERT INTO Equipments (EquipmentId, EquipmentType, SerialNumber, Brand, Model, PurchaseDate, Status, CreatedDate, ModifiedDate)
 VALUES
     -- Ordinateurs portables (15)
@@ -693,4 +693,3 @@ VALUES
     (14, 33, 14, 14, 3400, 3800, '2025-01-01', 'Augmentation commercial', GETDATE()),
     (15, 46, 19, 19, 5500, 6200, '2025-01-01', 'Augmentation chercheur R&D', GETDATE());
 SET IDENTITY_INSERT Promotions OFF;
-

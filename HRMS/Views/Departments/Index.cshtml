@@ -1,0 +1,189 @@
+@model HRMS.ViewModels.DepartmentIndexViewModel
+@{
+    ViewData["Title"] = "Gestion des Départements";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1><i class="fas fa-building me-2"></i>Départements</h1>
+        <p class="text-muted mb-0">Gestion des départements, postes et organisation</p>
+    </div>
+    @if (User.IsInRole("AdminRH"))
+    {
+        <div>
+            <a asp-action="Create" class="btn btn-primary me-2">
+                <i class="fas fa-plus me-1"></i>Nouveau Département
+            </a>
+            <a asp-action="CreatePosition" class="btn btn-success">
+                <i class="fas fa-plus me-1"></i>Nouveau Poste
+            </a>
+        </div>
+    }
+</div>
+
+<!-- Statistiques -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <i class="fas fa-building icon text-primary"></i>
+            <h6>Départements</h6>
+            <h3 class="text-primary">@Model.TotalDepartments</h3>
+            <small class="text-muted">Total des départements</small>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <i class="fas fa-id-badge icon text-success"></i>
+            <h6>Postes</h6>
+            <h3 class="text-success">@Model.TotalPositions</h3>
+            <small class="text-muted">Total des postes</small>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <i class="fas fa-users icon text-warning"></i>
+            <h6>Employés Actifs</h6>
+            <h3 class="text-warning">@Model.TotalEmployees</h3>
+            <small class="text-muted">Dans tous les départements</small>
+        </div>
+    </div>
+</div>
+
+<!-- Filtres de Recherche -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" asp-action="Index" class="row g-3">
+            <div class="col-md-10">
+                <label class="form-label"><i class="fas fa-search me-1"></i>Recherche</label>
+                <input type="text" name="searchString" value="@Model.SearchString"
+                       class="form-control" placeholder="Nom ou code du département..." />
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-filter me-1"></i>Filtrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Liste des Départements -->
+<div class="card shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+            <i class="fas fa-list me-2"></i>Liste des Départements
+            <span class="badge bg-primary ms-2">@Model.Departments.TotalCount</span>
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        @if (Model.Departments.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" id="departmentsTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 5%;">#</th>
+                            <th style="width: 10%;">Code</th>
+                            <th style="width: 20%;">Nom</th>
+                            <th style="width: 20%;">Manager</th>
+                            <th style="width: 10%;" class="text-center">Postes</th>
+                            <th style="width: 10%;" class="text-center">Employés</th>
+                            <th style="width: 15%;">Date Création</th>
+                            <th style="width: 10%;" class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int rowNumber = ((Model.Departments.PageIndex - 1) * Model.Departments.PageSize) + 1;
+                        }
+                        @foreach (var dept in Model.Departments)
+                        {
+                            <tr>
+                                <td class="text-muted">@rowNumber</td>
+                                <td>
+                                    <span class="badge bg-secondary">@dept.Code</span>
+                                </td>
+                                <td>
+                                    <strong>@dept.Name</strong>
+                                    @if (!string.IsNullOrEmpty(dept.Description))
+                                    {
+                                        <br /><small class="text-muted">@(dept.Description.Length > 50 ? dept.Description.Substring(0, 50) + "..." : dept.Description)</small>
+                                    }
+                                </td>
+                                <td>
+                                    @if (dept.ManagerName != "Non assigné")
+                                    {
+                                        <span class="text-success"><i class="fas fa-user-tie me-1"></i>@dept.ManagerName</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted"><i class="fas fa-user-slash me-1"></i>Non assigné</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-info">@dept.PositionCount</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-success">@dept.EmployeeCount</span>
+                                </td>
+                                <td>
+                                    <small>@dept.CreatedDate.ToString("dd/MM/yyyy")</small>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Details" asp-route-id="@dept.DepartmentId"
+                                           class="btn btn-primary" title="Voir détails">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        @if (User.IsInRole("AdminRH"))
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@dept.DepartmentId"
+                                               class="btn btn-warning" title="Modifier">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                            rowNumber++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="p-5 text-center text-muted">
+                <i class="fas fa-building fa-4x mb-3"></i>
+                <h5>Aucun département trouvé</h5>
+                <p class="mb-0">Aucun département ne correspond aux critères de recherche.</p>
+            </div>
+        }
+        <partial name="_Pagination" model="Model.Departments" />
+    </div>
+</div>
+
+<style>
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    #departmentsTable tbody tr {
+        animation: fadeInUp 0.3s ease-out;
+    }
+
+    #departmentsTable tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+
+    #departmentsTable tbody tr:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+</style>

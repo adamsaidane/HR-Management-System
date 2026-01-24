@@ -9,139 +9,181 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = HRMS
 build_property.RootNamespace = HRMS
-build_property.ProjectDir = C:\Workspace\HRMS\HRMS\
+build_property.ProjectDir = C:\Users\Aziz\RiderProjects\HR-Management-System\HRMS\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Workspace\HRMS\HRMS
+build_property.MSBuildProjectDirectory = C:\Users\Aziz\RiderProjects\HR-Management-System\HRMS
 build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 8.0
+build_property.EnableCodeStyleSeverity = 
 
-[C:/Workspace/HRMS/HRMS/Views/Account/ChangePassword.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Account/AccessDenied.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxBY2Nlc3NEZW5pZWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Account/ChangePassword.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxDaGFuZ2VQYXNzd29yZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Account/Login.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Account/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Account/Register.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Account/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Employees/Create.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Departments/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVwYXJ0bWVudHNcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Departments/CreatePosition.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVwYXJ0bWVudHNcQ3JlYXRlUG9zaXRpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Departments/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVwYXJ0bWVudHNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Departments/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVwYXJ0bWVudHNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Departments/EditPosition.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVwYXJ0bWVudHNcRWRpdFBvc2l0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Departments/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVwYXJ0bWVudHNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Departments/PositionDetails.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVwYXJ0bWVudHNcUG9zaXRpb25EZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Employees/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVzXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Employees/Details.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Employees/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVzXERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Employees/Edit.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Employees/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVzXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Employees/Index.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Employees/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Equipment/AssignEquipment.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Equipment/AssignEquipment.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXF1aXBtZW50XEFzc2lnbkVxdWlwbWVudC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Equipment/Create.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Equipment/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXF1aXBtZW50XENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Equipment/EmployeeEquipment.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Equipment/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXF1aXBtZW50XEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Equipment/EmployeeEquipment.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXF1aXBtZW50XEVtcGxveWVlRXF1aXBtZW50LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Equipment/Index.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Equipment/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXF1aXBtZW50XEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Home/Index.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Home/Privacy.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Promotions/Create.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Promotions/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvbW90aW9uc1xDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Promotions/EmployeePromotions.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Promotions/EmployeePromotions.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvbW90aW9uc1xFbXBsb3llZVByb21vdGlvbnMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Promotions/Index.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Promotions/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvbW90aW9uc1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Recruitment/CandidateDetails.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Recruitment/CandidateDetails.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVjcnVpdG1lbnRcQ2FuZGlkYXRlRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Recruitment/Candidates.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Recruitment/Candidates.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVjcnVpdG1lbnRcQ2FuZGlkYXRlcy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Recruitment/ConvertToEmployee.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Recruitment/ConvertToEmployee.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVjcnVpdG1lbnRcQ29udmVydFRvRW1wbG95ZWUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Recruitment/CreateCandidate.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Recruitment/CreateCandidate.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVjcnVpdG1lbnRcQ3JlYXRlQ2FuZGlkYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Recruitment/CreateJobOffer.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Recruitment/CreateJobOffer.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVjcnVpdG1lbnRcQ3JlYXRlSm9iT2ZmZXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Recruitment/JobOffers.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Recruitment/JobOffers.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVjcnVpdG1lbnRcSm9iT2ZmZXJzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Recruitment/ScheduleInterview.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Recruitment/ScheduleInterview.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVjcnVpdG1lbnRcU2NoZWR1bGVJbnRlcnZpZXcuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Salaries/DepartmentSalaries.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Salaries/DepartmentSalaries.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FsYXJpZXNcRGVwYXJ0bWVudFNhbGFyaWVzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Salaries/EmployeeSalary.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Salaries/EmployeeSalary.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FsYXJpZXNcRW1wbG95ZWVTYWxhcnkuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Salaries/Index.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Salaries/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FsYXJpZXNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Salaries/SalaryReport.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Salaries/SalaryReport.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FsYXJpZXNcU2FsYXJ5UmVwb3J0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Shared/Error.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Shared/_Pagination.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9QYWdpbmF0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/_ViewImports.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/_ViewStart.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Workspace/HRMS/HRMS/Views/Shared/_Layout.cshtml]
+[C:/Users/Aziz/RiderProjects/HR-Management-System/HRMS/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-do5ohm3euk

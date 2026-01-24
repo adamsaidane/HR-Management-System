@@ -1,0 +1,264 @@
+@model HRMS.ViewModels.DepartmentDetailsViewModel
+@{
+    ViewData["Title"] = $"Département - {Model.Department.Name}";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a asp-action="Index">Départements</a></li>
+                <li class="breadcrumb-item active">@Model.Department.Name</li>
+            </ol>
+        </nav>
+        <h1><i class="fas fa-building me-2"></i>@Model.Department.Name</h1>
+        <span class="badge bg-secondary fs-6">@Model.Department.Code</span>
+    </div>
+    <div>
+        @if (User.IsInRole("AdminRH"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Department.DepartmentId" class="btn btn-warning me-2">
+                <i class="fas fa-edit me-1"></i>Modifier
+            </a>
+            <a asp-action="CreatePosition" asp-route-departmentId="@Model.Department.DepartmentId" class="btn btn-success">
+                <i class="fas fa-plus me-1"></i>Ajouter un Poste
+            </a>
+        }
+    </div>
+</div>
+
+<!-- Informations du département -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <i class="fas fa-users icon text-primary"></i>
+            <h6>Employés Actifs</h6>
+            <h3 class="text-primary">@Model.TotalEmployees</h3>
+            <small class="text-muted">Dans ce département</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <i class="fas fa-id-badge icon text-success"></i>
+            <h6>Postes</h6>
+            <h3 class="text-success">@Model.Positions.Count</h3>
+            <small class="text-muted">Postes disponibles</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <i class="fas fa-money-bill-wave icon text-warning"></i>
+            <h6>Masse Salariale</h6>
+            <h3 class="text-warning">@Model.TotalSalaryMass.ToString("N0") DT</h3>
+            <small class="text-muted">Total mensuel</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <i class="fas fa-calculator icon text-info"></i>
+            <h6>Salaire Moyen</h6>
+            <h3 class="text-info">@Model.AverageSalary.ToString("N0") DT</h3>
+            <small class="text-muted">Par employé</small>
+        </div>
+    </div>
+</div>
+
+<!-- Détails du département -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informations du Département</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Description:</strong></p>
+                        <p class="text-muted">@(Model.Department.Description ?? "Aucune description")</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><strong>Manager:</strong></p>
+                        @if (Model.Department.Manager != null)
+                        {
+                            <p class="text-success">
+                                <i class="fas fa-user-tie me-1"></i>@Model.Department.Manager.FullName
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="text-muted">
+                                <i class="fas fa-user-slash me-1"></i>Non assigné
+                            </p>
+                        }
+                    </div>
+                    <div class="col-md-3">
+                        <p><strong>Date de création:</strong></p>
+                        <p class="text-muted">@Model.Department.CreatedDate.ToString("dd/MM/yyyy")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Liste des postes avec employés -->
+<div class="card shadow-sm">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">
+            <i class="fas fa-sitemap me-2"></i>Postes et Employés
+            <span class="badge bg-primary ms-2">@Model.Positions.Count postes</span>
+        </h5>
+    </div>
+    <div class="card-body">
+        @if (Model.Positions.Any())
+        {
+            <div class="accordion" id="positionsAccordion">
+                @foreach (var position in Model.Positions)
+                {
+                    var collapseId = $"collapse-{position.PositionId}";
+                    var headingId = $"heading-{position.PositionId}";
+                    
+                    <div class="accordion-item mb-3 border rounded">
+                        <h2 class="accordion-header" id="@headingId">
+                            <button class="accordion-button collapsed" type="button" 
+                                    data-bs-toggle="collapse" data-bs-target="#@collapseId"
+                                    aria-expanded="false" aria-controls="@collapseId">
+                                <div class="d-flex justify-content-between align-items-center w-100 me-3">
+                                    <div>
+                                        <i class="fas fa-briefcase me-2 text-primary"></i>
+                                        <strong>@position.Title</strong>
+                                        <span class="badge bg-success ms-2">@position.EmployeeCount employé(s)</span>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-warning text-dark">
+                                            Salaire base: @position.BaseSalary.ToString("N0") DT
+                                        </span>
+                                    </div>
+                                </div>
+                            </button>
+                        </h2>
+                        <div id="@collapseId" class="accordion-collapse collapse" 
+                             aria-labelledby="@headingId" data-bs-parent="#positionsAccordion">
+                            <div class="accordion-body">
+                                @if (!string.IsNullOrEmpty(position.Description))
+                                {
+                                    <p class="text-muted mb-3">@position.Description</p>
+                                }
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="mb-0">Employés occupant ce poste:</h6>
+                                    <div>
+                                        <a asp-action="PositionDetails" asp-route-id="@position.PositionId" 
+                                           class="btn btn-sm btn-outline-primary me-1">
+                                            <i class="fas fa-eye me-1"></i>Détails du poste
+                                        </a>
+                                        @if (User.IsInRole("AdminRH"))
+                                        {
+                                            <a asp-action="EditPosition" asp-route-id="@position.PositionId" 
+                                               class="btn btn-sm btn-outline-warning">
+                                                <i class="fas fa-edit me-1"></i>Modifier
+                                            </a>
+                                        }
+                                    </div>
+                                </div>
+                                
+                                @if (position.Employees.Any())
+                                {
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-hover">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Matricule</th>
+                                                    <th>Nom Complet</th>
+                                                    <th>Email</th>
+                                                    <th>Téléphone</th>
+                                                    <th>Date d'embauche</th>
+                                                    <th class="text-center">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var employee in position.Employees)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <span class="badge bg-secondary">@employee.Matricule</span>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                @if (!string.IsNullOrEmpty(employee.PhotoPath))
+                                                                {
+                                                                    <img src="@employee.PhotoPath" alt="Photo" 
+                                                                         class="rounded-circle me-2" 
+                                                                         style="width:30px;height:30px;object-fit:cover;" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white me-2" 
+                                                                         style="width:30px;height:30px;">
+                                                                        <i class="fas fa-user" style="font-size:12px;"></i>
+                                                                    </div>
+                                                                }
+                                                                <span>@employee.FullName</span>
+                                                            </div>
+                                                        </td>
+                                                        <td><small>@employee.Email</small></td>
+                                                        <td><small>@employee.Phone</small></td>
+                                                        <td><small>@employee.HireDate.ToString("dd/MM/yyyy")</small></td>
+                                                        <td class="text-center">
+                                                            <a asp-controller="Employees" asp-action="Details" 
+                                                               asp-route-id="@employee.EmployeeId"
+                                                               class="btn btn-sm btn-info" title="Voir profil">
+                                                                <i class="fas fa-eye"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-info mb-0">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Aucun employé n'occupe actuellement ce poste.
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-center text-muted py-5">
+                <i class="fas fa-folder-open fa-4x mb-3"></i>
+                <h5>Aucun poste dans ce département</h5>
+                <p class="mb-3">Ce département n'a pas encore de postes définis.</p>
+                @if (User.IsInRole("AdminRH"))
+                {
+                    <a asp-action="CreatePosition" asp-route-departmentId="@Model.Department.DepartmentId" 
+                       class="btn btn-success">
+                        <i class="fas fa-plus me-1"></i>Créer un poste
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .accordion-button:not(.collapsed) {
+        background-color: #f0f7ff;
+        color: #0d6efd;
+    }
+    
+    .accordion-item {
+        transition: box-shadow 0.3s;
+    }
+    
+    .accordion-item:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+</style>

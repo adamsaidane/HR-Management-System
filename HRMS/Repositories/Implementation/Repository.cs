@@ -25,6 +25,11 @@ public class Repository<T> : IRepository<T> where T : class
         return await _dbSet.ToListAsync();
     }
 
+    public virtual IQueryable<T> GetAllQueryable()
+    {
+        return _dbSet.AsQueryable();
+    }
+
     public virtual async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
     {
         return await _dbSet.Where(predicate).ToListAsync();
@@ -57,6 +62,11 @@ public class Repository<T> : IRepository<T> where T : class
     }
 
     public virtual void Remove(T entity)
+    {
+        _dbSet.Remove(entity);
+    }
+
+    public virtual void Delete(T entity)
     {
         _dbSet.Remove(entity);
     }

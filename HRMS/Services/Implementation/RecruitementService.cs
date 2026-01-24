@@ -312,4 +312,44 @@ public class RecruitmentService : IRecruitmentService
 
         return PaginatedList<Candidate>.Create(candidates, pageIndex, pageSize);
     }
+
+    public async Task AddCvFromCandidateToEmployeeAsync(int candidateId, Employee employee)
+    {
+        var candidate = await GetCandidateByIdAsync(candidateId);
+
+        if (!string.IsNullOrWhiteSpace(candidate.CVPath))
+        {
+            try
+            {
+                var relativePath = candidate.CVPath.TrimStart('/'); 
+                var fullPath = Path.Combine(_environment.WebRootPath, relativePath);
+
+                if (!System.IO.File.Exists(fullPath))
+                {
+                    throw new FileNotFoundException($"CV introuvable : {fullPath}");
+                }
+
+                var fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
+
+                IFormFile candidateCvFile = new FormFile(
+                    fileStream,
+                    0,
+                    fileStream.Length,
+                    "CV",
+                    Path.GetFileName(fullPath)
+                );
+
+                await _employeeService.UploadEmployeeDocumentAsync(
+                    employee.EmployeeId,
+                    "CV",
+                    candidateCvFile
+                );
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+    }
 }

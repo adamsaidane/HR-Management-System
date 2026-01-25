@@ -228,7 +228,9 @@
                                 </td>
                                 <td class="align-middle"><strong class="text-primary">@employee.Matricule</strong></td>
                                 <td class="align-middle">
-                                    <strong>@employee.FullName</strong>
+                                    <smart-link entity="@employee" class="smart-link">
+                                        <strong>@employee.FullName</strong>
+                                    </smart-link>
                                 </td>
                                 <td class="align-middle">
                                     <a href="mailto:@employee.Email" class="text-decoration-none">
@@ -236,9 +238,18 @@
                                     </a>
                                 </td>
                                 <td class="align-middle">
-                                    <span class="badge bg-info">@employee.Department.Name</span>
+                                    <smart-link entity="@employee.Department" class="smart-link">
+                                        <span class="badge bg-info">@employee.Department.Name</span>
+                                    </smart-link>
                                 </td>
-                                <td class="align-middle">@employee.Position.Title</td>
+                                <td class="align-middle">
+                                    <smart-link entity="@employee.Position" class="smart-link">
+                                        <span class="fw-medium text-dark">
+                                            <i class="bi bi-briefcase me-1 text-muted"></i>
+                                            @employee.Position.Title
+                                        </span>
+                                    </smart-link>
+                                </td>
                                 <td class="align-middle">
                                     @switch (employee.Status)
                                     {
@@ -290,7 +301,6 @@
 </div>
 
 <style>
-    /* Style pour les en-têtes triables */
     thead th a {
         display: flex;
         align-items: center;

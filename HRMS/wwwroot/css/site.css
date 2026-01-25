@@ -20,3 +20,13 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.smart-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.smart-link:hover {
+    color: inherit;
+    text-decoration: none;
+}

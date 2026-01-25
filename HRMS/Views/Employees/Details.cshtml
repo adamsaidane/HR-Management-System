@@ -84,11 +84,15 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <small class="text-muted d-block">Département</small>
-                        <strong>@Model.Employee.Department.Name</strong>
+                        <smart-link entity="@Model.Employee.Department" class="smart-link">
+                            <strong>@Model.Employee.Department.Name</strong>
+                        </smart-link>
                     </div>
                     <div class="col-md-6 mb-3">
                         <small class="text-muted d-block">Poste</small>
-                        <strong>@Model.Employee.Position.Title</strong>
+                        <smart-link entity="@Model.Employee.Position" class="smart-link">
+                            <strong>@Model.Employee.Position.Title</strong>
+                        </smart-link>
                     </div>
                     <div class="col-md-6 mb-3">
                         <small class="text-muted d-block">Type de contrat</small>

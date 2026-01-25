@@ -110,11 +110,11 @@
                         {
                             var anciennete = (DateTime.Now - employee.HireDate).Days / 365;
                             <tr>
-                                <td class="text-muted">@rowNumber</td>
-                                <td>
+                                <td class="text-muted align-middle">@rowNumber</td>
+                                <td class="align-middle">
                                     <span class="badge bg-secondary">@employee.Matricule</span>
                                 </td>
-                                <td>
+                                <td class="align-middle">
                                     <div class="d-flex align-items-center">
                                         @if (!string.IsNullOrEmpty(employee.PhotoPath))
                                         {
@@ -132,13 +132,13 @@
                                         <strong>@employee.FullName</strong>
                                     </div>
                                 </td>
-                                <td><small>@employee.Email</small></td>
-                                <td><small>@employee.Phone</small></td>
-                                <td>
+                                <td class="align-middle"><small>@employee.Email</small></td>
+                                <td class="align-middle"><small>@employee.Phone</small></td>
+                                <td class="align-middle">
                                     <span class="badge bg-info">@anciennete an(s)</span>
                                     <br /><small class="text-muted">depuis @employee.HireDate.ToString("dd/MM/yyyy")</small>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center align-middle">
                                     <div class="btn-group btn-group-sm">
                                         <a asp-controller="Employees" asp-action="Details" 
                                            asp-route-id="@employee.EmployeeId"

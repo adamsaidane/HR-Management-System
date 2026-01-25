@@ -180,10 +180,10 @@
                                                 @foreach (var employee in position.Employees)
                                                 {
                                                     <tr>
-                                                        <td>
+                                                        <td class="align-middle">
                                                             <span class="badge bg-secondary">@employee.Matricule</span>
                                                         </td>
-                                                        <td>
+                                                        <td class="align-middle">
                                                             <div class="d-flex align-items-center">
                                                                 @if (!string.IsNullOrEmpty(employee.PhotoPath))
                                                                 {
@@ -201,10 +201,10 @@
                                                                 <span>@employee.FullName</span>
                                                             </div>
                                                         </td>
-                                                        <td><small>@employee.Email</small></td>
-                                                        <td><small>@employee.Phone</small></td>
-                                                        <td><small>@employee.HireDate.ToString("dd/MM/yyyy")</small></td>
-                                                        <td class="text-center">
+                                                        <td class="align-middle"><small>@employee.Email</small></td>
+                                                        <td class="align-middle"><small>@employee.Phone</small></td>
+                                                        <td class="align-middle"><small>@employee.HireDate.ToString("dd/MM/yyyy")</small></td>
+                                                        <td class="text-center align-middle">
                                                             <a asp-controller="Employees" asp-action="Details" 
                                                                asp-route-id="@employee.EmployeeId"
                                                                class="btn btn-sm btn-info" title="Voir profil">

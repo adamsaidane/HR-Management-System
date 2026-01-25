@@ -7,7 +7,14 @@
 <div class="page-header d-flex justify-content-between align-items-center mb-4">
     <div>
         <h1><i class="fas fa-chart-line me-2"></i>Historique des Promotions</h1>
-        <p class="text-muted mb-0">Employé: <strong>@employee.FullName</strong> (@employee.Matricule)</p>
+        <p class="text-muted mb-0">Employé:
+            <smart-link entity="@employee" class="smart-link">
+                <strong>
+                    @employee.FullName
+                </strong> 
+            </smart-link>
+            (@employee.Matricule)
+            </p>
     </div>
     <a asp-controller="Employees" asp-action="Details" asp-route-id="@employee.EmployeeId" 
        class="btn btn-outline-secondary">
@@ -74,7 +81,13 @@
                                     <div class="card-body">
                                         <h5 class="card-title">
                                             <i class="fas fa-arrow-up text-success me-2"></i>
-                                            @promotion.OldPosition.Title → <strong class="text-primary">@promotion.NewPosition.Title</strong>
+                                            <smart-link entity="@promotion.OldPosition" class="smart-link">
+                                                @promotion.OldPosition.Title
+                                            </smart-link>
+                                            → 
+                                            <smart-link entity="@promotion.NewPosition" class="smart-link">
+                                                <strong class="text-primary">@promotion.NewPosition.Title</strong>
+                                            </smart-link>
                                         </h5>
                                         <div class="row mt-3">
                                             <div class="col-md-4">

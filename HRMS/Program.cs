@@ -4,6 +4,7 @@ using HRMS.Models;
 using HRMS.Repositories;
 using HRMS.Repositories.Implementation;
 using HRMS.Service;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,7 @@ builder.Services.AddScoped<IRecruitmentService, RecruitmentService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddSingleton<IUrlHelperFactory, UrlHelperFactory>();
 
 // Configuration de l'authentification par cookies
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

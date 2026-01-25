@@ -30,9 +30,21 @@
                 {
                     <tr>
                         <td>@promo.PromotionDate.ToString("dd/MM/yyyy")</td>
-                        <td><strong>@promo.Employee.FullName</strong></td>
-                        <td><span class="badge bg-danger">@promo.OldPosition.Title</span></td>
-                        <td><span class="badge bg-success">@promo.NewPosition.Title</span></td>
+                        <td>
+                            <smart-link entity="@promo.Employee" class="smart-link">
+                                <strong>@promo.Employee.FullName</strong>
+                            </smart-link>
+                        </td>
+                        <td>
+                            <smart-link entity="@promo.OldPosition" class="smart-link">
+                            <span class="badge bg-danger">@promo.OldPosition.Title</span>
+                            </smart-link>
+                        </td>
+                        <td>
+                            <smart-link entity="@promo.NewPosition" class="smart-link">
+                                <span class="badge bg-success">@promo.NewPosition.Title</span>
+                            </smart-link>
+                        </td>
                         <td>@promo.OldSalary.ToString("N2") DT</td>
                         <td><strong>@promo.NewSalary.ToString("N2") DT</strong></td>
                         <td class="text-success fw-bold">+@((promo.NewSalary - promo.OldSalary).ToString("N2")) DT</td>

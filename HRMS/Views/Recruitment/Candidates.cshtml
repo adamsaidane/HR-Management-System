@@ -31,18 +31,24 @@
                 @foreach (var candidate in Model)
                 {
                     <tr>
-                        <td><strong>@candidate.FullName</strong></td>
-                        <td>@candidate.Age</td>
-                        <td>@candidate.Gender</td>
-                        <td>@candidate.Email</td>
-                        <td>@candidate.Phone</td>
-                        <td>@candidate.JobOffer.Title</td>
-                        <td>@candidate.ApplicationDate.ToString("dd/MM/yyyy")</td>
-                        <td><span class="badge bg-@(candidate.Status == HRMS.Enums.CandidateStatus.CandidatureReçue ? "info" : 
-                                                  candidate.Status == HRMS.Enums.CandidateStatus.Entretien ? "warning" : 
+                        <td class="align-middle">
+                            <smart-link entity="@candidate" class="smart-link">
+                                <strong>@candidate.FullName</strong>
+                            </smart-link>
+                        </td>
+                        <td class="align-middle">@candidate.Age</td>
+                        <td class="align-middle">@candidate.Gender</td>
+                        <td class="align-middle">@candidate.Email</td>
+                        <td class="align-middle">@candidate.Phone</td>
+                        <td class="align-middle">@candidate.JobOffer.Title</td>
+                        <td class="align-middle">@candidate.ApplicationDate.ToString("dd/MM/yyyy")</td>
+                        <td class="align-middle">
+                            <span class="badge bg-@(candidate.Status == HRMS.Enums.CandidateStatus.CandidatureReçue ? "info" :
+                                                  candidate.Status == HRMS.Enums.CandidateStatus.Entretien ? "warning" :
                                                   candidate.Status == HRMS.Enums.CandidateStatus.Accepté ? "success" : "danger") fs-6">
-                            @candidate.Status
-                        </span></td>
+                                @candidate.Status
+                            </span>
+                        </td>
                         <td>
                             <a asp-action="CandidateDetails" asp-route-id="@candidate.CandidateId" class="btn btn-sm btn-info">
                                 <i class="fas fa-eye"></i>

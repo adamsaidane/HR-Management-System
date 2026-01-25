@@ -90,9 +90,21 @@
 
                         <tr>
                             <td><strong>@employee.Matricule</strong></td>
-                            <td>@employee.FullName</td>
-                            <td><span class="badge bg-info">@employee.Department.Name</span></td>
-                            <td>@employee.Position.Title</td>
+                            <td>
+                                <smart-link entity="@employee" class="smart-link">
+                                @employee.FullName
+                                </smart-link>
+                            </td>
+                            <td>
+                                <smart-link entity="@employee.Department" class="smart-link">
+                                    <span class="badge bg-info">@employee.Department.Name</span>
+                                </smart-link>
+                            </td>
+                            <td>
+                                <smart-link entity="@employee.Position" class="smart-link">
+                                @employee.Position.Title
+                                </smart-link>
+                            </td>
                             <td class="text-end">@baseSalary.ToString("N2") DT</td>
                             <td class="text-end text-success">@benefits.ToString("N2") DT</td>
                             <td class="text-end"><strong>@gross.ToString("N2") DT</strong></td>

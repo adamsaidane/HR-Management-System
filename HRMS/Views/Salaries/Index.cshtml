@@ -119,11 +119,11 @@
                             var anciennete = (DateTime.Now - employee.HireDate).Days / 365;
 
                             <tr>
-                                <td class="text-muted">@rowNumber</td>
-                                <td>
+                                <td class="text-muted align-middle">@rowNumber</td>
+                                <td class="align-middle">
                                     <strong class="text-primary">@employee.Matricule</strong>
                                 </td>
-                                <td>
+                                <td class="align-middle">
                                     <div class="d-flex align-items-center">
                                         @if (!string.IsNullOrEmpty(employee.PhotoPath))
                                         {
@@ -138,20 +138,28 @@
                                                 <i class="fas fa-user"></i>
                                             </div>
                                         }
-                                        <span><strong>@employee.FullName</strong></span>
+                                        <smart-link entity="@employee" class="smart-link">
+                                            <span><strong>@employee.FullName</strong></span>
+                                        </smart-link>
                                     </div>
                                 </td>
-                                <td>
+                                <td class="align-middle">
+                                    <smart-link entity="@employee.Department" class="smart-link">
                                     <span class="badge bg-info">@employee.Department.Name</span>
+                                    </smart-link>
                                 </td>
-                                <td>@employee.Position.Title</td>
-                                <td class="text-end">
+                                <td class="align-middle">
+                                    <smart-link entity="@employee.Position" class="smart-link">
+                                        @employee.Position.Title
+                                    </smart-link>
+                                </td>
+                                <td class="text-end align-middle">
                                     <strong class="text-success fs-6">@salaryAmount.ToString("N2") DT</strong>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center align-middle">
                                     <span class="badge bg-secondary">@anciennete an(s)</span>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center align-middle">
                                     <div class="btn-group btn-group-sm">
                                         <a asp-action="EmployeeSalary" 
                                            asp-route-employeeId="@employee.EmployeeId" 

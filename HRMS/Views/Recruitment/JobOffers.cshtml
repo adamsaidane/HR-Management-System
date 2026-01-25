@@ -123,8 +123,12 @@
                     <h5 class="mb-0">@offer.Title</h5>
                 </div>
                 <div class="card-body">
-                    <p class="mb-2"><i class="fas fa-building me-2"></i>@offer.Department.Name</p>
-                    <p class="mb-2"><i class="fas fa-user-tie me-2"></i>@offer.Position.Title</p>
+                    <smart-link entity="@offer.Department" class="smart-link">
+                        <p class="mb-2"><i class="fas fa-building me-2"></i>@offer.Department.Name</p>
+                    </smart-link>
+                    <smart-link entity="@offer.Position" class="smart-link">
+                        <p class="mb-2"><i class="fas fa-user-tie me-2"></i>@offer.Position.Title</p>
+                    </smart-link>
                     <p class="mb-2"><i class="fas fa-calendar me-2"></i>@offer.PostDate.ToString("dd/MM/yyyy")</p>
                     <p class="mb-2"><i class="fas fa-briefcase me-2"></i>@offer.ContractType</p>
                     <p class="mb-2">

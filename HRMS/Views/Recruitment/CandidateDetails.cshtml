@@ -118,10 +118,22 @@
                 <h5>@candidate.JobOffer.Title</h5>
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <p class="mb-1"><i class="fas fa-building me-2 text-muted"></i><strong>Département:</strong> @candidate.JobOffer.Department.Name</p>
+                        <p class="mb-1">
+                            <i class="fas fa-building me-2 text-muted"></i>
+                            <strong>Département:</strong>
+                            <smart-link entity="@candidate.JobOffer.Department" class="smart-link">
+                                @candidate.JobOffer.Department.Name
+                            </smart-link>
+                        </p>
                     </div>
                     <div class="col-md-6">
-                        <p class="mb-1"><i class="fas fa-user-tie me-2 text-muted"></i><strong>Poste:</strong> @candidate.JobOffer.Position.Title</p>
+                        <p class="mb-1">
+                            <i class="fas fa-user-tie me-2 text-muted"></i>
+                            <strong>Poste:</strong> 
+                            <smart-link entity="@candidate.JobOffer.Position" class="smart-link">
+                                @candidate.JobOffer.Position.Title
+                            </smart-link>
+                        </p>
                     </div>
                 </div>
                 <div class="mb-3">

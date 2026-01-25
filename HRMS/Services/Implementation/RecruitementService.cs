@@ -163,6 +163,11 @@ public class RecruitmentService : IRecruitmentService
         return await _unitOfWork.Interviews.GetByCandidateAsync(candidateId);
     }
 
+    public async Task<IEnumerable<Interview>> GetAllInterviewsAsync()
+    {
+        return await _unitOfWork.Interviews.GetAllWithDetailsAsync();
+    }
+
     public async Task UpdateInterviewResultAsync(int interviewId, InterviewResult result, string notes)
     {
         var interview = await _unitOfWork.Interviews.GetByIdAsync(interviewId);

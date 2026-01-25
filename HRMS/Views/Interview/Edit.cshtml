@@ -1,0 +1,184 @@
+﻿@model HRMS.Models.Interview
+@{
+    ViewData["Title"] = "Modifier l'Entretien";
+}
+
+<div class="page-header mb-4">
+    <a href="@Url.Action("Index", "Interview")" class="btn btn-outline-secondary btn-sm mb-3">
+        <i class="fas fa-arrow-left me-1"></i>Retour
+    </a>
+    <h1><i class="fas fa-edit me-2"></i>Modifier l'Entretien</h1>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="fas fa-file-alt me-2"></i>Informations de l'Entretien</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="@Url.Action("Edit", "Interview")">
+                    @Html.AntiForgeryToken()
+
+                    <!-- ID caché -->
+                    <input type="hidden" name="interviewId" value="@Model.InterviewId" />
+                    <input type="hidden" name="candidateId" value="@Model.CandidateId" />
+
+                    <!-- Candidat (Lecture seule) -->
+                    <div class="mb-3">
+                        <label for="candidateName" class="form-label">Candidat</label>
+                        <input type="text" 
+                               id="candidateName"
+                               class="form-control"
+                               value="@(Model.Candidate?.FirstName ?? "") @(Model.Candidate?.LastName ?? "")"
+                               disabled>
+                        <small class="text-muted">Vous ne pouvez pas modifier le candidat</small>
+                    </div>
+
+                    <!-- Date de l'Entretien -->
+                    <div class="mb-3">
+                        <label for="interviewDate" class="form-label">Date et Heure de l'Entretien <span class="text-danger">*</span></label>
+                        <input type="datetime-local" 
+                               name="interviewDate" 
+                               id="interviewDate" 
+                               class="form-control"
+                               value="@Model.InterviewDate.ToString("yyyy-MM-ddTHH:mm")"
+                               required>
+                    </div>
+
+                    <!-- Lieu -->
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Lieu</label>
+                        <input type="text" 
+                               name="location" 
+                               id="location" 
+                               class="form-control"
+                               placeholder="Ex: Bureau 101, Salle de réunion, En ligne..."
+                               maxlength="200"
+                               value="@(Model.Location ?? "")">
+                    </div>
+
+                    <!-- Nom de l'Interviewer -->
+                    <div class="mb-3">
+                        <label for="interviewerName" class="form-label">Nom de l'Interviewer</label>
+                        <input type="text" 
+                               name="interviewerName" 
+                               id="interviewerName" 
+                               class="form-control"
+                               placeholder="Ex: Jean Dupont"
+                               maxlength="100"
+                               value="@(Model.InterviewerName ?? "")">
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Notes</label>
+                        <textarea name="notes" 
+                                  id="notes" 
+                                  class="form-control"
+                                  rows="4"
+                                  placeholder="Ajoutez vos observations...">@(Model.Notes ?? "")</textarea>
+                    </div>
+
+                    <!-- Résultat -->
+                    <div class="mb-3">
+                        <label for="result" class="form-label">Résultat de l'Entretien</label>
+                        <select name="result" id="result" class="form-select">
+                            <option value="0" selected="@(Model.Result == HRMS.Enums.InterviewResult.EnAttente)">En Attente</option>
+                            <option value="1" selected="@(Model.Result == HRMS.Enums.InterviewResult.Réussi)">Réussi</option>
+                            <option value="2" selected="@(Model.Result == HRMS.Enums.InterviewResult.Échoué)">Échoué</option>
+                            <option value="3" selected="@(Model.Result == HRMS.Enums.InterviewResult.AutreEntretienNécessaire)">Autre Entretien Nécessaire</option>
+                        </select>
+                        <small class="text-muted">Mettez à jour le résultat de l'entretien</small>
+                    </div>
+
+                    <!-- Boutons d'Action -->
+                    <div class="mb-0 d-flex gap-2">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-save me-2"></i>Mettre à Jour
+                        </button>
+                        <a href="@Url.Action("Details", "Interview", new { id = Model.InterviewId })" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barre Latérale -->
+    <div class="col-lg-4">
+        <!-- Résumé -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Résumé</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <small class="text-muted d-block">Candidat</small>
+                    <strong>@(Model.Candidate?.FirstName ?? "") @(Model.Candidate?.LastName ?? "")</strong>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted d-block">Date Actuelle</small>
+                    <strong>@Model.InterviewDate.ToString("dd/MM/yyyy à HH:mm")</strong>
+                </div>
+                <div class="mb-0">
+                    <small class="text-muted d-block">Résultat Actuel</small>
+                    <strong>
+                        @switch (Model.Result)
+                        {
+                            case HRMS.Enums.InterviewResult.Réussi:
+                                <span class="badge bg-success">Réussi</span>
+                                break;
+                            case HRMS.Enums.InterviewResult.Échoué:
+                                <span class="badge bg-danger">Échoué</span>
+                                break;
+                            case HRMS.Enums.InterviewResult.AutreEntretienNécessaire:
+                                <span class="badge bg-warning">Autre Entretien</span>
+                                break;
+                            default:
+                                <span class="badge bg-secondary">En Attente</span>
+                                break;
+                        }
+                    </strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Options de Date Rapides -->
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-calendar me-2"></i>Modifier la Date</h5>
+            </div>
+            <div class="card-body">
+                <div class="btn-group-vertical w-100" role="group">
+                    <button type="button" class="btn btn-outline-secondary text-start" onclick="changeDate(1)">
+                        <small>Demain</small><br>
+                        <strong id="tomorrow">@DateTime.Now.AddDays(1).ToString("dd/MM/yyyy")</strong>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary text-start" onclick="changeDate(3)">
+                        <small>Dans 3 jours</small><br>
+                        <strong id="in3days">@DateTime.Now.AddDays(3).ToString("dd/MM/yyyy")</strong>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary text-start" onclick="changeDate(7)">
+                        <small>Dans 1 semaine</small><br>
+                        <strong id="in1week">@DateTime.Now.AddDays(7).ToString("dd/MM/yyyy")</strong>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function changeDate(days) {
+            const newDate = new Date();
+            newDate.setDate(newDate.getDate() + days);
+            newDate.setHours(10, 0, 0, 0);
+            
+            const dateString = newDate.toISOString().slice(0, 16);
+            document.getElementById('interviewDate').value = dateString;
+        }
+    </script>
+}

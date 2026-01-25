@@ -20,6 +20,7 @@ public interface IRecruitmentService
     Task UpdateCandidateStatusAsync(int candidateId, CandidateStatus status);
     Task ScheduleInterviewAsync(Interview interview);
     Task<IEnumerable<Interview>> GetInterviewsByCandidateAsync(int candidateId);
+    Task<IEnumerable<Interview>> GetAllInterviewsAsync();
     Task UpdateInterviewResultAsync(int interviewId, InterviewResult result, string notes);
     Task<Employee> ConvertCandidateToEmployeeAsync(int candidateId, Employee employee);
     Task<JobOfferFormViewModel> GetJobOfferFormViewModelAsync();

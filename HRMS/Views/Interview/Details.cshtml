@@ -1,0 +1,236 @@
+﻿@model HRMS.Models.Interview
+@{
+    ViewData["Title"] = "Détails de l'Entretien";
+}
+
+<div class="page-header mb-4">
+    <a href="@Url.Action("Index", "Interview")" class="btn btn-outline-secondary btn-sm mb-3">
+        <i class="fas fa-arrow-left me-1"></i>Retour à la Liste
+    </a>
+    <h1><i class="fas fa-handshake me-2"></i>Détails de l'Entretien</h1>
+</div>
+
+<div class="row">
+    <!-- Informations Principales -->
+    <div class="col-lg-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informations Générales</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">Candidat:</label>
+                        <p class="lead">@(Model.Candidate?.FirstName ?? "") @(Model.Candidate?.LastName ?? "")</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">Email:</label>
+                        <p>@(Model.Candidate?.Email ?? "N/A")</p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">Date de l'Entretien:</label>
+                        <p class="lead">@Model.InterviewDate.ToString("dd/MM/yyyy à HH:mm")</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">Lieu:</label>
+                        <p>
+                            @if (!string.IsNullOrEmpty(Model.Location))
+                            {
+                                <i class="fas fa-map-marker-alt me-1"></i>@Model.Location
+                            }
+                            else
+                            {
+                                <span class="text-muted">Non spécifié</span>
+                            }
+                        </p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">Interviewer:</label>
+                        <p>
+                            @if (!string.IsNullOrEmpty(Model.InterviewerName))
+                            {
+                                @Model.InterviewerName
+                            }
+                            else
+                            {
+                                <span class="text-muted">Non spécifié</span>
+                            }
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">Date de Création:</label>
+                        <p>@Model.CreatedDate.ToString("dd/MM/yyyy HH:mm")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes et Résultat -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0"><i class="fas fa-clipboard me-2"></i>Notes et Observations</h5>
+            </div>
+            <div class="card-body">
+                @if (!string.IsNullOrEmpty(Model.Notes))
+                {
+                    <p class="card-text">@Model.Notes</p>
+                }
+                else
+                {
+                    <p class="text-muted">Aucune note enregistrée</p>
+                }
+            </div>
+        </div>
+
+        <!-- Formulaire de Mise à Jour du Résultat -->
+        @if (User.IsInRole("AdminRH") || User.IsInRole("Manager"))
+        {
+            <div class="card shadow-sm border-info">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-check-square me-2"></i>Mettre à Jour le Résultat</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="@Url.Action("UpdateResult", "Interview")">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="interviewId" value="@Model.InterviewId" />
+
+                        <div class="mb-3">
+                            <label for="result" class="form-label">Résultat de l'Entretien <span class="text-danger">*</span></label>
+                            <select name="result" id="result" class="form-select" required>
+                                <option value="">-- Sélectionner un Résultat --</option>
+                                <option value="0" selected="@(Model.Result == HRMS.Enums.InterviewResult.EnAttente)">En Attente</option>
+                                <option value="1" selected="@(Model.Result == HRMS.Enums.InterviewResult.Réussi)">Réussi</option>
+                                <option value="2" selected="@(Model.Result == HRMS.Enums.InterviewResult.Échoué)">Échoué</option>
+                                <option value="3" selected="@(Model.Result == HRMS.Enums.InterviewResult.AutreEntretienNécessaire)">Autre Entretien Nécessaire</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes Supplémentaires:</label>
+                            <textarea name="notes" id="notes" class="form-control" rows="4" placeholder="Ajoutez vos observations...">@(Model.Notes ?? "")</textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Mettre à Jour
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Barre Latérale -->
+    <div class="col-lg-4">
+        <!-- Statut du Résultat -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-flag me-2"></i>Statut</h5>
+            </div>
+            <div class="card-body text-center">
+                @switch (Model.Result)
+                {
+                    case HRMS.Enums.InterviewResult.Réussi:
+                        <div class="mb-3">
+                            <i class="fas fa-check-circle fa-3x text-success"></i>
+                        </div>
+                        <h4 class="text-success">Réussi</h4>
+                        <p class="text-muted small">Le candidat a réussi l'entretien</p>
+                        break;
+                    case HRMS.Enums.InterviewResult.Échoué:
+                        <div class="mb-3">
+                            <i class="fas fa-times-circle fa-3x text-danger"></i>
+                        </div>
+                        <h4 class="text-danger">Échoué</h4>
+                        <p class="text-muted small">Le candidat n'a pas réussi l'entretien</p>
+                        break;
+                    case HRMS.Enums.InterviewResult.AutreEntretienNécessaire:
+                        <div class="mb-3">
+                            <i class="fas fa-repeat fa-3x text-warning"></i>
+                        </div>
+                        <h4 class="text-warning">Autre Entretien Nécessaire</h4>
+                        <p class="text-muted small">Un autre entretien est requis</p>
+                        break;
+                    default:
+                        <div class="mb-3">
+                            <i class="fas fa-hourglass-half fa-3x text-secondary"></i>
+                        </div>
+                        <h4 class="text-secondary">En Attente</h4>
+                        <p class="text-muted small">Le résultat n'a pas encore été défini</p>
+                        break;
+                }
+            </div>
+        </div>
+
+        <!-- État de l'Entretien -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>État</h5>
+            </div>
+            <div class="card-body text-center">
+                @if (Model.InterviewDate > DateTime.Now)
+                {
+                    <div class="mb-3">
+                        <i class="fas fa-clock fa-3x text-info"></i>
+                    </div>
+                    <h6 class="text-info">À Venir</h6>
+                    <p class="text-muted small">
+                        @((Model.InterviewDate - DateTime.Now).Days) jour(s) restant(s)
+                    </p>
+                }
+                else
+                {
+                    <div class="mb-3">
+                        <i class="fas fa-check fa-3x text-success"></i>
+                    </div>
+                    <h6 class="text-success">Entretien Terminé</h6>
+                    <p class="text-muted small">
+                        Le @Model.InterviewDate.ToString("dd/MM/yyyy")
+                    </p>
+                }
+            </div>
+        </div>
+
+        <!-- Actions -->
+        @if (User.IsInRole("AdminRH") || User.IsInRole("Manager"))
+        {
+            <div class="card shadow-sm border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-tools me-2"></i>Actions</h5>
+                </div>
+                <div class="card-body">
+                    <a href="@Url.Action("Edit", "Interview", new { id = Model.InterviewId })" class="btn btn-warning btn-sm w-100 mb-2">
+                        <i class="fas fa-edit me-1"></i>Modifier
+                    </a>
+                    <form method="post" action="@Url.Action("Delete", "Interview", new { id = Model.InterviewId })" style="display: inline;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger btn-sm w-100" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet entretien?')">
+                            <i class="fas fa-trash-alt me-1"></i>Supprimer
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+
+        <!-- Informations Candidate -->
+        @if (Model.Candidate != null)
+        {
+            <div class="card shadow-sm mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-user me-2"></i>Candidat</h5>
+                </div>
+                <div class="card-body">
+
+                    <p class="text-center mb-2"><strong>@Model.Candidate.FirstName @Model.Candidate.LastName</strong></p>
+                    <p class="text-center text-muted small mb-3">@Model.Candidate.Email</p>
+                    <a href="@Url.Action("CandidateDetails", "Recruitment", new { id = Model.Candidate.CandidateId })" class="btn btn-outline-primary btn-sm w-100">
+                        <i class="fas fa-eye me-1"></i>Voir Profil
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

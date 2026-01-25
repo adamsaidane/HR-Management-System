@@ -183,13 +183,18 @@ public class DashboardService : IDashboardService
         var employees = await _unitOfWork.Employees.GetAllAsync();
         var today = DateTime.Today;
 
-        return employees
-            .Select(e => today.Year - e.DateOfBirth.Year)
-            .GroupBy(age =>
-                age < 25 ? "< 25" :
+        var ranges = new List<string> { "< 25", "25-35", "36-45", "45+" };
+        var result = ranges.ToDictionary(r => r, r => 0);
+
+        foreach (var e in employees)
+        {
+            var age = today.Year - e.DateOfBirth.Year;
+            string key = age < 25 ? "< 25" :
                 age <= 35 ? "25-35" :
-                age <= 45 ? "36-45" : "45+")
-            .ToDictionary(g => g.Key, g => g.Count());
+                age <= 45 ? "36-45" : "45+";
+            result[key]++;
+        }
+        return result;
     }
 
     private async Task<Dictionary<string, int>> GetEmployeesByContractTypeAsync()
@@ -203,13 +208,18 @@ public class DashboardService : IDashboardService
         var employees = await _unitOfWork.Employees.GetAllAsync();
         var today = DateTime.Today;
 
-        return employees
-            .Select(e => today.Year - e.HireDate.Year)
-            .GroupBy(y =>
-                y < 1 ? "< 1 an" :
+        var ranges = new List<string> { "< 1 an", "1-3 ans", "3-5 ans", "5+ ans" };
+        var result = ranges.ToDictionary(r => r, r => 0);
+
+        foreach (var e in employees)
+        {
+            var y = today.Year - e.HireDate.Year;
+            string key = y < 1 ? "< 1 an" :
                 y <= 3 ? "1-3 ans" :
-                y <= 5 ? "3-5 ans" : "5+ ans")
-            .ToDictionary(g => g.Key, g => g.Count());
+                y <= 5 ? "3-5 ans" : "5+ ans";
+            result[key]++;
+        }
+        return result;
     }
 
     private async Task<Dictionary<string, int>> GetCandidatesByStageAsync()

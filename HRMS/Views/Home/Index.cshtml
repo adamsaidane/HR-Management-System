@@ -95,15 +95,46 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-6">
             <div class="card">
                 <div class="card-header">Ancienneté (Années)</div>
                 <div class="card-body"><div class="chart-container"><canvas id="seniorityChart"></canvas></div></div>
             </div>
         </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">Croissance des Effectifs (Par Année)</div>
+                <div class="card-body"><div class="chart-container"><canvas id="growthChart"></canvas></div></div>
+            </div>
+        </div>
     </div>
 
-    <h4 class="section-title"><i class="fas fa-chart-line me-2"></i>Recrutement & Finance</h4>
+    <h4 class="section-title"><i class="fas fa-chart-line me-2"></i>Tendances d'Embauche & Départs</h4>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">Tendance d'Embauche (12 derniers mois)</div>
+                <div class="card-body"><div class="chart-container"><canvas id="hiringTrendChart"></canvas></div></div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">Tendance de Départs (12 derniers mois)</div>
+                <div class="card-body"><div class="chart-container"><canvas id="terminationTrendChart"></canvas></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">Taux de Rotation du Personnel (%)</div>
+                <div class="card-body"><div class="chart-container"><canvas id="turnoverChart"></canvas></div></div>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="section-title"><i class="fas fa-money-check-alt me-2"></i>Analyse Salariale & Rémunération</h4>
     <div class="row">
         <div class="col-lg-7">
             <div class="card">
@@ -120,6 +151,57 @@
     </div>
 
     <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">Distribution des Salaires</div>
+                <div class="card-body"><div class="chart-container"><canvas id="salaryDistChart"></canvas></div></div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">Salaire Moyen par Poste</div>
+                <div class="card-body"><div class="chart-container"><canvas id="avgSalaryPosChart"></canvas></div></div>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="section-title"><i class="fas fa-gift me-2"></i>Primes & Avantages</h4>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">Primes par Département (Total)</div>
+                <div class="card-body"><div class="chart-container"><canvas id="bonusDeptChart"></canvas></div></div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">Primes par Type</div>
+                <div class="card-body"><div class="chart-container"><canvas id="bonusTypeChart"></canvas></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">Utilisation des Avantages Sociaux</div>
+                <div class="card-body"><div class="chart-container"><canvas id="benefitUtilChart"></canvas></div></div>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="section-title"><i class="fas fa-arrow-up me-2"></i>Promotions & Carrière</h4>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">Promotions par Département</div>
+                <div class="card-body"><div class="chart-container"><canvas id="promotionDeptChart"></canvas></div></div>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="section-title"><i class="fas fa-user-tie me-2"></i>Recrutement & Candidatures</h4>
+    <div class="row">
         <div class="col-lg-4">
             <div class="card">
                 <div class="card-header">Pipeline Candidats</div>
@@ -134,8 +216,39 @@
         </div>
         <div class="col-lg-4">
             <div class="card">
-                <div class="card-header">Types d'Équipement</div>
+                <div class="card-header">Résultats d'Entretiens</div>
+                <div class="card-body"><div class="chart-container"><canvas id="interviewResultChart"></canvas></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">Tendance des Candidatures (12 derniers mois)</div>
+                <div class="card-body"><div class="chart-container"><canvas id="candidateAppTrendChart"></canvas></div></div>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="section-title"><i class="fas fa-laptop me-2"></i>Équipements & Documents</h4>
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">Équipements par Type</div>
                 <div class="card-body"><div class="chart-container"><canvas id="equipmentTypeChart"></canvas></div></div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">Équipements par Statut</div>
+                <div class="card-body"><div class="chart-container"><canvas id="equipmentStatusChart"></canvas></div></div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">Documents par Type</div>
+                <div class="card-body"><div class="chart-container"><canvas id="documentTypeChart"></canvas></div></div>
             </div>
         </div>
     </div>
@@ -147,7 +260,7 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     
-    const palette = ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#6f42c1', '#5a5c69'];
+    const palette = ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#6f42c1', '#5a5c69', '#858796', '#fd7e14', '#20c997'];
 
     const setupChart = (id, type, labels, values, label = '', horizontal = false) => {
         const el = document.getElementById(id);
@@ -160,10 +273,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 datasets: [{
                     label: label,
                     data: values,
-                    backgroundColor: type === 'pie' || type === 'doughnut' ? palette : palette[0],
+                    backgroundColor: type === 'pie' || type === 'doughnut' ? palette : (type === 'line' ? 'rgba(78, 115, 223, 0.1)' : palette[0]),
                     borderColor: type === 'line' ? palette[0] : '#ffffff',
                     borderWidth: 2,
-                    fill: false,
+                    fill: type === 'line',
                     tension: 0.3,
                     pointRadius: 4
                 }]
@@ -183,28 +296,44 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     };
 
-
+    // Employee Analytics
     setupChart('deptChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByDepartment.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByDepartment.Values)), 'Nombre');
-    
     setupChart('statusChart', 'doughnut', @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByStatus.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByStatus.Values)));
-    
     setupChart('genderChart', 'pie', @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByGender.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByGender.Values)));
-    
-    setupChart('ageChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByAgeRange.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByAgeRange.Values)), 'Âge');
-    
+    setupChart('ageChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByAgeRange.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByAgeRange.Values)), 'Employés');
     setupChart('contractChart', 'doughnut', @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByContractType.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByContractType.Values)));
-    
-    setupChart('seniorityChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.EmployeesBySeniority.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.EmployeesBySeniority.Values)), 'Années');
+    setupChart('seniorityChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.EmployeesBySeniority.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.EmployeesBySeniority.Values)), 'Employés');
+    setupChart('growthChart', 'line', @Html.Raw(JsonSerializer.Serialize(Model.EmployeeGrowthByYear.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.EmployeeGrowthByYear.Values)), 'Total Employés');
 
-    setupChart('candidatesStageChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.CandidatesByStage.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.CandidatesByStage.Values)), 'Candidats');
+    // Hiring & Termination Trends
+    setupChart('hiringTrendChart', 'line', @Html.Raw(JsonSerializer.Serialize(Model.HiringTrendByMonth.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.HiringTrendByMonth.Values)), 'Embauches');
+    setupChart('terminationTrendChart', 'line', @Html.Raw(JsonSerializer.Serialize(Model.TerminationTrendByMonth.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.TerminationTrendByMonth.Values)), 'Départs');
+    setupChart('turnoverChart', 'line', @Html.Raw(JsonSerializer.Serialize(Model.TurnoverRate.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.TurnoverRate.Values)), 'Taux (%)');
 
-    setupChart('jobOfferDeptChart', 'pie', @Html.Raw(JsonSerializer.Serialize(Model.JobOffersByDepartment.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.JobOffersByDepartment.Values)));
-
-    setupChart('salaryDeptChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.SalaryByDepartment.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.SalaryByDepartment.Values)), 'Salaire (DT)', true);
-
+    // Salary Analytics
     setupChart('salaryEvolutionChart', 'line', @Html.Raw(JsonSerializer.Serialize(Model.SalaryEvolution.Select(x => x.Month))), @Html.Raw(JsonSerializer.Serialize(Model.SalaryEvolution.Select(x => x.TotalSalary))), 'Masse Salariale (DT)');
+    setupChart('salaryDeptChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.SalaryByDepartment.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.SalaryByDepartment.Values)), 'Salaire (DT)', true);
+    setupChart('salaryDistChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.SalaryDistribution.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.SalaryDistribution.Values)), 'Nombre d\'employés');
+    setupChart('avgSalaryPosChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.AverageSalaryByPosition.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.AverageSalaryByPosition.Values)), 'Salaire Moyen (DT)', true);
 
-    setupChart('equipmentTypeChart', 'pie', @Html.Raw(JsonSerializer.Serialize(Model.EquipmentByStatus.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.EquipmentByStatus.Values)));
+    // Bonuses & Benefits
+    setupChart('bonusDeptChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.BonusesByDepartment.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.BonusesByDepartment.Values)), 'Total (DT)');
+    setupChart('bonusTypeChart', 'doughnut', @Html.Raw(JsonSerializer.Serialize(Model.BonusesByType.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.BonusesByType.Values)));
+    setupChart('benefitUtilChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.BenefitUtilization.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.BenefitUtilization.Values)), 'Nombre d\'employés');
+
+    // Promotions
+    setupChart('promotionDeptChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.PromotionsByDepartment.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.PromotionsByDepartment.Values)), 'Nombre de promotions');
+
+    // Recruitment
+    setupChart('candidatesStageChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.CandidatesByStage.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.CandidatesByStage.Values)), 'Candidats');
+    setupChart('jobOfferDeptChart', 'pie', @Html.Raw(JsonSerializer.Serialize(Model.JobOffersByDepartment.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.JobOffersByDepartment.Values)));
+    setupChart('interviewResultChart', 'doughnut', @Html.Raw(JsonSerializer.Serialize(Model.InterviewSuccessRate.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.InterviewSuccessRate.Values)));
+    setupChart('candidateAppTrendChart', 'line', @Html.Raw(JsonSerializer.Serialize(Model.CandidatesApplicationTrend.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.CandidatesApplicationTrend.Values)), 'Candidatures');
+
+    // Equipment & Documents
+    setupChart('equipmentTypeChart', 'pie', @Html.Raw(JsonSerializer.Serialize(Model.EquipmentByType.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.EquipmentByType.Values)));
+    setupChart('equipmentStatusChart', 'doughnut', @Html.Raw(JsonSerializer.Serialize(Model.EquipmentByStatus.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.EquipmentByStatus.Values)));
+    setupChart('documentTypeChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.DocumentsByType.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.DocumentsByType.Values)), 'Nombre de documents');
 
 });
 </script>

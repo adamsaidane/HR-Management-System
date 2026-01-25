@@ -27,4 +27,19 @@ public class DashboardViewModel
     public Dictionary<string, decimal> SalaryByDepartment { get; set; }
 
     public Dictionary<string, int> EquipmentByStatus { get; set; }
+    
+    public Dictionary<string, int> HiringTrendByMonth { get; set; }
+    public Dictionary<string, int> TerminationTrendByMonth { get; set; }
+    public Dictionary<string, decimal> BonusesByDepartment { get; set; }
+    public Dictionary<string, int> BonusesByType { get; set; }
+    public Dictionary<string, int> DocumentsByType { get; set; }
+    public Dictionary<string, decimal> SalaryDistribution { get; set; }
+    public Dictionary<string, int> PromotionsByDepartment { get; set; }
+    public Dictionary<string, int> InterviewSuccessRate { get; set; }
+    public Dictionary<string, decimal> AverageSalaryByPosition { get; set; }
+    public Dictionary<string, int> EquipmentByType { get; set; }
+    public Dictionary<string, int> BenefitUtilization { get; set; }
+    public Dictionary<int, int> EmployeeGrowthByYear { get; set; }
+    public Dictionary<string, decimal> TurnoverRate { get; set; }
+    public Dictionary<string, int> CandidatesApplicationTrend { get; set; }
 }

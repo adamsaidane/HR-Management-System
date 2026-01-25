@@ -43,6 +43,20 @@ public class HomeController : Controller
             JobOffersByDepartment = stats.JobOffersByDepartment,
             SalaryByDepartment = stats.SalaryByDepartment,
             EquipmentByStatus = stats.EquipmentByStatus,
+            HiringTrendByMonth = stats.HiringTrendByMonth,
+            TerminationTrendByMonth = stats.TerminationTrendByMonth,
+            BonusesByDepartment = stats.BonusesByDepartment,
+            BonusesByType = stats.BonusesByType,
+            DocumentsByType = stats.DocumentsByType,
+            SalaryDistribution = stats.SalaryDistribution,
+            PromotionsByDepartment = stats.PromotionsByDepartment,
+            InterviewSuccessRate = stats.InterviewSuccessRate,
+            AverageSalaryByPosition = stats.AverageSalaryByPosition,
+            EquipmentByType = stats.EquipmentByType,
+            BenefitUtilization = stats.BenefitUtilization,
+            EmployeeGrowthByYear = stats.EmployeeGrowthByYear,
+            TurnoverRate = stats.TurnoverRate,
+            CandidatesApplicationTrend = stats.CandidatesApplicationTrend,
         };
 
         return View(viewModel);

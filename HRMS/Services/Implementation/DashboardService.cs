@@ -62,19 +62,31 @@ public class DashboardService : IDashboardService
         stats.EquipmentByStatus = await GetEquipmentByStatusAsync();
         
         stats.HiringTrendByMonth = await GetHiringTrendByMonthAsync();
-        stats.TerminationTrendByMonth = await GetTerminationTrendByMonthAsync();
         stats.BonusesByDepartment = await GetBonusesByDepartmentAsync();
         stats.BonusesByType = await GetBonusesByTypeAsync();
         stats.DocumentsByType = await GetDocumentsByTypeAsync();
         stats.SalaryDistribution = await GetSalaryDistributionAsync();
         stats.PromotionsByDepartment = await GetPromotionsByDepartmentAsync();
         stats.InterviewSuccessRate = await GetInterviewSuccessRateAsync();
-        stats.AverageSalaryByPosition = await GetAverageSalaryByPositionAsync();
         stats.EquipmentByType = await GetEquipmentByTypeAsync();
         stats.BenefitUtilization = await GetBenefitUtilizationAsync();
         stats.EmployeeGrowthByYear = await GetEmployeeGrowthByYearAsync();
-        stats.TurnoverRate = await GetTurnoverRateAsync();
         stats.CandidatesApplicationTrend = await GetCandidatesApplicationTrendAsync();
+        stats.AverageSalaryByDepartment = await GetAverageSalaryByDepartmentAsync();
+        stats.BonusTrendByMonth = await GetBonusTrendByMonthAsync();
+        stats.EquipmentAssignmentsByDepartment = await GetEquipmentAssignmentsByDepartmentAsync();
+        stats.ActiveJobOffersByContractType = await GetActiveJobOffersByContractTypeAsync();
+        stats.InterviewsByMonth = await GetInterviewsByMonthAsync();
+        stats.PromotionTrendByMonth = await GetPromotionTrendByMonthAsync();
+        stats.SalaryIncreaseTrend = await GetSalaryIncreaseTrendAsync();
+        stats.EmployeesByAgeAndGender = await GetEmployeesByAgeAndGenderAsync();
+        stats.BenefitCostByDepartment = await GetBenefitCostByDepartmentAsync();
+        stats.EquipmentPurchaseByYear = await GetEquipmentPurchaseByYearAsync();
+        stats.AverageBonusByDepartment = await GetAverageBonusByDepartmentAsync();
+        stats.EmployeeRetentionByYear = await GetEmployeeRetentionByYearAsync();
+        stats.InterviewsScheduledVsCompleted = await GetInterviewsScheduledVsCompletedAsync();
+        stats.SalaryGrowthByDepartment = await GetSalaryGrowthByDepartmentAsync();
+        stats.BenefitsByType = await GetBenefitsByTypeAsync();
         
         // Évolutions
         stats.SalaryEvolutionData = await GetSalaryEvolutionLastYearAsync();
@@ -240,7 +252,6 @@ public class DashboardService : IDashboardService
         return eq.GroupBy(e => e.Status).ToDictionary(g => g.Key.ToString(), g => g.Count());
     }
 
-    // NEW ANALYTICS METHODS WITH NULL CHECKS
     private async Task<Dictionary<string, int>> GetHiringTrendByMonthAsync()
     {
         var employees = await _unitOfWork.Employees.GetAllAsync();
@@ -251,23 +262,6 @@ public class DashboardService : IDashboardService
             var targetDate = DateTime.Now.AddMonths(-i);
             var monthKey = targetDate.ToString("MMM yyyy");
             var count = employees.Count(e => e.HireDate.Year == targetDate.Year && e.HireDate.Month == targetDate.Month);
-            result[monthKey] = count;
-        }
-        return result;
-    }
-
-    private async Task<Dictionary<string, int>> GetTerminationTrendByMonthAsync()
-    {
-        var employees = await _unitOfWork.Employees.GetAllAsync();
-        var result = new Dictionary<string, int>();
-
-        for (int i = 11; i >= 0; i--)
-        {
-            var targetDate = DateTime.Now.AddMonths(-i);
-            var monthKey = targetDate.ToString("MMM yyyy");
-            var count = employees.Count(e => e.EndDate.HasValue && 
-                e.EndDate.Value.Year == targetDate.Year && 
-                e.EndDate.Value.Month == targetDate.Month);
             result[monthKey] = count;
         }
         return result;
@@ -358,31 +352,6 @@ public class DashboardService : IDashboardService
             .ToDictionary(g => g.Key, g => g.Count());
     }
 
-    private async Task<Dictionary<string, decimal>> GetAverageSalaryByPositionAsync()
-    {
-        var employees = await _unitOfWork.Employees.FindAsync(e => e.Status == EmployeeStatus.Actif);
-        var result = new Dictionary<string, List<decimal>>();
-
-        foreach (var emp in employees)
-        {
-            // Check if Position is not null
-            if (emp.Position == null || string.IsNullOrEmpty(emp.Position.Title))
-                continue;
-
-            var salary = await _unitOfWork.Salaries.GetCurrentSalaryAsync(emp.EmployeeId);
-            if (salary != null)
-            {
-                if (!result.ContainsKey(emp.Position.Title))
-                    result[emp.Position.Title] = new List<decimal>();
-                result[emp.Position.Title].Add(salary.BaseSalary);
-            }
-        }
-
-        return result
-            .Where(kvp => kvp.Value.Any())
-            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Average());
-    }
-
     private async Task<Dictionary<string, int>> GetEquipmentByTypeAsync()
     {
         var equipment = await _unitOfWork.Equipments.GetAllAsync();
@@ -420,28 +389,6 @@ public class DashboardService : IDashboardService
         return result;
     }
 
-    private async Task<Dictionary<string, decimal>> GetTurnoverRateAsync()
-    {
-        var employees = await _unitOfWork.Employees.GetAllAsync();
-        var result = new Dictionary<string, decimal>();
-
-        for (int i = 11; i >= 0; i--)
-        {
-            var targetDate = DateTime.Now.AddMonths(-i);
-            var monthKey = targetDate.ToString("MMM yyyy");
-            var monthStart = new DateTime(targetDate.Year, targetDate.Month, 1);
-            var monthEnd = monthStart.AddMonths(1).AddDays(-1);
-
-            var activeCount = employees.Count(e => e.HireDate <= monthEnd && 
-                (!e.EndDate.HasValue || e.EndDate.Value > monthStart));
-            var terminatedCount = employees.Count(e => e.EndDate.HasValue && 
-                e.EndDate.Value >= monthStart && e.EndDate.Value <= monthEnd);
-
-            result[monthKey] = activeCount > 0 ? (decimal)terminatedCount / activeCount * 100 : 0;
-        }
-        return result;
-    }
-
     private async Task<Dictionary<string, int>> GetCandidatesApplicationTrendAsync()
     {
         var candidates = await _unitOfWork.Candidates.GetAllAsync();
@@ -456,5 +403,273 @@ public class DashboardService : IDashboardService
             result[monthKey] = count;
         }
         return result;
+    }
+    private async Task<Dictionary<string, decimal>> GetAverageSalaryByDepartmentAsync()
+    {
+        var employees = await _unitOfWork.Employees.FindAsync(e => e.Status == EmployeeStatus.Actif);
+        var result = new Dictionary<string, decimal>();
+
+        foreach (var dept in employees.Where(e => e.Department != null).GroupBy(e => e.Department.Name))
+        {
+            decimal total = 0;
+            int count = 0;
+            foreach (var emp in dept)
+            {
+                var salary = await _unitOfWork.Salaries.GetCurrentSalaryAsync(emp.EmployeeId);
+                if (salary != null)
+                {
+                    total += salary.BaseSalary;
+                    count++;
+                }
+            }
+            if (count > 0)
+                result[dept.Key] = total / count;
+        }
+        return result;
+    }
+
+    private async Task<Dictionary<string, decimal>> GetBonusTrendByMonthAsync()
+    {
+        var bonuses = await _unitOfWork.Bonuses.GetAllAsync();
+        var result = new Dictionary<string, decimal>();
+
+        for (int i = 11; i >= 0; i--)
+        {
+            var targetDate = DateTime.Now.AddMonths(-i);
+            var monthKey = targetDate.ToString("MMM yyyy");
+            var total = bonuses
+                .Where(b => b.Date.Year == targetDate.Year && b.Date.Month == targetDate.Month)
+                .Sum(b => b.Amount);
+            result[monthKey] = total;
+        }
+        return result;
+    }
+
+    private async Task<Dictionary<string, int>> GetEquipmentAssignmentsByDepartmentAsync()
+    {
+        var assignments = await _unitOfWork.EquipmentAssignments.GetAllAsync();
+        var employees = await _unitOfWork.Employees.GetAllAsync();
+
+        return assignments
+            .Where(a => a.ReturnDate == null)
+            .Join(employees.Where(e => e.Department != null),
+                a => a.EmployeeId,
+                e => e.EmployeeId,
+                (a, e) => e.Department.Name)
+            .GroupBy(name => name)
+            .ToDictionary(g => g.Key, g => g.Count());
+    }
+
+    private async Task<Dictionary<string, int>> GetActiveJobOffersByContractTypeAsync()
+    {
+        var offers = await _unitOfWork.JobOffers.FindAsync(o => o.Status == JobOfferStatus.Ouverte);
+        return offers.GroupBy(o => o.ContractType.ToString())
+            .ToDictionary(g => g.Key, g => g.Count());
+    }
+
+    private async Task<Dictionary<string, int>> GetInterviewsByMonthAsync()
+    {
+        var interviews = await _unitOfWork.Interviews.GetAllAsync();
+        var result = new Dictionary<string, int>();
+
+        for (int i = 11; i >= 0; i--)
+        {
+            var targetDate = DateTime.Now.AddMonths(-i);
+            var monthKey = targetDate.ToString("MMM yyyy");
+            var count = interviews.Count(iv => iv.InterviewDate.Year == targetDate.Year && 
+                iv.InterviewDate.Month == targetDate.Month);
+            result[monthKey] = count;
+        }
+        return result;
+    }
+
+    private async Task<Dictionary<string, int>> GetPromotionTrendByMonthAsync()
+    {
+        var promotions = await _unitOfWork.Promotions.GetAllAsync();
+        var result = new Dictionary<string, int>();
+
+        for (int i = 11; i >= 0; i--)
+        {
+            var targetDate = DateTime.Now.AddMonths(-i);
+            var monthKey = targetDate.ToString("MMM yyyy");
+            var count = promotions.Count(p => p.PromotionDate.Year == targetDate.Year && 
+                p.PromotionDate.Month == targetDate.Month);
+            result[monthKey] = count;
+        }
+        return result;
+    }
+
+    private async Task<Dictionary<string, decimal>> GetSalaryIncreaseTrendAsync()
+    {
+        var promotions = await _unitOfWork.Promotions.GetAllAsync();
+        var result = new Dictionary<string, decimal>();
+
+        for (int i = 11; i >= 0; i--)
+        {
+            var targetDate = DateTime.Now.AddMonths(-i);
+            var monthKey = targetDate.ToString("MMM yyyy");
+            var avgIncrease = promotions
+                .Where(p => p.PromotionDate.Year == targetDate.Year && 
+                    p.PromotionDate.Month == targetDate.Month)
+                .Select(p => p.NewSalary - p.OldSalary)
+                .DefaultIfEmpty(0)
+                .Average();
+            result[monthKey] = avgIncrease;
+        }
+        return result;
+    }
+
+    private async Task<Dictionary<string, int>> GetEmployeesByAgeAndGenderAsync()
+    {
+        var employees = await _unitOfWork.Employees.GetAllAsync();
+        var today = DateTime.Today;
+        var result = new Dictionary<string, int>();
+
+        var grouped = employees
+            .Select(e => new
+            {
+                Gender = e.Gender.ToString(),
+                AgeRange = today.Year - e.DateOfBirth.Year < 30 ? "<30" :
+                           today.Year - e.DateOfBirth.Year < 40 ? "30-40" :
+                           today.Year - e.DateOfBirth.Year < 50 ? "40-50" : "50+"
+            })
+            .GroupBy(x => $"{x.Gender} ({x.AgeRange})")
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        return grouped;
+    }
+
+    private async Task<Dictionary<string, decimal>> GetBenefitCostByDepartmentAsync()
+    {
+        var empBenefits = await _unitOfWork.EmployeeBenefits.GetAllAsync();
+        var employees = await _unitOfWork.Employees.GetAllAsync();
+        var benefits = await _unitOfWork.Benefits.GetAllAsync();
+
+        var result = new Dictionary<string, decimal>();
+
+        var joined = empBenefits
+            .Where(eb => eb.EndDate == null || eb.EndDate >= DateTime.Now)
+            .Join(employees.Where(e => e.Department != null),
+                eb => eb.EmployeeId,
+                e => e.EmployeeId,
+                (eb, e) => new { eb.BenefitId, DeptName = e.Department.Name })
+            .Join(benefits,
+                x => x.BenefitId,
+                b => b.BenefitId,
+                (x, b) => new { x.DeptName, b.Value });
+
+        foreach (var group in joined.GroupBy(x => x.DeptName))
+        {
+            result[group.Key] = group.Sum(x => x.Value);
+        }
+
+        return result;
+    }
+
+    private async Task<Dictionary<string, int>> GetEquipmentPurchaseByYearAsync()
+    {
+        var equipment = await _unitOfWork.Equipments.GetAllAsync();
+        var result = new Dictionary<string, int>();
+
+        var currentYear = DateTime.Now.Year;
+        for (int year = currentYear - 5; year <= currentYear; year++)
+        {
+            var count = equipment.Count(e => e.PurchaseDate.HasValue && 
+                e.PurchaseDate.Value.Year == year);
+            if (count > 0)
+                result[year.ToString()] = count;
+        }
+
+        return result;
+    }
+
+    private async Task<Dictionary<string, decimal>> GetAverageBonusByDepartmentAsync()
+    {
+        var bonuses = await _unitOfWork.Bonuses.GetAllAsync();
+        var employees = await _unitOfWork.Employees.GetAllAsync();
+        var result = new Dictionary<string, decimal>();
+
+        var grouped = bonuses
+            .Join(employees.Where(e => e.Department != null),
+                b => b.EmployeeId,
+                e => e.EmployeeId,
+                (b, e) => new { b.Amount, DeptName = e.Department.Name })
+            .GroupBy(x => x.DeptName);
+
+        foreach (var group in grouped)
+        {
+            result[group.Key] = group.Average(x => x.Amount);
+        }
+
+        return result;
+    }
+
+    private async Task<Dictionary<string, int>> GetEmployeeRetentionByYearAsync()
+    {
+        var employees = await _unitOfWork.Employees.GetAllAsync();
+        var result = new Dictionary<string, int>();
+
+        var currentYear = DateTime.Now.Year;
+        for (int year = currentYear - 5; year <= currentYear; year++)
+        {
+            var hiredBefore = employees.Count(e => e.HireDate.Year < year);
+            var stillActive = employees.Count(e => e.HireDate.Year < year && 
+                (!e.EndDate.HasValue || e.EndDate.Value.Year >= year));
+            
+            result[year.ToString()] = hiredBefore > 0 ? 
+                (int)((double)stillActive / hiredBefore * 100) : 0;
+        }
+
+        return result;
+    }
+
+    private async Task<Dictionary<string, int>> GetInterviewsScheduledVsCompletedAsync()
+    {
+        var interviews = await _unitOfWork.Interviews.GetAllAsync();
+        
+        return new Dictionary<string, int>
+        {
+            ["Programmés"] = interviews.Count(i => i.Result == InterviewResult.EnAttente && 
+                i.InterviewDate > DateTime.Now),
+            ["Complétés"] = interviews.Count(i => i.Result != InterviewResult.EnAttente),
+            ["Expirés"] = interviews.Count(i => i.Result == InterviewResult.EnAttente && 
+                i.InterviewDate <= DateTime.Now)
+        };
+    }
+
+    private async Task<Dictionary<string, decimal>> GetSalaryGrowthByDepartmentAsync()
+    {
+        var promotions = await _unitOfWork.Promotions.GetAllAsync();
+        var employees = await _unitOfWork.Employees.GetAllAsync();
+        var result = new Dictionary<string, decimal>();
+
+        var lastYear = DateTime.Now.AddYears(-1);
+        
+        var grouped = promotions
+            .Where(p => p.PromotionDate >= lastYear)
+            .Join(employees.Where(e => e.Department != null),
+                p => p.EmployeeId,
+                e => e.EmployeeId,
+                (p, e) => new { 
+                    DeptName = e.Department.Name, 
+                    Increase = p.NewSalary - p.OldSalary 
+                })
+            .GroupBy(x => x.DeptName);
+
+        foreach (var group in grouped)
+        {
+            result[group.Key] = group.Sum(x => x.Increase);
+        }
+
+        return result;
+    }
+
+    private async Task<Dictionary<string, int>> GetBenefitsByTypeAsync()
+    {
+        var benefits = await _unitOfWork.Benefits.GetAllAsync();
+        return benefits
+            .Where(b => !string.IsNullOrEmpty(b.BenefitType))
+            .GroupBy(b => b.BenefitType)
+            .ToDictionary(g => g.Key, g => g.Count());
     }
 }

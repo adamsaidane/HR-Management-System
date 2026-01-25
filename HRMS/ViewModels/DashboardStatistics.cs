@@ -16,7 +16,16 @@ public class DashboardStatistics
     public int AvailableEquipment { get; set; }
     public Dictionary<string, int> EmployeesByDepartment { get; set; }
     public Dictionary<string, int> EmployeesByStatus { get; set; }
-    public Dictionary<string, int> EquipmentByType { get; set; }
     public List<SalaryEvolution> SalaryEvolutionData { get; set; }
     public List<RecentPromotion> RecentPromotions { get; set; }
+    public Dictionary<string, int> EmployeesByGender { get; set; }
+    public Dictionary<string, int> EmployeesByAgeRange { get; set; }
+    public Dictionary<string, int> EmployeesByContractType { get; set; }
+    public Dictionary<string, int> EmployeesBySeniority { get; set; }
+
+    public Dictionary<string, int> CandidatesByStage { get; set; }
+    public Dictionary<string, int> JobOffersByDepartment { get; set; }
+
+    public Dictionary<string, decimal> SalaryByDepartment { get; set; }
+    public Dictionary<string, int> EquipmentByStatus { get; set; }
 }

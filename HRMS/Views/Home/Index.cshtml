@@ -1,16 +1,17 @@
 ﻿@model HRMS.ViewModels.DashboardViewModel
+@using System.Text.Json
 @{
     ViewData["Title"] = "Dashboard";
 }
 
-<div class="page-header d-flex justify-content-between align-items-center">
+<div class="page-header d-flex justify-content-between align-items-center mb-4">
     <h1><i class="fas fa-tachometer-alt me-2"></i>Tableau de Bord</h1>
     <div class="text-muted">
-        <i class="far fa-calendar-alt me-2"></i>@DateTime.Now.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("fr-FR"))
+        <i class="far fa-calendar-alt me-2"></i>
+        @DateTime.Now.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("fr-FR"))
     </div>
 </div>
 
-<!-- Statistiques Principales -->
 <div class="row">
     <div class="col-lg-3 col-md-6 mb-4">
         <div class="stat-card">
@@ -46,163 +47,165 @@
     </div>
 </div>
 
-<!-- Graphiques -->
-<div class="row">
-    <div class="col-lg-6 mb-4">
-        <div class="card shadow-sm">
-            <div class="card-header bg-white">
-                <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Employés par Département</h5>
+<style>
+    .card { border: none; border-radius: 12px; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); margin-bottom: 1.5rem; transition: all 0.3s; }
+    .card:hover { box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1); }
+    .card-header { background-color: transparent; border-bottom: 1px solid rgba(0,0,0,0.05); font-weight: 700; color: #334155; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; }
+    .chart-container { position: relative; height: 280px; width: 100%; }
+    h4.section-title { color: #1e293b; font-weight: 800; margin: 2rem 0 1.5rem 0; padding-bottom: 0.5rem; border-bottom: 2px solid #e2e8f0; }
+</style>
+
+<div class="container-fluid py-4 bg-light">
+
+    <h4 class="section-title"><i class="fas fa-users me-2"></i>Analytique Employés</h4>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">Employés par Département</div>
+                <div class="card-body"><div class="chart-container"><canvas id="deptChart"></canvas></div></div>
             </div>
-            <div class="card-body">
-                <canvas id="departmentChart"></canvas>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">Statut Professionnel</div>
+                <div class="card-body"><div class="chart-container"><canvas id="statusChart"></canvas></div></div>
             </div>
         </div>
     </div>
 
-    <div class="col-lg-6 mb-4">
-        <div class="card shadow-sm">
-            <div class="card-header bg-white">
-                <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Répartition par Statut</h5>
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">Répartition par Genre</div>
+                <div class="card-body"><div class="chart-container"><canvas id="genderChart"></canvas></div></div>
             </div>
-            <div class="card-body">
-                <canvas id="statusChart"></canvas>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">Tranches d'Âge</div>
+                <div class="card-body"><div class="chart-container"><canvas id="ageChart"></canvas></div></div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">Types de Contrat</div>
+                <div class="card-body"><div class="chart-container"><canvas id="contractChart"></canvas></div></div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Évolution Salariale -->
-<div class="row">
-    <div class="col-12 mb-4">
-        <div class="card shadow-sm">
-            <div class="card-header bg-white">
-                <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Évolution de la Masse Salariale</h5>
-            </div>
-            <div class="card-body">
-                <canvas id="salaryChart"></canvas>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">Ancienneté (Années)</div>
+                <div class="card-body"><div class="chart-container"><canvas id="seniorityChart"></canvas></div></div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Promotions Récentes -->
-<div class="row">
-    <div class="col-12">
-        <div class="card shadow-sm">
-            <div class="card-header bg-white">
-                <h5 class="mb-0"><i class="fas fa-trophy me-2"></i>Promotions Récentes</h5>
+    <h4 class="section-title"><i class="fas fa-chart-line me-2"></i>Recrutement & Finance</h4>
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="card">
+                <div class="card-header">Évolution de la Masse Salariale</div>
+                <div class="card-body"><div class="chart-container"><canvas id="salaryEvolutionChart"></canvas></div></div>
             </div>
-            <div class="card-body">
-                @if (Model.RecentPromotions != null && Model.RecentPromotions.Any())
-                {
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Employé</th>
-                                    <th>Ancien Poste</th>
-                                    <th>Nouveau Poste</th>
-                                    <th>Date</th>
-                                    <th>Augmentation</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var promo in Model.RecentPromotions)
-                                {
-                                    <tr>
-                                        <td><strong>@promo.EmployeeName</strong></td>
-                                        <td>@promo.OldPosition</td>
-                                        <td><span class="badge bg-success">@promo.NewPosition</span></td>
-                                        <td>@promo.PromotionDate.ToString("dd/MM/yyyy")</td>
-                                        <td class="text-success fw-bold">+@promo.SalaryIncrease.ToString("N0") DT</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                }
-                else
-                {
-                    <p class="text-muted mb-0">Aucune promotion récente</p>
-                }
+        </div>
+        <div class="col-lg-5">
+            <div class="card">
+                <div class="card-header">Salaires par Département (Moyenne)</div>
+                <div class="card-body"><div class="chart-container"><canvas id="salaryDeptChart"></canvas></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">Pipeline Candidats</div>
+                <div class="card-body"><div class="chart-container"><canvas id="candidatesStageChart"></canvas></div></div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">Offres par Département</div>
+                <div class="card-body"><div class="chart-container"><canvas id="jobOfferDeptChart"></canvas></div></div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">Types d'Équipement</div>
+                <div class="card-body"><div class="chart-container"><canvas id="equipmentTypeChart"></canvas></div></div>
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
-    // Graphique Départements
-    const deptCtx = document.getElementById('departmentChart').getContext('2d');
-    new Chart(deptCtx, {
-        type: 'bar',
-        data: {
-            labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.EmployeesByDepartment.Keys)),
-            datasets: [{
-                label: 'Nombre d\'employés',
-                data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.EmployeesByDepartment.Values)),
-                backgroundColor: 'rgba(52, 152, 219, 0.7)',
-                borderColor: 'rgba(52, 152, 219, 1)',
-                borderWidth: 2,
-                borderRadius: 5
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
+document.addEventListener("DOMContentLoaded", function () {
+    
+    const palette = ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#6f42c1', '#5a5c69'];
+
+    const setupChart = (id, type, labels, values, label = '', horizontal = false) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        new Chart(el, {
+            type: type,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: label,
+                    data: values,
+                    backgroundColor: type === 'pie' || type === 'doughnut' ? palette : palette[0],
+                    borderColor: type === 'line' ? palette[0] : '#ffffff',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.3,
+                    pointRadius: 4
+                }]
             },
-            scales: {
-                y: { beginAtZero: true }
+            options: {
+                indexAxis: horizontal ? 'y' : 'x',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: (type === 'pie' || type === 'doughnut'), position: 'bottom' }
+                },
+                scales: (type === 'pie' || type === 'doughnut') ? {} : {
+                    y: { beginAtZero: true, grid: { color: '#f8f9fa' } },
+                    x: { grid: { display: false } }
+                }
             }
-        }
-    });
+        });
+    };
 
-    // Graphique Statuts
-    const statusCtx = document.getElementById('statusChart').getContext('2d');
-    new Chart(statusCtx, {
-        type: 'doughnut',
-        data: {
-            labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.EmployeesByStatus.Keys)),
-            datasets: [{
-                data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.EmployeesByStatus.Values)),
-                backgroundColor: [
-                    'rgba(46, 204, 113, 0.8)',
-                    'rgba(241, 196, 15, 0.8)',
-                    'rgba(231, 76, 60, 0.8)'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
 
-    // Graphique Évolution Salariale
-    const salaryCtx = document.getElementById('salaryChart').getContext('2d');
-    new Chart(salaryCtx, {
-        type: 'line',
-        data: {
-            labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SalaryEvolution.Select(s => s.Month))),
-            datasets: [{
-                label: 'Masse Salariale Mensuelle (DT)',
-                data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SalaryEvolution.Select(s => s.TotalSalary))),
-                backgroundColor: 'rgba(155, 89, 182, 0.2)',
-                borderColor: 'rgba(155, 89, 182, 1)',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: { beginAtZero: true }
-            }
-        }
-    });
+    setupChart('deptChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByDepartment.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByDepartment.Values)), 'Nombre');
+    
+    setupChart('statusChart', 'doughnut', @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByStatus.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByStatus.Values)));
+    
+    setupChart('genderChart', 'pie', @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByGender.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByGender.Values)));
+    
+    setupChart('ageChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByAgeRange.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByAgeRange.Values)), 'Âge');
+    
+    setupChart('contractChart', 'doughnut', @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByContractType.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.EmployeesByContractType.Values)));
+    
+    setupChart('seniorityChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.EmployeesBySeniority.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.EmployeesBySeniority.Values)), 'Années');
+
+    setupChart('candidatesStageChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.CandidatesByStage.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.CandidatesByStage.Values)), 'Candidats');
+
+    setupChart('jobOfferDeptChart', 'pie', @Html.Raw(JsonSerializer.Serialize(Model.JobOffersByDepartment.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.JobOffersByDepartment.Values)));
+
+    setupChart('salaryDeptChart', 'bar', @Html.Raw(JsonSerializer.Serialize(Model.SalaryByDepartment.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.SalaryByDepartment.Values)), 'Salaire (DT)', true);
+
+    setupChart('salaryEvolutionChart', 'line', @Html.Raw(JsonSerializer.Serialize(Model.SalaryEvolution.Select(x => x.Month))), @Html.Raw(JsonSerializer.Serialize(Model.SalaryEvolution.Select(x => x.TotalSalary))), 'Masse Salariale (DT)');
+
+    setupChart('equipmentTypeChart', 'pie', @Html.Raw(JsonSerializer.Serialize(Model.EquipmentByStatus.Keys)), @Html.Raw(JsonSerializer.Serialize(Model.EquipmentByStatus.Values)));
+
+});
 </script>
 }

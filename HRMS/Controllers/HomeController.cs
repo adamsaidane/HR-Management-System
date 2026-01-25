@@ -34,7 +34,15 @@ public class HomeController : Controller
             EmployeesByStatus = stats.EmployeesByStatus,
             SalaryEvolution = stats.SalaryEvolutionData,
             RecentPromotions = stats.RecentPromotions,
-            TotalEquipment = stats.TotalEquipment
+            TotalEquipment = stats.TotalEquipment,
+            EmployeesByAgeRange = stats.EmployeesByAgeRange,
+            EmployeesByContractType = stats.EmployeesByContractType,
+            EmployeesBySeniority = stats.EmployeesBySeniority,
+            EmployeesByGender = stats.EmployeesByGender,
+            CandidatesByStage = stats.CandidatesByStage,
+            JobOffersByDepartment = stats.JobOffersByDepartment,
+            SalaryByDepartment = stats.SalaryByDepartment,
+            EquipmentByStatus = stats.EquipmentByStatus,
         };
 
         return View(viewModel);

@@ -53,21 +53,23 @@ public class DashboardService : IDashboardService
 
         // Répartitions
         stats.EmployeesByDepartment = await GetEmployeesByDepartmentAsync();
+        stats.EmployeesByStatus = await GetEmployeesByStatusAsync();
+        stats.EmployeesByGender = await GetEmployeesByGenderAsync();
+        stats.EmployeesByAgeRange = await GetEmployeesByAgeRangeAsync();
+        stats.EmployeesByContractType = await GetEmployeesByContractTypeAsync();
+        stats.EmployeesBySeniority = await GetEmployeesBySeniorityAsync();
+
+        stats.CandidatesByStage = await GetCandidatesByStageAsync();
+        stats.JobOffersByDepartment = await GetJobOffersByDepartmentAsync();
+
+        stats.SalaryByDepartment = await GetSalaryByDepartmentAsync();
+
+        stats.EquipmentByStatus = await GetEquipmentByStatusAsync();
         
-        var employeesByStatus = await _unitOfWork.Employees.GetAllAsync();
-        stats.EmployeesByStatus = employeesByStatus
-            .GroupBy(e => e.Status.ToString())
-            .ToDictionary(g => g.Key, g => g.Count());
-
-        var allEquipment = await _unitOfWork.Equipments.GetAllAsync();
-        stats.EquipmentByType = allEquipment
-            .GroupBy(e => e.EquipmentType)
-            .ToDictionary(g => g.Key, g => g.Count());
-
         // Évolutions
         stats.SalaryEvolutionData = await GetSalaryEvolutionLastYearAsync();
         stats.RecentPromotions = await GetRecentPromotionsAsync(5);
-
+        
         return stats;
     }
 
@@ -166,4 +168,100 @@ public class DashboardService : IDashboardService
 
         return result;
     }
+    private async Task<Dictionary<string, int>> GetEmployeesByStatusAsync()
+    {
+        var employees = await _unitOfWork.Employees.GetAllAsync();
+
+        return employees
+            .GroupBy(e => e.Status.ToString())
+            .ToDictionary(g => g.Key, g => g.Count());
+    }
+    private async Task<Dictionary<string, int>> GetEmployeesByGenderAsync()
+    {
+        var employees = await _unitOfWork.Employees.GetAllAsync();
+
+        return employees
+            .GroupBy(e => e.Gender.ToString())
+            .ToDictionary(g => g.Key, g => g.Count());
+    }
+    private async Task<Dictionary<string, int>> GetEmployeesByAgeRangeAsync()
+    {
+        var employees = await _unitOfWork.Employees.GetAllAsync();
+        var today = DateTime.Today;
+
+        return employees
+            .Select(e => today.Year - e.DateOfBirth.Year)
+            .GroupBy(age =>
+                age < 25 ? "< 25" :
+                age <= 35 ? "25-35" :
+                age <= 45 ? "36-45" :
+                "45+")
+            .ToDictionary(g => g.Key, g => g.Count());
+    }
+    private async Task<Dictionary<string, int>> GetEmployeesByContractTypeAsync()
+    {
+        var employees = await _unitOfWork.Employees.GetAllAsync();
+
+        return employees
+            .GroupBy(e => e.ContractType.ToString())
+            .ToDictionary(g => g.Key, g => g.Count());
+    }
+    private async Task<Dictionary<string, int>> GetEmployeesBySeniorityAsync()
+    {
+        var employees = await _unitOfWork.Employees.GetAllAsync();
+        var today = DateTime.Today;
+
+        return employees
+            .Select(e => today.Year - e.HireDate.Year)
+            .GroupBy(y =>
+                y < 1 ? "< 1 an" :
+                y <= 3 ? "1-3 ans" :
+                y <= 5 ? "3-5 ans" :
+                "5+ ans")
+            .ToDictionary(g => g.Key, g => g.Count());
+    }
+    private async Task<Dictionary<string, int>> GetCandidatesByStageAsync()
+    {
+        var candidates = await _unitOfWork.Candidates.GetAllAsync();
+
+        return candidates
+            .GroupBy(c => c.Status.ToString())
+            .ToDictionary(g => g.Key, g => g.Count());
+    }
+    private async Task<Dictionary<string, int>> GetJobOffersByDepartmentAsync()
+    {
+        var offers = await _unitOfWork.JobOffers.GetAllAsync();
+
+        return offers
+            .GroupBy(o => o.Department.Name)
+            .ToDictionary(g => g.Key, g => g.Count());
+    }
+    private async Task<Dictionary<string, decimal>> GetSalaryByDepartmentAsync()
+    {
+        var employees = await _unitOfWork.Employees.GetAllAsync();
+        var result = new Dictionary<string, decimal>();
+
+        foreach (var dept in employees.GroupBy(e => e.Department.Name))
+        {
+            decimal total = 0;
+            foreach (var emp in dept)
+            {
+                var salary = await _unitOfWork.Salaries.GetCurrentSalaryAsync(emp.EmployeeId);
+                if (salary != null)
+                    total += salary.BaseSalary;
+            }
+            result.Add(dept.Key, total);
+        }
+
+        return result;
+    }
+    private async Task<Dictionary<string, int>> GetEquipmentByStatusAsync()
+    {
+        var eq = await _unitOfWork.Equipments.GetAllAsync();
+
+        return eq
+            .GroupBy(e => e.Status)
+            .ToDictionary(g => g.Key.ToString(), g => g.Count());
+    }
+
 }

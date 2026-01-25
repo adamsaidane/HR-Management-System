@@ -583,10 +583,10 @@ INSERT INTO JobOffers (JobOfferId, Title, Description, ContractType, DepartmentI
 VALUES
     -- Offres ouvertes
     (1, 'Développeur Full Stack Senior', 'Recherche développeur expérimenté .NET/React pour projets innovants',0 , 1, 2, '2025-11-01', '2025-01-31', 0, GETDATE(), GETDATE()),
-    (2, 'DevOps Engineer', 'Expert infrastructure cloud et CI/CD pour modernisation',0 , 1, 5, '2025-11-15', '2025-02-15', 0, GETDATE(), GETDATE()),
-    (3, 'Chargé de Recrutement', 'Profil dynamique pour renforcer l''équipe RH',0 , 2, 7, '2025-12-01', '2025-02-28', 0, GETDATE(), GETDATE()),
+    (2, 'DevOps Engineer', 'Expert infrastructure cloud et CI/CD pour modernisation',0 , 1, 5, '2025-11-15', '2025-02-15', 1, GETDATE(), GETDATE()),
+    (3, 'Chargé de Recrutement', 'Profil dynamique pour renforcer l''équipe RH',0 , 2, 7, '2025-12-01', '2025-02-28', 1, GETDATE(), GETDATE()),
     (4, 'Contrôleur de Gestion Junior', 'Jeune diplômé finance pour analyse et reporting',0 , 3, 11, '2025-11-20', '2025-01-20', 0, GETDATE(), GETDATE()),
-    (5, 'Digital Marketing Specialist', 'Expert SEO/SEM pour stratégie digitale',0 , 4, 13, '2025-12-05', '2025-02-05', 0, GETDATE(), GETDATE()),
+    (5, 'Digital Marketing Specialist', 'Expert SEO/SEM pour stratégie digitale',0 , 4, 13, '2025-12-05', '2025-02-05', 1, GETDATE(), GETDATE()),
     (6, 'Commercial BtoB', 'Expérience vente solutions IT entreprises', 0 ,5, 14, '2025-11-10', '2025-01-10', 0, GETDATE(), GETDATE()),
     -- Offres fermées (recrutements terminés)
     (7, 'Développeur Junior .NET', 'Poste pourvu - Youssef Khelifi recruté',1, 1, 1, '2021-11-01', '2021-12-31', 1, GETDATE(), GETDATE()),
@@ -602,20 +602,20 @@ SET IDENTITY_INSERT Candidates ON;
 INSERT INTO Candidates (CandidateId, FirstName, LastName, Gender, DateOfBirth, Email, Phone, Address, CVPath, JobOfferId, Status, ApplicationDate)
 VALUES
     -- Candidats pour Développeur Full Stack (offre 1)
-    (1, 'Amine', 'Fourati', 1,'1996-03-12', 'amine.fourati@email.com', '98765432', '15 Rue de la Paix, Tunis', '/cvs/amine_fourati.pdf', 1, 0, '2025-11-05'),
-    (2, 'Yasmine', 'Ayari', 2,'1997-07-25', 'yasmine.ayari@email.com', '97654321', '28 Avenue Habib Bourguiba, La Marsa', '/cvs/yasmine_ayari.pdf', 1, 1, '2025-11-08'),
-    (3, 'Khalil', 'Mbarek', 1,'1995-01-18', 'khalil.mbarek@email.com', '96543210', '42 Rue Ibn Khaldoun, Sousse', '/cvs/khalil_mbarek.pdf', 1, 2, '2025-11-12'),
-    (4, 'Nour', 'Sakli',2, '1998-09-03', 'nour.sakli@email.com', '95432109', '17 Avenue de France, Tunis', '/cvs/nour_sakli.pdf', 1, 3, '2025-11-15'),
-
+    (1, 'Amine', 'Fourati', 1,'1996-03-12', 'amine.fourati@email.com', '98765432', '15 Rue de la Paix, Tunis', '/cvs/amine_fourati.pdf', 1, 1, '2025-11-05'),
+    (2, 'Yasmine', 'Ayari', 2,'1997-07-25', 'yasmine.ayari@email.com', '97654321', '28 Avenue Habib Bourguiba, La Marsa', '/cvs/yasmine_ayari.pdf', 1, 2, '2025-11-08'),
+    (3, 'Khalil', 'Mbarek', 1,'1995-01-18', 'khalil.mbarek@email.com', '96543210', '42 Rue Ibn Khaldoun, Sousse', '/cvs/khalil_mbarek.pdf', 1, 1, '2025-11-12'),
+    (4, 'Nour', 'Sakli',2, '1998-09-03', 'nour.sakli@email.com', '95432109', '17 Avenue de France, Tunis', '/cvs/nour_sakli.pdf', 1, 2, '2025-11-15'),
+   
     -- Candidats pour DevOps (offre 2)
-    (5, 'Faker', 'Jedidi', 1,'1994-11-20', 'faker.jedidi@email.com', '94321098', '33 Rue de Marseille, Sfax', '/cvs/faker_jedidi.pdf', 2, 0, '2025-11-18'),
-    (6, 'Sabrine', 'Chouchane', 2,'1996-05-14', 'sabrine.chouchane@email.com', '93210987', '56 Avenue Mohamed V, Tunis', '/cvs/sabrine_chouchane.pdf', 2, 1, '2025-11-20'),
-    (7, 'Rami', 'Ouerhani', 1,'1993-08-09', 'rami.ouerhani@email.com', '92109876', '21 Rue de Rome, Bizerte', '/cvs/rami_ouerhani.pdf', 2, 0, '2025-11-22'),
-
+    (5, 'Faker', 'Jedidi', 1,'1994-11-20', 'faker.jedidi@email.com', '94321098', '33 Rue de Marseille, Sfax', '/cvs/faker_jedidi.pdf', 2, 1, '2025-11-18'),
+    (6, 'Sabrine', 'Chouchane', 2,'1996-05-14', 'sabrine.chouchane@email.com', '93210987', '56 Avenue Mohamed V, Tunis', '/cvs/sabrine_chouchane.pdf', 2, 2, '2025-11-20'),
+    (7, 'Rami', 'Ouerhani', 1,'1993-08-09', 'rami.ouerhani@email.com', '92109876', '21 Rue de Rome, Bizerte', '/cvs/rami_ouerhani.pdf', 2, 1, '2025-11-22'),
+    
     -- Candidats pour Chargé RH (offre 3)
-    (8, 'Amina', 'Ltaief', 2,'1997-02-27', 'amina.ltaief@email.com', '91098765', '44 Avenue de Carthage, Tunis', '/cvs/amina_ltaief.pdf', 3, 0, '2025-12-02'),
-    (9, 'Seif', 'Jlassi', 1,'1995-06-30', 'seif.jlassi@email.com', '90987654', '19 Rue Charles de Gaulle, Monastir', '/cvs/seif_jlassi.pdf', 3, 1, '2025-12-04'),
-    (10, 'Emna', 'Mahjoub', 2,'1998-10-11', 'emna.mahjoub@email.com', '89876543', '37 Avenue Habib Thameur, Tunis', '/cvs/emna_mahjoub.pdf', 3, 0, '2025-12-06'),
+    (8, 'Amina', 'Ltaief', 2,'1997-02-27', 'amina.ltaief@email.com', '91098765', '44 Avenue de Carthage, Tunis', '/cvs/amina_ltaief.pdf', 3, 1, '2025-12-02'),
+    (9, 'Seif', 'Jlassi', 1,'1995-06-30', 'seif.jlassi@email.com', '90987654', '19 Rue Charles de Gaulle, Monastir', '/cvs/seif_jlassi.pdf', 3, 2, '2025-12-04'),
+    (10, 'Emna', 'Mahjoub', 2,'1998-10-11', 'emna.mahjoub@email.com', '89876543', '37 Avenue Habib Thameur, Tunis', '/cvs/emna_mahjoub.pdf', 3, 1, '2025-12-06'),
 
     -- Candidats pour Contrôleur Gestion (offre 4)
     (11, 'Aymen', 'Agrebi', 1,'1992-12-05', 'aymen.agrebi@email.com', '88765432', '52 Rue de la République, Tunis', '/cvs/aymen_agrebi.pdf', 4, 0, '2025-11-25'),
@@ -623,52 +623,50 @@ VALUES
     (13, 'Walid', 'Driss', 1,'1991-09-22', 'walid.driss@email.com', '86543210', '29 Rue Ibn Sina, Tunis', '/cvs/walid_driss.pdf', 4, 0, '2025-11-30'),
 
     -- Candidats pour Marketing Digital (offre 5)
-    (14, 'Safa', 'Barhoumi', 2,'1999-01-08', 'safa.barhoumi@email.com', '85432109', '63 Avenue de Paris, La Marsa', '/cvs/safa_barhoumi.pdf', 5, 0, '2025-12-07'),
-    (15, 'Tarek', 'Chaari', 1,'1993-03-19', 'tarek.chaari@email.com', '84321098', '18 Rue de la Kasbah, Tunis', '/cvs/tarek_chaari.pdf', 5, 1, '2025-12-09'),
-    (16, 'Dorra', 'Mhenni', 2,'1997-07-02', 'dorra.mhenni@email.com', '83210987', '41 Avenue Bourguiba, Sfax', '/cvs/dorra_mhenni.pdf', 5, 0, '2025-12-11'),
+    (14, 'Safa', 'Barhoumi', 2,'1999-01-08', 'safa.barhoumi@email.com', '85432109', '63 Avenue de Paris, La Marsa', '/cvs/safa_barhoumi.pdf', 5, 3, '2025-12-07'),
+    (15, 'Tarek', 'Chaari', 1,'1993-03-19', 'tarek.chaari@email.com', '84321098', '18 Rue de la Kasbah, Tunis', '/cvs/tarek_chaari.pdf', 5, 2, '2025-12-09'),
+    (16, 'Dorra', 'Mhenni', 2,'1997-07-02', 'dorra.mhenni@email.com', '83210987', '41 Avenue Bourguiba, Sfax', '/cvs/dorra_mhenni.pdf', 5, 1, '2025-12-11'),
 
     -- Candidats pour Commercial BtoB (offre 6)
-    (17, 'Montassar', 'Hachicha', 1,'1990-05-26', 'montassar.hachicha@email.com', '82109876', '25 Rue Charles Nicolle, Tunis', '/cvs/montassar_hachicha.pdf', 6, 0, '2025-11-13'),
+    (17, 'Montassar', 'Hachicha', 1,'1990-05-26', 'montassar.hachicha@email.com', '82109876', '25 Rue Charles Nicolle, Tunis', '/cvs/montassar_hachicha.pdf', 6, 1, '2025-11-13'),
     (18, 'Hanene', 'Cheikhrouhou', 2,'1994-08-17', 'hanene.cheikhrouhou@email.com', '81098765', '58 Avenue Mohamed V, Bizerte', '/cvs/hanene_cheikhrouhou.pdf', 6, 2, '2025-11-16'),
-    (19, 'Kamel', 'Belkhiria', 1,'1989-11-01', 'kamel.belkhiria@email.com', '80987654', '32 Rue de Marseille, Tunis', '/cvs/kamel_belkhiria.pdf', 6, 1, '2025-11-19'),
-    (20, 'Wided', 'Omrane', 2,'1996-06-13', 'wided.omrane@email.com', '79876543', '47 Avenue de France, Monastir', '/cvs/wided_omrane.pdf', 6, 0, '2025-11-21'),
+    (19, 'Kamel', 'Belkhiria', 1,'1989-11-01', 'kamel.belkhiria@email.com', '80987654', '32 Rue de Marseille, Tunis', '/cvs/kamel_belkhiria.pdf', 6, 2, '2025-11-19'),
+    (20, 'Wided', 'Omrane', 2,'1996-06-13', 'wided.omrane@email.com', '79876543', '47 Avenue de France, Monastir', '/cvs/wided_omrane.pdf', 6, 1, '2025-11-21'),
 
     -- Anciens candidats
     (21, 'Youssef', 'Khelifi', 1,'1988-02-10', 'youssef.khelifi@email.com', '78765432', '56 Rue de Marseille, Sfax', '/cvs/youssef_khelifi_old.pdf', 7, 3, '2021-11-10'),
-    (22, 'Marwa', 'Rekik', 2,'1990-09-28', 'marwa.rekik@email.com', '77654321', '34 Rue Ibn Sina, Tunis', '/cvs/marwa_rekik_old.pdf', 8, 4, '2024-04-15'),
+    (22, 'Marwa', 'Rekik', 2,'1990-09-28', 'marwa.rekik@email.com', '77654321', '34 Rue Ibn Sina, Tunis', '/cvs/marwa_rekik_old.pdf', 8, 3, '2024-04-15'),
     (23, 'Imen', 'Mathlouthi', 2,'1992-12-14', 'imen.mathlouthi@email.com', '76543210', '23 Avenue de Carthage, Sousse', '/cvs/imen_mathlouthi_old.pdf', 11, 3, '2022-10-20'),
     (24, 'Nabil', 'Ghariani', 1,'1987-07-07', 'nabil.ghariani@email.com', '75432109', '34 Rue de Rome, Tunis', '/cvs/nabil_ghariani_old.pdf', 12, 3, '2024-06-18'),
 
     -- Candidat refusé
-    (25, 'Sofiene', 'Marzouki', 1,'1995-04-04', 'sofiene.marzouki@email.com', '74321098', '62 Avenue Bourguiba, Tunis', '/cvs/sofiene_marzouki.pdf', 1, 3, '2025-11-10');
-SET IDENTITY_INSERT Candidates OFF;
+    (25, 'Sofiene', 'Marzouki', 1,'1995-04-04', 'sofiene.marzouki@email.com', '74321098', '62 Avenue Bourguiba, Tunis', '/cvs/sofiene_marzouki.pdf', 1, 3, '2025-11-10');SET IDENTITY_INSERT Candidates OFF;
 
 -- Interviews
 SET IDENTITY_INSERT Interviews ON;
 INSERT INTO Interviews (InterviewId, CandidateId, InterviewDate, Location, InterviewerName, Notes, Result, CreatedDate)
 VALUES
     -- Entretiens terminés avec résultats
-    (1, 2, '2025-11-15', 'Salle 201', 'Mohamed Ben Ali', 'Très bon profil technique, excellente communication', 2, GETDATE()),
-    (2, 3, '2025-11-18', 'Salle 201', 'Mohamed Ben Ali', 'Compétences techniques solides, manque expérience cloud', 3, GETDATE()),
-    (3, 4, '2025-11-20', 'Salle 201', 'Amira Trabelsi', 'Expert architecture, profil senior confirmé', 2, GETDATE()),
-    (4, 6, '2025-11-25', 'Salle 103', 'Mohamed Ben Ali', 'Excellente maîtrise DevOps, certifications AWS', 2, GETDATE()),
-    (5, 9, '2025-12-08', 'Salle 205', 'Salma Abidi', 'Profil dynamique, bonne connaissance recrutement', 2, GETDATE()),
-    (6, 12, '2025-12-02', 'Salle 303', 'Tarek Chaabane', 'Bon niveau technique, accepté en stage', 2, GETDATE()),
-    (7, 15, '2025-12-12', 'Salle 404', 'Nizar Hamza', 'Expert SEO/SEM, portefeuille impressionnant', 2, GETDATE()),
-    (8, 18, '2025-11-22', 'Salle 505', 'Zied Tlili', 'Excellente expérience BtoB, accepté', 2, GETDATE()),
-    (9, 19, '2025-11-24', 'Salle 505', 'Zied Tlili', 'Bon profil commercial, entretien positif', 2, GETDATE()),
-    (10, 25, '2025-11-17', 'Salle 201', 'Mohamed Ben Ali', 'Compétences insuffisantes pour le poste', 1, GETDATE()),
+    (1, 2, '2025-11-15', 'Salle 201', 'Mohamed Ben Ali', 'Très bon profil technique', 1, GETDATE()),
+    (2, 3, '2025-11-18', 'Salle 201', 'Mohamed Ben Ali', 'Solide, mais manque cloud (Besoin 2nd avis)', 3, GETDATE()),
+    (3, 4, '2025-11-20', 'Salle 201', 'Amira Trabelsi', 'Expert architecture, confirmé', 1, GETDATE()),
+    (4, 6, '2025-11-25', 'Salle 103', 'Mohamed Ben Ali', 'Excellente maîtrise DevOps', 1, GETDATE()),
+    (5, 9, '2025-12-08', 'Salle 205', 'Salma Abidi', 'Profil dynamique', 1, GETDATE()),
+    (6, 12, '2025-12-02', 'Salle 303', 'Tarek Chaabane', 'Bon niveau technique', 1, GETDATE()),
+    (7, 15, '2025-12-12', 'Salle 404', 'Nizar Hamza', 'Expert SEO/SEM', 1, GETDATE()),
+    (8, 18, '2025-11-22', 'Salle 505', 'Zied Tlili', 'Excellente expérience BtoB', 1, GETDATE()),
+    (9, 19, '2025-11-24', 'Salle 505', 'Zied Tlili', 'Entretien positif', 1, GETDATE()),
+    (10, 25, '2025-11-17', 'Salle 201', 'Mohamed Ben Ali', 'Compétences insuffisantes', 2, GETDATE()),
     -- Entretiens programmés (en attente)
     (11, 1, '2025-01-10', 'Salle 201', 'Mohamed Ben Ali', 'Premier entretien technique', 0, GETDATE()),
     (12, 5, '2025-01-12', 'Salle 103', 'Lina Bouaziz', 'Entretien technique DevOps', 0, GETDATE()),
     (13, 7, '2025-01-15', 'Salle 103', 'Mohamed Ben Ali', 'Second entretien DevOps', 0, GETDATE()),
     (14, 8, '2025-01-18', 'Salle 205', 'Salma Abidi', 'Entretien RH initial', 0, GETDATE()),
     (15, 10, '2025-01-20', 'Salle 205', 'Hichem Najar', 'Second entretien RH', 0, GETDATE()),
-    (16, 11, '2025-01-14', 'Salle 303', 'Tarek Chaabane', 'Entretien contrôleur gestion', 0, GETDATE()),
-    (17, 13, '2025-01-16', 'Salle 303', 'Samia Boussetta', 'Second entretien finance', 0, GETDATE()),
-    (18, 14, '2025-01-22', 'Salle 404', 'Nizar Hamza', 'Entretien marketing digital', 0, GETDATE()),
-    (19, 16, '2025-01-24', 'Salle 404', 'Asma Chahed', 'Test pratique marketing', 0, GETDATE()),
-    (20, 20, '2025-01-17', 'Salle 505', 'Zied Tlili', 'Entretien commercial BtoB', 0, GETDATE());
+    (18, 14, '2025-01-22', 'Salle 404', 'Nizar Hamza', 'Entretien marketing digital', 2, GETDATE()),
+    (19, 16, '2025-01-24', 'Salle 404', 'Asma Chahed', 'Test pratique marketing', 3, GETDATE()),
+    (20, 16, '2025-01-31', 'Salle 104', 'Zied Tlili', 'Test RH', 0, GETDATE()),
+    (21, 20, '2025-01-17', 'Salle 505', 'Zied Tlili', 'Entretien commercial BtoB', 0, GETDATE());
 SET IDENTITY_INSERT Interviews OFF;
 
 -- Promotions

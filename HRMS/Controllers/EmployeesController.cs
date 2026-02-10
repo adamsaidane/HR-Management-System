@@ -1,4 +1,5 @@
 ﻿using HRMS.Enums;
+using HRMS.Extensions;
 using HRMS.Models;
 using HRMS.Service;
 using HRMS.ViewModels;
@@ -20,6 +21,7 @@ public class EmployeesController : Controller
     }
 
     // GET: Employees
+    [Authorize(Roles = "AdminRH")]
     public async Task<IActionResult> Index(
         string searchString,
         int? departmentId,
@@ -62,6 +64,10 @@ public class EmployeesController : Controller
     // GET: Employees/Details/5
     public async Task<IActionResult> Details(int id)
     {
+        if (!User.IsAdmin() && User.GetEmployeeId() != id)
+        {
+            return Forbid();
+        }
         try
         {
             var viewModel = await _employeeService.GetEmployeeDetailsViewModelAsync(id);
@@ -78,6 +84,7 @@ public class EmployeesController : Controller
     }
 
     // GET: Employees/Create
+    [Authorize(Roles = "AdminRH")]
     public async Task<IActionResult> Create()
     {
         var viewModel = await _employeeService.GetEmployeeFormViewModelAsync();
@@ -87,6 +94,7 @@ public class EmployeesController : Controller
     // POST: Employees/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "AdminRH")]
     public async Task<IActionResult> Create(EmployeeFormViewModel model)
     {
         if (!ModelState.IsValid)
@@ -114,6 +122,10 @@ public class EmployeesController : Controller
     // GET: Employees/Edit/5
     public async Task<IActionResult> Edit(int id)
     {
+        if (!User.IsAdmin() && User.GetEmployeeId() != id)
+        {
+            return Forbid();
+        }
         try
         {
             var model = await _employeeService.GetEmployeeFormViewModelAsync(id);
@@ -130,6 +142,10 @@ public class EmployeesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, EmployeeFormViewModel model)
     {
+        if (!User.IsAdmin() && User.GetEmployeeId() != id)
+        {
+            return Forbid();
+        }
         if (!ModelState.IsValid)
         {
             model.Departments = await _employeeService.GetAllDepartmentsAsync();
@@ -157,6 +173,10 @@ public class EmployeesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UploadDocument(int employeeId, string documentType, IFormFile file)
     {
+        if (!User.IsAdmin() && User.GetEmployeeId() != employeeId)
+        {
+            return Forbid();
+        }
         if (file == null || file.Length == 0)
             return RedirectToAction(nameof(Details), new { id = employeeId });
 

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HRMS.Controllers;
 
-[Authorize]
+[Authorize(Roles = "AdminRH,Manager")]
 public class RecruitmentController : Controller
 {
     private readonly IRecruitmentService _recruitmentService;

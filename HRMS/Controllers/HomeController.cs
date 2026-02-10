@@ -1,5 +1,6 @@
 using HRMS.Service;
 using HRMS.ViewModels;
+using HRMS.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,10 @@ public class HomeController : Controller
     // GET: Home/Index - Dashboard
     public async Task<ActionResult> Index()
     {
+        if (!User.IsAdmin())
+        {
+            return RedirectToAction("Details", "Employees", new { id = User.GetEmployeeId() });
+        }
         var stats = await _dashboardService.GetDashboardStatisticsAsync();
 
         var viewModel = new DashboardViewModel

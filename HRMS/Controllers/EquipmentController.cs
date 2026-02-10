@@ -1,4 +1,5 @@
 ﻿using HRMS.Enums;
+using HRMS.Extensions;
 using HRMS.Models;
 using HRMS.Service;
 using HRMS.ViewModels;
@@ -20,7 +21,8 @@ public class EquipmentController : Controller
         _employeeService = employeeService;
     }
 
-    // GET: Equipment
+    // GET: 
+    [Authorize(Roles = "AdminRH")]
     public async Task<IActionResult> Index(string equipmentType, EquipmentStatus? status,
         int? pageNumber = 1)
     {
@@ -165,6 +167,10 @@ public class EquipmentController : Controller
     [HttpGet("Equipment/EmployeeEquipment/{employeeId}")]
     public async Task<IActionResult> EmployeeEquipment(int employeeId)
     {
+        if (!User.IsAdmin() && User.GetEmployeeId() != employeeId)
+        {
+            return Forbid();
+        }
         var employee = await _employeeService.GetEmployeeByIdAsync(employeeId);
         if (employee == null)
             return NotFound();

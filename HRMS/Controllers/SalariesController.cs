@@ -1,4 +1,5 @@
 ﻿using HRMS.Enums;
+using HRMS.Extensions;
 using HRMS.Models;
 using HRMS.Service;
 using HRMS.Repositories;
@@ -18,6 +19,7 @@ public class SalariesController : Controller
     }
 
     // GET: Salaries/Index
+    [Authorize(Roles = "AdminRH")]
     public async Task<IActionResult> Index(string searchString, int? departmentId, int? pageNumber)
     {
         var viewModel = await _salaryService.GetSalaryIndexViewModelPaginatedAsync(searchString, departmentId,
@@ -30,6 +32,10 @@ public class SalariesController : Controller
     [HttpGet("Salaries/EmployeeSalary/{employeeId}")]
     public async Task<IActionResult> EmployeeSalary(int employeeId)
     {
+        if (!User.IsAdmin() && User.GetEmployeeId() != employeeId)
+        {
+            return Forbid();
+        }
         try
         {
             var viewModel = await _salaryService.GetEmployeeSalaryViewModelAsync(employeeId);

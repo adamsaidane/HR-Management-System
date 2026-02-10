@@ -1,4 +1,5 @@
 ﻿using HRMS.Enums;
+using HRMS.Extensions;
 using HRMS.Service;
 using HRMS.ViewModels;
 using HRMS.Repositories;
@@ -20,6 +21,7 @@ public class PromotionsController : Controller
     }
 
     // GET: Promotions
+    [Authorize(Roles = "AdminRH")]
     public async Task<IActionResult> Index(int? pageNumber = 1)
     {
         var promotions = await _promotionService.GetAllPromotionsPaginatedAsync(pageNumber ?? 1,10);
@@ -69,6 +71,10 @@ public class PromotionsController : Controller
     [HttpGet("Promotions/EmployeePromotions/{employeeId}")]
     public async Task<IActionResult> EmployeePromotions(int employeeId)
     {
+        if (!User.IsAdmin() && User.GetEmployeeId() != employeeId)
+        {
+            return Forbid();
+        }
         var employee = await _employeeService.GetEmployeeByIdAsync(employeeId);
         if (employee == null)
             return NotFound();

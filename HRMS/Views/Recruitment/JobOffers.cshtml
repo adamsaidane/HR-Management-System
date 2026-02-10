@@ -142,7 +142,8 @@
                     <a asp-action="Candidates" asp-route-jobOfferId="@offer.JobOfferId" class="btn btn-sm btn-info">
                         <i class="fas fa-users me-1"></i>Candidats
                     </a>
-                    @if (offer.Status == HRMS.Enums.JobOfferStatus.Ouverte)
+                    @if (offer.Status == HRMS.Enums.JobOfferStatus.Ouverte 
+                         && User.IsInRole("AdminRH"))
                     {
                         <form method="post" asp-action="CloseJobOffer" asp-route-id="@offer.JobOfferId" class="d-inline">
                             @Html.AntiForgeryToken()

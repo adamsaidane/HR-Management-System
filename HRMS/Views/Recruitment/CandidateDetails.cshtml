@@ -96,7 +96,7 @@
                     <i class="fas fa-calendar-plus me-2"></i>Planifier un Entretien
                 </a>
 
-                @if (candidate.Status == HRMS.Enums.CandidateStatus.Accepté)
+                @if (candidate.Status == HRMS.Enums.CandidateStatus.Accepté && User.IsInRole("AdminRH"))
                 {
                     <a asp-action="ConvertToEmployee" asp-route-candidateId="@candidate.CandidateId" 
                        class="btn btn-warning w-100">

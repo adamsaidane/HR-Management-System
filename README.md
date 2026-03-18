@@ -141,8 +141,7 @@ HR-Management-System/
 │   ├── Salary, Bonus, Benefit
 │   ├── Candidate, JobOffer, Interview
 │   ├── Equipment, EquipmentAssignment
-│   ├── Promotion, User, Document
-│   └── AuditLog
+│   └── Promotion, User, Document
 │
 ├── ViewModels/                   # 30+ View Models
 │   ├── DashboardViewModel
@@ -276,7 +275,6 @@ DbInitializer.Initialize(context);
 | `EquipmentAssignments` | Asset-to-employee allocation |
 | `Promotions` | Career advancement records |
 | `Documents` | HR documents and files |
-| `AuditLogs` | System-wide audit trail |
 
 ---
 
